@@ -8,15 +8,15 @@ This folder is the compact, GitHub-safe architecture reference for the living co
 
 The archive package assembled during consolidation included large upstream/reference ZIPs, including files over GitHub's normal 100 MB single-file limit. The purpose of this folder is therefore to keep the architecturally important text, contracts, verification evidence and specialist instructions directly beside the code without requiring the large archive.
 
-No new architecture is introduced here. The files are copies or pointers to the existing Root 0.1.0 architecture and agent material.
+The Root 0.1.0 material in `CURRENT/` is preserved architecture/evidence. Additional requirement documents in this folder record later explicitly requested constraints without turning them into unverified implementation claims.
 
 ## Architecture in one view
 
 ```text
-Case study
+Case study / standalone exercise
     |
 React + Fluent UI 2 root
-workspace / explorer / tool experiences / run history
+workspace / explorer / tool experiences / run history / interview practice
     |
 Mosaic-derived generic notebook + flexible layout system
     |
@@ -36,19 +36,29 @@ SQLite only an explicitly labeled compatibility fallback
 MotherDuck optional/future
 ```
 
-The specialist surfaces — Fabric/Data Factory, warehouse, Airflow/dbt, Power BI and Databricks-inspired ML — extend this common root. They do not own separate project databases, notebook formats, run histories or private copies of datasets.
+The specialist surfaces — Fabric/Data Factory, warehouse, Airflow/dbt, Power BI, Databricks-inspired ML and future Interview Practice — extend this common root. They do not own separate project databases, notebook formats, run histories or private copies of datasets.
 
 ## Non-negotiable separations
 
 The established design keeps these dimensions independent:
 
-1. **Case** — the problem, inputs, outputs and learning objectives.
+1. **Case / exercise** — the problem, inputs, outputs and learning objectives.
 2. **Tool experience** — product-inspired labels, ribbon, panels and controls.
 3. **Document** — notebook, pipeline, model, report definition or other editable source.
 4. **Layout** — where editors, outputs, explanations, diagrams and results appear.
 5. **Runtime** — SQL, SparkLab, Python, Polars or other supported execution adapter.
 
-A Fabric-inspired notebook can therefore use the same notebook document and SparkLab runtime as another tool experience without duplicating source or state.
+A Fabric-inspired notebook can therefore use the same notebook document and SparkLab runtime as another tool experience without duplicating source or state. A future interview exercise can use the same workbench with a dedicated practice layout rather than another notebook application.
+
+## Interview / LeetCode compatibility
+
+Read `INTERVIEW_LEETCODE_REQUIREMENTS.md` before changing notebook, validation, persistence or runtime contracts.
+
+The future Interview Practice module must be able to support standalone exercises, starter code, Run vs Submit, visible/hidden result-based tests, attempt history distinct from notebook revisions and generic run history, reset/reveal operations, problem-browser metadata and a named interview/practice layout. It must reuse the shared notebook/runtime/validation architecture rather than becoming a second application.
+
+These are compatibility requirements during Core Integration Pass 1; they are not a request to interrupt the core pass with a full interview module implementation.
+
+Direct file: https://github.com/julian-passebecq/ducklabms_code/blob/main/architecture-reference/INTERVIEW_LEETCODE_REQUIREMENTS.md
 
 ## Execution truth boundary
 
@@ -99,12 +109,13 @@ See `CURRENT/VERIFICATION.md` for the exact preserved wording and evidence.
 2. `CURRENT/ARCHITECTURE.md`
 3. `CURRENT/MODULE_CONTRACT.md`
 4. `CURRENT/NOTEBOOK_RUNTIME_CONTRACT.md`
-5. `CURRENT/SOURCE_AUDIT.md`
-6. `CURRENT/TRUTH_AND_SECURITY.md`
-7. `CURRENT/CASE_COVERAGE.md`
-8. `CURRENT/ROADMAP.md`
-9. `CURRENT/VERIFICATION.md`
-10. `AGENTS/00_COORDINATION.md`
+5. `INTERVIEW_LEETCODE_REQUIREMENTS.md`
+6. `CURRENT/SOURCE_AUDIT.md`
+7. `CURRENT/TRUTH_AND_SECURITY.md`
+8. `CURRENT/CASE_COVERAGE.md`
+9. `CURRENT/ROADMAP.md`
+10. `CURRENT/VERIFICATION.md`
+11. `AGENTS/00_COORDINATION.md`
 
 ## Preserved specialist instructions
 
