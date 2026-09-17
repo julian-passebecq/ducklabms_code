@@ -16,9 +16,9 @@ export interface NotebookView {
 
 export const coreBlockPalette: Array<{ type: CorePanelType; label: string; description: string }> = [
   { type: 'markdown', label: 'Text / notes', description: 'Explanation, assumptions and conclusions.' },
-  { type: 'sql', label: 'SQL', description: 'DuckDB SQL executed in the browser.' },
-  { type: 'python', label: 'Python', description: 'Pyodide Python with the latest shared table as input_df.' },
-  { type: 'polars', label: 'Polars', description: 'Browser Polars for DataFrame-style transformations.' },
+  { type: 'sql', label: 'SQL', description: 'SQL executed through the shared local runtime.' },
+  { type: 'python', label: 'Python', description: 'Trusted local Python using shared catalog helpers.' },
+  { type: 'polars', label: 'Polars', description: 'Optional local Polars for DataFrame transformations.' },
   { type: 'table', label: 'Table', description: 'Render the latest shared analytical result.' },
   { type: 'chart', label: 'Chart', description: 'Render the latest shared analytical result as a chart/KPI.' },
   { type: 'catalog', label: 'Data catalog', description: 'Files, DuckDB tables and import controls.' }
@@ -26,9 +26,9 @@ export const coreBlockPalette: Array<{ type: CorePanelType; label: string; descr
 
 export const initialBlocks: WorkbenchPanel[] = [
   { id: 'notes', type: 'markdown', title: 'Analysis notes', subtitle: 'Text · explanation' },
-  { id: 'sql-main', type: 'sql', title: 'SQL', subtitle: 'DuckDB · browser' },
-  { id: 'python-main', type: 'python', title: 'Python', subtitle: 'Pyodide · browser' },
-  { id: 'polars-main', type: 'polars', title: 'Polars', subtitle: 'Polars · browser' },
+  { id: 'sql-main', type: 'sql', title: 'SQL', subtitle: 'Shared SQL runtime' },
+  { id: 'python-main', type: 'python', title: 'Python', subtitle: 'Trusted local Python' },
+  { id: 'polars-main', type: 'polars', title: 'Polars', subtitle: 'Local Polars' },
   { id: 'result-table', type: 'table', title: 'Result table', subtitle: 'Shared analytical result' },
   { id: 'result-chart', type: 'chart', title: 'Result chart', subtitle: 'Shared analytical result' },
   { id: 'data-catalog', type: 'catalog', title: 'Data', subtitle: 'DuckDB · CSV · Parquet' }
@@ -111,9 +111,9 @@ export function blockLabel(type: CorePanelType) {
 }
 
 export function runtimeLabel(type: PanelType) {
-  if (type === 'sql') return 'DuckDB · browser'
-  if (type === 'python') return 'Pyodide · browser'
-  if (type === 'polars') return 'Polars · Pyodide'
+  if (type === 'sql') return 'Shared SQL runtime'
+  if (type === 'python') return 'Trusted local Python'
+  if (type === 'polars') return 'Local Polars'
   if (type === 'table' || type === 'chart') return 'Shared result'
   if (type === 'notebook-output') return 'Saved Jupyter output'
   if (type === 'catalog') return 'DuckDB · files'
@@ -306,9 +306,9 @@ export function moveNotebookGroup(view: NotebookView, blocks: WorkbenchPanel[], 
 export function projectRemovalIds(blocks: WorkbenchPanel[], blockId: string) {
   const selected = blocks.find((block) => block.id === blockId)
   if (!selected) return [blockId]
-  if (selected.notebook?.cellType !== 'code' || !selected.notebook.cellId) return [blockId]
+  if (selected.notebook?.cellType !== 'code' && !['sql','python','polars'].includes(selected.type)) return [blockId]
   const outputIds = blocks
-    .filter((block) => block.notebook?.cellType === 'output' && block.notebook.parentCellId === selected.notebook?.cellId)
+    .filter((block) => block.notebook?.cellType === 'output' && block.notebook.parentCellId === (selected.notebook?.cellId??selected.id))
     .map((block) => block.id)
   return [blockId, ...outputIds]
 }

@@ -287,6 +287,9 @@ class Engine:
             return self.catalog.listing()
         if op == 'execute':
             return self.execute(request)
+        if op == 'exercise':
+            from .exercises import grade
+            return grade(self, request)
         if op == 'workflow':
             return self.workflow(request)
         if op == 'check':

@@ -1,8 +1,8 @@
 import {useRef,useState,lazy,Suspense} from 'react';
 const MonacoAdapter=lazy(()=>import('./MonacoAdapter'));
-export interface EditorProps {value:string;language:string;onChange:(s:string)=>void;onRun:()=>void;readOnly?:boolean}
+export interface EditorProps {value:string;language:string;onChange:(s:string)=>void;onRun:()=>void;readOnly?:boolean;modelId?:string;active?:boolean}
 export function CodeEditor(props:EditorProps){
- const [simple,setSimple]=useState(false);
+ const [simple,setSimple]=useState(props.active===false);
  return <div className="editor-host"><div className="editor-mode"><span>{props.language}</span><button onClick={()=>setSimple(!simple)}>{simple?'Use Monaco':'Use plain editor'}</button></div>{simple?<PlainEditor {...props}/>:<Suspense fallback={<PlainEditor {...props}/>}><MonacoAdapter {...props}/></Suspense>}</div>;
 }
 

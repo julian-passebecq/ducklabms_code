@@ -44,3 +44,7 @@ Use the returned execution ID, source hash, session generation, result, catalog 
 ## Specialist contribution checklist
 
 One bounded feature; one root-owned runtime path; a supported-syntax matrix; positive and negative tests; stale-data behavior; save/reopen behavior; appropriate truth labels; no dependency duplication; an updated migration ledger. Return a changed-file list and raw test evidence. Do not rewrite shared contracts without an explicit integration proposal.
+
+## Exercise consumer extension (Pass 1)
+
+`RuntimeClient.exercise` submits a saved source checkpoint for visible Run or graded Submit. The server owns fixture classes, expected rows and solution disclosure. Canonical response models in `apps/api/datapass/exercise_contracts.py` are exported in OpenAPI; TypeScript consumers use ExerciseDefinition, ExerciseAttempt, ExerciseRequest and ExerciseResult. Standalone workspaces use nullable `case_id` with the same documents, catalog and workers. Attempts remain separate from notebook revisions and generic runs. Module contract version remains 1. See `NOTEBOOK_INTERVIEW_PASS_1_HANDOFF.md` for compatibility changes and scope.

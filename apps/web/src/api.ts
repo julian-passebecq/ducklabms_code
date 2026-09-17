@@ -1,4 +1,4 @@
-import type {Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace} from '../../../packages/contracts/src/index.ts';
+import type {Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace,ExerciseDefinition,ExerciseRequest,ExerciseResult,ExerciseAttempt,PracticeReview} from '../../../packages/contracts/src/index.ts';
 import type {RootNotebook} from './notebook';
 
 const STORAGE='datapass-local-token';
@@ -17,10 +17,15 @@ export class ApiClient implements RuntimeClient {
   return data as T;
  }
  cases=()=>this.request<CaseStudy[]>('/cases');
+ exercises=()=>this.request<ExerciseDefinition[]>('/exercises');
+ solution=(id:string)=>this.request<{source:string;exercise_version:string}>(`/exercises/${encodeURIComponent(id)}/solution`,{method:'POST'});
+ attempts=(id:string)=>this.request<ExerciseAttempt[]>(`/workspaces/${id}/attempts`);
+ exercise=(id:string,request:ExerciseRequest)=>this.request<ExerciseResult>(`/workspaces/${id}/exercise`,{method:'POST',body:JSON.stringify(request)});
+ review=(id:string,exercise:string,revision:number,metadata:PracticeReview)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}/practice/${encodeURIComponent(exercise)}/review`,{method:'PUT',body:JSON.stringify({revision,...metadata})});
  modules=()=>this.request<ModuleManifest[]>('/modules');
  profiles=()=>this.request<Profile[]>('/profiles');
  workspaces=()=>this.request<Array<Pick<Workspace,'id'|'case_id'|'title'|'revision'|'updated_at'>>>('/workspaces');
- create=(case_id:string)=>this.request<Workspace<RootNotebook>>('/workspaces',{method:'POST',body:JSON.stringify({case_id})});
+ create=(case_id:string|null)=>this.request<Workspace<RootNotebook>>('/workspaces',{method:'POST',body:JSON.stringify({case_id})});
  workspace=(id:string)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}`);
  save=(id:string,revision:number,notebook:RootNotebook)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}/notebook`,{method:'PUT',body:JSON.stringify({revision,notebook})});
  catalog=(id:string)=>this.request<Asset[]>(`/workspaces/${id}/catalog`);
