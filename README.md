@@ -20,15 +20,17 @@ https://github.com/julian-passebecq/ducklake_mslab
 
 ## Current evidence
 
-- 75 Python tests passed; two optional-engine tests skipped because DuckDB and Polars are not installed in this execution environment.
-- 16 executable TypeScript notebook/contract tests passed, including ipynb round-trips and layout/identity invariants.
-- TypeScript/TSX syntax checked. **The full React dependency install, typecheck, Vite build and browser rendering were not verified here.** Package-network access is blocked; the installed browser blocks all navigation by policy. Those restrictions were not bypassed.
-- SQLite compatibility mode executes real SQL and supported SparkLab code over the shared data. It is never labeled DuckDB or DuckLake.
-- DuckDB and real DuckLake attachment have code paths, but remain unverified in this environment. MotherDuck is deliberately inactive.
+Core Integration Pass 1 (September 18, 2026) closes the real dependency, strict TypeScript, production React/Vite and local-engine gates. See `docs/VERIFICATION.md` for raw logs, exact checks and limits.
+
+- Real Python/npm packages installed; `package-lock.json` retained.
+- Python regression coverage runs on both SQLite and DuckDB; real Polars executes.
+- Production Chromium journeys exercise the React/Fluent app, locally bundled Monaco worker, all layouts, notebook persistence, ipynb import/export, keyboard execution, stale lineage and distinct run scopes.
+- Real DuckLake attach/write/Parquet/reopen and Windows `start.py` startup pass.
+- Version remains Root 0.1.0. This pass does not claim completion of specialist products or a v0.2 release.
 
 ## Start locally
 
-Use Python 3.11+ and Node 22.16+ (Node is needed only for the React app and TS tests). The reference environment used Python 3.13.5 and Node 22.16.0. Windows installation has not been tested here.
+Use Python 3.11+ and Node 22.16+ (Node is needed only for the React app and TS tests). Core Pass 1 was tested on Windows with Python 3.13.1 and Node 24.19.0. Use a supported Node runtime; the host's older Node 21 is insufficient.
 
 ```sh
 python -m venv .venv
@@ -50,7 +52,7 @@ Then install and start:
 
 ```sh
 python -m pip install -r requirements.txt -r requirements-engines.txt
-npm install
+npm ci
 npm run build
 python start.py --storage duckdb
 ```

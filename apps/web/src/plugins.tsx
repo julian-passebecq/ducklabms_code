@@ -1,15 +1,33 @@
-import {isExecutionFresh} from '../../../packages/contracts/src/index.ts';
+import {isExecutionFresh,requireModuleCompatibility} from '../../../packages/contracts/src/index.ts';
 import type {ReactNode} from 'react';
-import type {Asset,CaseStudy,Execution,ModuleManifest} from '../../../packages/contracts/src/index.ts';
+import type {Asset,CaseStudy,Execution,ModuleManifest,RuntimeClient} from '../../../packages/contracts/src/index.ts';
 import {Badge,Button} from '@fluentui/react-components';
 import {DataTable} from './ResultView';
 
 /** A specialist receives root state and commands. It may not create a second
  * provider, catalog, execution API, notebook document or localStorage schema. */
-export interface ToolContext {caseStudy:CaseStudy;assets:Asset[];runs:Execution[];selectedStep:string;onSelectStep:(id:string)=>void;onRunWorkflow:()=>void;busy:boolean}
-export interface ToolPlugin {manifest:ModuleManifest;description:string;surfaces:Array<'notebook'|'graph'|'catalog'|'runs'|'brief'>;renderOverview:(context:ToolContext)=>ReactNode}
+export interface ToolContext {workspaceId:string;notebookId:string;services:{runtime:RuntimeClient;inspectAsset:(name:string)=>void};caseStudy:CaseStudy;assets:Asset[];runs:Execution[];selectedStep:string;onSelectStep:(id:string)=>void;onRunWorkflow:()=>void;busy:boolean}
+export type ToolPanelId='graph'|'catalog'|'brief'|'report';
+export interface ToolPanel {id:ToolPanelId;render:(context:ToolContext)=>ReactNode}
+export interface ToolPlugin {manifest:ModuleManifest;description:string;panels:ToolPanel[]}
+const panels:Record<ToolPanelId,ToolPanel>={
+ brief:{id:'brief',render:context=><CaseBrief context={context}/>},
+ graph:{id:'graph',render:context=><PipelineSurface context={context}/>},
+ catalog:{id:'catalog',render:context=><CatalogSurface context={context} onInspect={context.services.inspectAsset}/>},
+ report:{id:'report',render:context=><ReportSurface context={context}/>},
+};
+const modulePanels:Record<string,ToolPanelId[]>={
+ 'data-factory':['brief','graph','catalog'], 'fabric-notebook':['brief','catalog'],
+ warehouse:['brief','catalog'],dbt:['brief','graph','catalog'],airflow:['brief','graph'],
+ 'power-bi':['brief','report','catalog'],'databricks-notebook':['brief','catalog'],
+ 'polars-notebook':['brief','catalog'],sparklab:['brief','catalog'],
+};
 export function buildRegistry(manifests:ModuleManifest[]):Map<string,ToolPlugin>{
- return new Map(manifests.map(manifest=>[manifest.id,{manifest,description:manifest.status==='foundation'?'Shared foundation; specialist migration is bounded by the module contract.':'',surfaces:['notebook','graph','catalog','runs','brief'],renderOverview:context=><CaseBrief context={context}/>}]));
+ return new Map(manifests.map(manifest=>{requireModuleCompatibility(manifest);return [manifest.id,{manifest,description:manifest.status==='foundation'?'Shared foundation; specialist migration is bounded by the module contract.':'',panels:(modulePanels[manifest.id]??['brief']).map(id=>panels[id])}]}));
+}
+export function renderToolPanel(registry:Map<string,ToolPlugin>,id:ToolPanelId,context:ToolContext):ReactNode {
+ const registered=context.caseStudy.modules.flatMap(module=>registry.get(module)?.panels??[]).find(panel=>panel.id===id);
+ return (registered??panels[id]).render(context);
 }
 export function CaseBrief({context}:{context:ToolContext}){
  const c=context.caseStudy;

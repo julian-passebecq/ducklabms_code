@@ -6,7 +6,7 @@ Root 0.1.0 is the new integration baseline. Do not keep releasing unrelated top-
 
 ## Order of work
 
-First run `01_ROOT_INTEGRATION.md` and `09_RELEASE_QA.md`: actual React/DuckDB build gates are still open. Then deepen the generic notebook and Spark kernel using `02_NOTEBOOK_MOSAIC.md` and `03_SPARKLAB_KERNEL.md`. Once shared interfaces are stable, pipeline, Airflow/dbt, BI and ML specialists can work concurrently in their own module folders. Curriculum work can proceed against the frozen case schema.
+First run `01_ROOT_INTEGRATION.md` and `09_RELEASE_QA.md`: Core Integration Pass 1 has closed the actual React/DuckDB gates with the evidence in docs/VERIFICATION.md; rerun these gates for future shared-core changes. Then deepen the generic notebook and Spark kernel using `02_NOTEBOOK_MOSAIC.md` and `03_SPARKLAB_KERNEL.md`. Once shared interfaces are stable, pipeline, Airflow/dbt, BI and ML specialists can work concurrently in their own module folders. Curriculum work can proceed against the frozen case schema.
 
 Do not give every specialist permission to replace packages/contracts, the API, the root package.json or Mosaic. The integrator merges only bounded changes with evidence. Each contribution must name the root version/contract version it targets.
 

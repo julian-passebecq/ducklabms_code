@@ -7,6 +7,7 @@ import re
 import threading
 import uuid
 from .content import get_case
+from .atomic import replace_file
 
 ID = re.compile(r'^[a-f0-9]{32}$')
 
@@ -43,7 +44,7 @@ class Documents:
         path.parent.mkdir(parents=True, exist_ok=True)
         temp = path.with_suffix('.tmp')
         temp.write_text(json.dumps(doc, indent=2))
-        temp.replace(path)
+        replace_file(temp, path)
         return doc
 
     def create(self, case_id: str):

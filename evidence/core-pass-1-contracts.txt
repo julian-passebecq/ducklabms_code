@@ -1,0 +1,30 @@
+
+> datapass-studio-root@0.1.0 test
+> node --experimental-strip-types --test tests/contracts.test.mts
+
+✔ graph validates unknown, duplicate and cycle; supports independent tasks (2.4072ms)
+✔ case notebook has shared cell identity across all layouts (1.931ms)
+✔ geometry cannot change notebook execution order (0.637ms)
+✔ semantic move is explicit and includes its output (0.6836ms)
+✔ practice canvas honors custom geometry (0.4682ms)
+✔ project restore sanitizes blocks and keeps source (2.1617ms)
+✔ kernel switch updates export type without losing source (0.3442ms)
+✔ ipynb roundtrip preserves source metadata attachments and inert HTML (4.1277ms)
+✔ unsupported notebook magics stay read-only (0.3495ms)
+✔ root custom Spark kernel survives ipynb export and import (1.4537ms)
+✔ output evidence is attached to its originating cell only (0.4075ms)
+✔ server evidence cannot attach to another notebook (0.3133ms)
+✔ stale or changed inputs invalidate report freshness (0.1521ms)
+✔ new cells appear in all persistent layouts (0.2765ms)
+✔ incompatible module contract rejected (0.1192ms)
+✔ custom practice geometry survives project save and restore (0.7398ms)
+✔ workflow evidence follows imported case cell identity and survives reopen (1.8449ms)
+✔ corrupt import and duplicate project identities fail without changing source (0.5674ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 161.8942

@@ -1,0 +1,111 @@
+...............E......E...........................................F..... [ 93%]
+.....                                                                    [100%]
+=================================== ERRORS ====================================
+_ ERROR at setup of test_spark_fails_closed[result = spark.table("source.orders").filter((F.col("net_amount") > 0) and (F.col("segment_id") > 0))] _
+
+tmp_path = WindowsPath('C:/Users/julia/AppData/Local/Temp/pytest-of-julia/pytest-18/test_spark_fails_closed_result1')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path/'db',mode='sqlite',trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+apps\api\datapass\execution.py:65: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+apps\api\datapass\catalog.py:135: in __init__
+    self._seed()
+apps\api\datapass\catalog.py:181: in _seed
+    self._touch(asset, [], 'deterministic seed v1')
+apps\api\datapass\catalog.py:160: in _touch
+    self._save_versions()
+apps\api\datapass\catalog.py:152: in _save_versions
+    tmp.replace(self.metadata_path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/julia/AppData/Local/Temp/pytest-of-julia/pytest-18/test_spark_fails_closed_result1/db/asset-lineage.tmp')
+target = WindowsPath('C:/Users/julia/AppData/Local/Temp/pytest-of-julia/pytest-18/test_spark_fails_closed_result1/db/asset-lineage.json')
+
+    def replace(self, target):
+        """
+        Rename this path to the target path, overwriting if that path exists.
+    
+        The target path may be absolute or relative. Relative paths are
+        interpreted relative to the current working directory, *not* the
+        directory of the Path object.
+    
+        Returns the new Path instance pointing to the target path.
+        """
+>       os.replace(self, target)
+E       PermissionError: [WinError 5] Access is denied: 'C:\\Users\\julia\\AppData\\Local\\Temp\\pytest-of-julia\\pytest-18\\test_spark_fails_closed_result1\\db\\asset-lineage.tmp' -> 'C:\\Users\\julia\\AppData\\Local\\Temp\\pytest-of-julia\\pytest-18\\test_spark_fails_closed_result1\\db\\asset-lineage.json'
+
+C:\Users\julia\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:780: PermissionError
+_ ERROR at setup of test_sql_rejects_external_operations[SELECT load_extension('evil')] _
+
+tmp_path = WindowsPath('C:/Users/julia/AppData/Local/Temp/pytest-of-julia/pytest-18/test_sql_rejects_external_oper5')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path/'db',mode='sqlite',trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+apps\api\datapass\execution.py:65: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+apps\api\datapass\catalog.py:135: in __init__
+    self._seed()
+apps\api\datapass\catalog.py:181: in _seed
+    self._touch(asset, [], 'deterministic seed v1')
+apps\api\datapass\catalog.py:160: in _touch
+    self._save_versions()
+apps\api\datapass\catalog.py:152: in _save_versions
+    tmp.replace(self.metadata_path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/julia/AppData/Local/Temp/pytest-of-julia/pytest-18/test_sql_rejects_external_oper5/db/asset-lineage.tmp')
+target = WindowsPath('C:/Users/julia/AppData/Local/Temp/pytest-of-julia/pytest-18/test_sql_rejects_external_oper5/db/asset-lineage.json')
+
+    def replace(self, target):
+        """
+        Rename this path to the target path, overwriting if that path exists.
+    
+        The target path may be absolute or relative. Relative paths are
+        interpreted relative to the current working directory, *not* the
+        directory of the Path object.
+    
+        Returns the new Path instance pointing to the target path.
+        """
+>       os.replace(self, target)
+E       PermissionError: [WinError 5] Access is denied: 'C:\\Users\\julia\\AppData\\Local\\Temp\\pytest-of-julia\\pytest-18\\test_sql_rejects_external_oper5\\db\\asset-lineage.tmp' -> 'C:\\Users\\julia\\AppData\\Local\\Temp\\pytest-of-julia\\pytest-18\\test_sql_rejects_external_oper5\\db\\asset-lineage.json'
+
+C:\Users\julia\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:780: PermissionError
+================================== FAILURES ===================================
+__________________ test_reference_fixture_executes_real_rows __________________
+
+    def test_reference_fixture_executes_real_rows():
+        result = execute_reference_sql(compiled_sql(GOOD_CODE), "retail")
+        assert result.status == "executed"
+>       assert result.engine == "SQLite reference fixture"
+E       AssertionError: assert 'DuckDB reference fixture' == 'SQLite reference fixture'
+E         
+E         - SQLite reference fixture
+E         ? ^^^^^^
+E         + DuckDB reference fixture
+E         ? ^^^^^^
+
+services\semantic\test_executor.py:33: AssertionError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:45
+  D:\PROJ\ducklabms_code\.venv\Lib\site-packages\starlette\testclient.py:45: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_root.py::test_spark_fails_closed[result = spark.table("source.orders").filter((F.col("net_amount") > 0) and (F.col("segment_id") > 0))]
+ERROR tests/test_root.py::test_sql_rejects_external_operations[SELECT load_extension('evil')]
+FAILED services/semantic/test_executor.py::test_reference_fixture_executes_real_rows
+1 failed, 74 passed, 1 warning, 2 errors in 8.30s

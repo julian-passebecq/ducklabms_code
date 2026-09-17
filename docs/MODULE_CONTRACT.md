@@ -12,9 +12,11 @@ A second FluentProvider, top-level application shell, notebook document format, 
 
 ## Current executable interfaces
 
-`ModuleManifest` contains id/title/kind/persona/status/contract_version. The root `ToolPlugin` registry supplies available surfaces and a renderer receiving `ToolContext`. `RuntimeClient` supplies execute/catalog/restart. Root React components own the UI calls; specialist modules receive services via context rather than import a global service singleton.
+`ModuleManifest` contains id/title/kind/persona/status/contract_version. The root `ToolPlugin` registry supplies registered panel renderers receiving `ToolContext`. `RuntimeClient` supplies execute/catalog/restart. Root React components own the UI calls; specialist modules receive services via context rather than import a global service singleton.
 
-The current manifest registry exposes foundation surfaces. It is not a hot-install plugin system. The next registry pass should add explicit per-module panels and case registration, while preserving contract_version=1 or providing a versioned migration.
+`ToolContext` includes the root workspace/notebook identities, shared `RuntimeClient`, catalog inspection command, current assets/runs and root execution/navigation commands. `ToolPlugin.panels` registers bounded graph, catalog, brief and report renderers. The static module-to-panel mapping is in `apps/web/src/plugins.tsx`; every manifest is checked against contract version 1. The root routes those panels with the same context, provider and catalog.
+
+This is compiled-in panel registration, not hot-loading third-party code. Unknown compatible modules receive only the generic brief; the root's generic workflow/catalog views remain available. Specialist implementations remain future bounded migrations.
 
 ## Case definition
 

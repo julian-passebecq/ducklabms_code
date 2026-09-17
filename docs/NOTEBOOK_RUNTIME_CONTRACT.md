@@ -15,7 +15,7 @@
 
 `createCaseNotebook`, `practiceView`, `sourceOf`, `withSource`, `setBlockKernel`, `recordExecution`, `restoreNotebook`, `importNotebook`, `exportNotebook`, `attachServerEvidence`, `addCell` are in `apps/web/src/notebook.ts`. Domain-neutral parsing, export and layout logic are extracted from Mosaic under `packages/notebook-core`.
 
-The canvas injects a renderer and geometry changes. The editor adapter uses locally bundled Monaco workers, with an accessible plain-text fallback. No CDN-based runtime editor loading is configured. The actual Monaco/Fluent bundle still needs the unexecuted build gate.
+The canvas injects a renderer and geometry changes. The editor adapter uses locally bundled Monaco workers, with an accessible plain-text fallback. No CDN-based runtime editor loading is configured. Core Integration Pass 1 verifies the production Monaco/Fluent bundle and its local editor worker in Chromium. Narrow canvases stack the same blocks without rewriting saved geometry.
 
 ## Practical boundaries
 

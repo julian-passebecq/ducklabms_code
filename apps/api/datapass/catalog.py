@@ -16,6 +16,7 @@ import re
 import sqlite3
 from typing import Any
 import uuid
+from .atomic import replace_file
 
 LAYERS = ('source', 'bronze', 'silver', 'gold', 'warehouse', 'features', 'metrics')
 IDENT = re.compile(r'^[A-Za-z][A-Za-z0-9_]{0,62}$')
@@ -128,6 +129,11 @@ class Catalog:
                 files = str(directory / 'lake-files').replace("'", "''")
                 self.db.execute(f"ATTACH 'ducklake:{meta}' AS lake (DATA_PATH '{files}')")
                 self.db.execute('USE lake')
+                for layer in LAYERS:
+                    (directory / 'lake-files' / layer).mkdir(parents=True, exist_ok=True)
+                # DuckLake needs file access only inside this workspace's data path.
+                allowed = str((directory / 'lake-files').resolve()).replace("'", "''")
+                self.db.execute(f"SET allowed_directories=['{allowed}']")
             for layer in LAYERS:
                 self.db.execute(f'CREATE SCHEMA IF NOT EXISTS {layer}')
             # After controlled initialization, notebook SQL cannot read arbitrary files.
@@ -149,7 +155,7 @@ class Catalog:
     def _save_versions(self):
         tmp = self.metadata_path.with_suffix('.tmp')
         tmp.write_text(json.dumps(self.versions, indent=2))
-        tmp.replace(self.metadata_path)
+        replace_file(tmp, self.metadata_path)
 
     def _touch(self, name: str, dependencies: list[str], producer: str):
         self.versions[name] = {

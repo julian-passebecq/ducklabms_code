@@ -50,3 +50,9 @@ Root execution no longer returns standalone simulator fixtures as if they were t
 `migration-sources/` contains original code/docs/configs, not generated dist files, dependency trees, images or fonts. Original upstream license notices are retained when present. `third-party/` contains Microsoft source-license references. The package does not grant a new license over user-provided source or third-party assets. There are no font binaries in the deliverable.
 
 Original release-note claims are historical inputs. They are not a replacement for the new root's own `docs/VERIFICATION.md` evidence.
+
+## Core Integration Pass 1 — September 18, 2026
+
+Retained all migration sources unchanged. The existing Mosaic extraction now compiles against the real readonly grid-layout types. Root adapters preserve workflow-to-cell output attachment after ipynb import and root-owned panel registration supplies workspace/runtime services. Responsive stacking changes presentation only. Catalog/document metadata replacement tolerates bounded Windows sharing locks; DuckLake has access only to its workspace data directory. Actual React, DuckDB, Polars, DuckLake and Windows startup evidence replaces the earlier unavailable-package gates in docs/VERIFICATION.md.
+
+No independent application, notebook format, catalog, database abstraction, provider or runtime was added. Root version remains 0.1.0. Full original Power BI, Airflow/dbt, ADF/Fabric, ML and guide functionality remains unmigrated as listed above.

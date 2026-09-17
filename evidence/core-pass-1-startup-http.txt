@@ -14,3 +14,4 @@
     "catalog persists through worker restart"
   ]
 }
+PASS: start.py --storage duckdb, authenticated HTTP, production React assets, Retail workflow on win32
