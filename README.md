@@ -6,6 +6,18 @@ This is the integration foundation created from the September 17, 2026 uploads. 
 
 The new root contains a React / Fluent UI 2 application, a Mosaic-derived notebook core, a local FastAPI service with persistent kernel workers, connected case studies, a shared catalog and specialist handoffs. Original application sources are retained under `migration-sources/`; they are reference material, not seven embedded apps.
 
+## Architecture reference
+
+The compact architecture archive for Codex and future agents is now kept directly in this repository under `architecture-reference/`:
+
+https://github.com/julian-passebecq/ducklabms_code/tree/main/architecture-reference
+
+It preserves the Root 0.1.0 architecture/contracts/verification files, specialist agent instructions and the later Core Architecture Contract v1 summary without requiring the historical >100 MB archive bundle.
+
+Historical/archive repository pointer:
+
+https://github.com/julian-passebecq/ducklake_mslab
+
 ## Current evidence
 
 - 75 Python tests passed; two optional-engine tests skipped because DuckDB and Polars are not installed in this execution environment.
@@ -76,6 +88,7 @@ The explicit business rule excludes zero and negative amounts; it is a teaching 
 
 | Directory | Responsibility |
 |---|---|
+| `architecture-reference` | Compact architect/source-of-truth reference for Codex and future agents |
 | `apps/web` | One FluentProvider, shell, explorer, module surfaces, notebook editor |
 | `packages/notebook-core` | Domain-neutral Mosaic layout, ipynb import/export, project sanitization |
 | `packages/contracts` | Root v1 shared types; generated backend OpenAPI snapshot |
