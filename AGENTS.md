@@ -15,12 +15,14 @@ The archive repository is reference material only. Large source archives previou
 3. `docs/ARCHITECTURE.md`
 4. `docs/MODULE_CONTRACT.md`
 5. `docs/NOTEBOOK_RUNTIME_CONTRACT.md`
-6. `docs/VERIFICATION.md`
-7. `docs/agents/00_COORDINATION.md`
+6. `architecture-reference/INTERVIEW_LEETCODE_REQUIREMENTS.md`
+7. `docs/VERIFICATION.md`
+8. `docs/agents/00_COORDINATION.md`
 
 Direct links:
 
 - Architecture reference index: https://github.com/julian-passebecq/ducklabms_code/tree/main/architecture-reference
+- Interview / LeetCode compatibility requirements: https://github.com/julian-passebecq/ducklabms_code/blob/main/architecture-reference/INTERVIEW_LEETCODE_REQUIREMENTS.md
 - Start here: https://github.com/julian-passebecq/ducklabms_code/blob/main/START_HERE.md
 - Architecture: https://github.com/julian-passebecq/ducklabms_code/blob/main/docs/ARCHITECTURE.md
 - Module contract: https://github.com/julian-passebecq/ducklabms_code/blob/main/docs/MODULE_CONTRACT.md
@@ -49,6 +51,12 @@ Keep **case**, **tool experience**, **document**, **layout** and **runtime** sep
 Do not create another application shell, notebook format, catalog, database, execution history or private dataset store for a specialist module.
 
 Real local execution results must remain explicitly separate from simulated cluster/cloud metrics, timing and cost.
+
+## Interview / LeetCode compatibility requirement
+
+The shared core must remain compatible with a future **Interview Practice** module rather than creating another LeetCode application. Read `architecture-reference/INTERVIEW_LEETCODE_REQUIREMENTS.md` before changing notebook, validation, runtime or persistence contracts.
+
+Preserve the ability to support standalone exercises, starter code, **Run vs Submit**, visible/hidden result-based tests, exercise-attempt history distinct from notebook revisions and run history, reset/reveal operations, problem metadata and a named interview/practice layout. Do not implement the full Interview module during Core Integration Pass 1 unless explicitly assigned; preserve compatibility now and implement it later as a bounded module.
 
 ## Existing advanced work is retained
 
