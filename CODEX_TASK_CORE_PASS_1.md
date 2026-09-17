@@ -22,27 +22,49 @@ Do not start a new application or redesign the platform. Work from the existing 
 
 ## Objective
 
-Complete the root integration and release-gate pass already defined by the architect. Do not stop at a plan.
+Complete as much of the root integration implementation as possible in one coding pass. **Do not stop at a plan and do not spend the coding budget repeatedly running broad test suites.**
 
 Focus on the shared core only. Do not implement full Power BI, Airflow, dbt, ADF/Fabric, Databricks or Interview Practice feature sets in this pass.
 
-## Required work
+## Coding-budget rule — implementation first
 
-- Install the real Python and npm dependencies.
-- Generate and commit the real npm lockfile after a successful install.
-- Resolve strict TypeScript issues.
-- Run and repair the Vite production build.
-- Run the existing Python and TypeScript test suites.
-- Verify the actual React app, not only the diagnostic client.
-- Verify actual DuckDB execution and persistence.
-- Verify the Retail revenue lakehouse connected path end to end.
-- Verify notebook save/reopen and all existing layout modes.
-- Verify `.ipynb` export/import round trips and source/cell identity preservation.
-- Verify run-one, run-notebook and run-workflow behavior remains semantically distinct.
-- Verify stale downstream assets after upstream mutation and recomputation behavior.
-- Verify timeout/restart/error recovery, output-to-cell attachment and workspace isolation where already covered by the contracts.
-- Preserve the shared workspace/catalog/runtime/notebook ownership boundaries.
-- Keep real local execution distinct from simulated cluster/cloud metrics and costs.
+The user explicitly wants this Codex session optimized for code output.
+
+- Spend the large majority of the session writing, repairing and integrating production code.
+- Full Python regression, TypeScript regression, browser journeys, complete integration suites and release-QA runs will be executed **outside this coding Codex session**.
+- Run only the **minimum essential check required to keep coding safely**. Examples: one targeted test for a changed contract, a typecheck needed to locate a blocking compiler error, a narrow build after a structural frontend change, or a tiny DuckDB smoke check when the next implementation step otherwise cannot be trusted.
+- Do not rerun the complete suite after each group of edits. Batch implementation.
+- If a known failure has an obvious fix, implement the fix and continue rather than consuming the session on unrelated verification.
+- Never claim an unrun check passed. Mark it `DEFERRED TO EXTERNAL QA` and record the exact command/area to verify later.
+- At handoff, provide a concise external-QA checklist rather than consuming the coding pass executing it.
+
+### No automatic Medium-agent escalation
+
+Do not automatically switch to, invoke, or delegate to a **Medium agent** or equivalent higher-cost secondary agent.
+
+This is exceptional only. If you become genuinely blocked and useful coding cannot continue, stop and ask the user for explicit confirmation before escalating. State the blocker and why Medium is required. If useful implementation can continue, continue coding with the current agent.
+
+## Implementation targets
+
+Advance/fix as much of the following as possible, using only essential unblocker checks inside Codex:
+
+- install/resolve real Python and npm dependencies when required to implement the root correctly;
+- generate and commit the real npm lockfile after a successful dependency resolution;
+- resolve strict TypeScript and React integration issues encountered while implementing;
+- repair Vite/build configuration and frontend structure so external QA can run the production build cleanly;
+- harden the actual React app, not only the diagnostic client;
+- make actual DuckDB the normal verified implementation path rather than relying on SQLite compatibility behavior;
+- harden the Retail revenue lakehouse connected path implementation;
+- harden notebook save/reopen and all existing layout modes;
+- harden `.ipynb` export/import and source/cell identity preservation;
+- preserve distinct run-one, run-notebook and run-workflow semantics;
+- preserve stale downstream assets after upstream mutation and correct recomputation behavior;
+- harden timeout/restart/error recovery, output-to-cell attachment and workspace isolation where contracts already define them;
+- preserve the shared workspace/catalog/runtime/notebook ownership boundaries;
+- keep real local execution distinct from simulated cluster/cloud metrics and costs;
+- formalize shared ToolContext/module registration where needed without implementing full specialist products.
+
+If compiler/build/runtime feedback is strictly required to make the next code decision, run the narrowest relevant command. Otherwise keep implementing and leave broad verification for external QA.
 
 ## Interview / LeetCode compatibility guardrail
 
@@ -77,15 +99,16 @@ The separate historical CodeDELeet archive is future migration/reference materia
 
 ## Completion requirements
 
-Return and commit:
+Commit the implementation and return:
 
 - exact files changed;
-- tests run and raw results;
-- build result;
-- DuckDB verification result;
-- actual React/browser evidence when available;
+- substantial functionality implemented/fixed;
+- essential checks actually run, if any, with raw result;
+- broad checks explicitly marked `DEFERRED TO EXTERNAL QA`;
+- exact commands the external QA pass should run;
+- high-risk areas QA should inspect first;
 - current real/simulated/unsupported boundaries;
-- unresolved blockers;
-- updated verification/gate documentation where evidence changed.
+- unresolved implementation blockers;
+- any shared-contract changes that future specialists must know.
 
-Do not call this v0.2 merely because the architecture contract is v1. A new implementation release number requires a deliberate tested release boundary.
+Do not call this v0.2 merely because the architecture contract is v1. A new implementation release number requires a deliberate tested release boundary after external QA evidence exists.
