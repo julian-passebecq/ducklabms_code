@@ -235,7 +235,7 @@ function dedupeIds(values: unknown[], allowedIds: Set<string>) {
 function sanitizeLayout(values: unknown[], visibleIds: string[]) {
   const allowedIds = new Set(visibleIds)
   const seen = new Set<string>()
-  const result: Layout = []
+  const result: Layout[number][] = []
   for (const value of values) {
     const item = sanitizeLayoutItem(value, allowedIds)
     if (!item || seen.has(item.i)) continue

@@ -39,7 +39,8 @@ export function practiceView(n:RootNotebook,stepId:string):NotebookView {
 }
 
 export function recordExecution(n:RootNotebook,run:Execution):RootNotebook {
- const code=n.blocks.find(b=>b.id===run.cell_id);if(!code)return n;
+ if(run.notebook_id!==n.id)return n;
+ const code=n.blocks.find(b=>b.id===run.cell_id)??n.blocks.find(b=>isRunnable(b)&&b.stepId===run.cell_id);if(!code)return n;
  const cellId=code.notebook?.cellId??code.id;
  let output=n.blocks.find(b=>b.type==='notebook-output'&&b.notebook?.parentCellId===cellId);
  const snapshots:JupyterOutputSnapshot[]=[];
@@ -100,8 +101,10 @@ export function setBlockKernel(n:RootNotebook,id:string,kernel:KernelId):RootNot
 }
 /** Use server evidence only. Missing source checkpoint stays visibly historical. */
 export function attachServerEvidence(n:RootNotebook,runs:Execution[]):RootNotebook {
- const ids=new Set(n.blocks.filter(isRunnable).map(b=>b.id));
  const executions:Record<string,Execution>={};
- for(const run of runs)if(run.notebook_id===n.id&&ids.has(run.cell_id)&&run.status!=='skipped')executions[run.cell_id]=run;
+ for(const run of runs){
+  const block=n.blocks.find(b=>isRunnable(b)&&b.id===run.cell_id)??n.blocks.find(b=>isRunnable(b)&&b.stepId===run.cell_id);
+  if(run.notebook_id===n.id&&block&&run.status!=='skipped')executions[block.id]=run;
+ }
  return {...n,executions};
 }

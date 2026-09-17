@@ -253,7 +253,7 @@ function splitLayout(blocks: WorkbenchPanel[], sourceById: Map<string, string>):
   // leave one "page" almost empty while the other scrolls far below it.
   const splitAt = balancedSplitIndex(groups, sourceById)
   const columns = [groups.slice(0, splitAt), groups.slice(splitAt)]
-  const layout: Layout = []
+  const layout: Layout[number][] = []
   columns.forEach((column, columnIndex) => {
     let y = 0
     column.forEach((group) => {
@@ -268,7 +268,7 @@ function splitLayout(blocks: WorkbenchPanel[], sourceById: Map<string, string>):
 }
 
 function explainLayout(blocks: WorkbenchPanel[], sourceById: Map<string, string>): Layout {
-  const layout: Layout = []
+  const layout: Layout[number][] = []
   let leftY = 0
   let rightY = 0
   for (const block of blocks) {
@@ -287,7 +287,7 @@ function explainLayout(blocks: WorkbenchPanel[], sourceById: Map<string, string>
 
 function twoPlusOneLayout(blocks: WorkbenchPanel[], sourceById: Map<string, string>): Layout {
   const groups = cellGroups(blocks)
-  const layout: Layout = []
+  const layout: Layout[number][] = []
   let bottomY = 10
   groups.forEach((group, groupIndex) => {
     if (groupIndex < 2) {
@@ -365,7 +365,7 @@ function finite(value: unknown): value is number {
 function restoreMosaicLayout(values: unknown, blockIds: string[], refToBlockId: Map<string, string>): Layout {
   const allowed = new Set(blockIds)
   const seen = new Set<string>()
-  const layout: Layout = []
+  const layout: Layout[number][] = []
   if (Array.isArray(values)) {
     for (const value of values) {
       if (!isRecord(value) || typeof value.ref !== 'string') continue

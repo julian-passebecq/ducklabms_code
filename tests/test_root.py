@@ -16,9 +16,9 @@ def request(code,language='sql',cell='cell',**kwargs):
     return dict(op='execute',notebook_id='notebook',cell_id=cell,language=language,code=code,case_id='retail-medallion',**kwargs)
 
 
-@pytest.fixture
-def engine(tmp_path):
-    value = Engine(tmp_path/'db',mode='sqlite',trusted_python=True)
+@pytest.fixture(params=['sqlite', 'duckdb'])
+def engine(tmp_path, request):
+    value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
     yield value
     value.catalog.close()
 
@@ -154,8 +154,9 @@ def test_document_compare_and_swap(tmp_path):
     with pytest.raises(ValueError):store.get('../../secret')
 
 
-def test_real_process_kernel_persistence_and_restart(tmp_path):
-    manager=KernelManager(mode='sqlite',trusted=True,timeout=10)
+@pytest.mark.parametrize('mode', ['sqlite', 'duckdb'])
+def test_real_process_kernel_persistence_and_restart(tmp_path, mode):
+    manager=KernelManager(mode=mode,trusted=True,timeout=10)
     try:
         manager.call('a',tmp_path/'a',request('x=123','python'))
         result=manager.call('a',tmp_path/'a',request('display(x)','python'))
@@ -167,20 +168,22 @@ def test_real_process_kernel_persistence_and_restart(tmp_path):
     finally:manager.close()
 
 
-def test_worker_timeout_terminates_and_recovers(tmp_path):
-    manager=KernelManager(mode='sqlite',trusted=True,timeout=3)
+@pytest.mark.parametrize('mode', ['sqlite', 'duckdb'])
+def test_worker_timeout_terminates_and_recovers(tmp_path, mode):
+    manager=KernelManager(mode=mode,trusted=True,timeout=10)
     try:
         manager.call('a',tmp_path,{'op':'capabilities'})
         manager.timeout=0.2
         with pytest.raises(KernelTimeout):manager.call('a',tmp_path,request('while True: pass','python'))
-        manager.timeout=3
+        manager.timeout=10
         result=manager.call('a',tmp_path,request('SELECT 1 AS n'))
         assert result['status']=='success'
     finally:manager.close()
 
 
-def test_api_auth_origins_revision_and_real_workflow(tmp_path):
-    app=create_app(tmp_path,'test-token',mode='sqlite',trusted_python=False)
+@pytest.mark.parametrize('mode', ['sqlite', 'duckdb'])
+def test_api_auth_origins_revision_and_real_workflow(tmp_path, mode):
+    app=create_app(tmp_path,'test-token',mode=mode,trusted_python=False)
     with TestClient(app,base_url='http://127.0.0.1') as client:
         assert client.get('/api/health').status_code==200
         assert client.get('/api/cases').status_code==401
@@ -242,9 +245,10 @@ def test_unknown_workflow_override_rejected(engine):
         engine.workflow({'case_id':'retail-medallion','notebook_id':'n','overrides':{'typo':'SELECT 1'}})
 
 
-def test_workspace_concurrent_requests_serialized(tmp_path):
+@pytest.mark.parametrize('mode', ['sqlite', 'duckdb'])
+def test_workspace_concurrent_requests_serialized(tmp_path, mode):
     from concurrent.futures import ThreadPoolExecutor
-    manager=KernelManager('sqlite',True,timeout=10,max_workers=2)
+    manager=KernelManager(mode,True,timeout=10,max_workers=2)
     try:
         with ThreadPoolExecutor(max_workers=3) as pool:
             results=list(pool.map(lambda i:manager.call('a',tmp_path/'a',request(f'SELECT {i} AS x')),range(6)))
@@ -272,3 +276,54 @@ def test_python_reads_participate_in_lineage(engine):
     changed=engine.execute(request("UPDATE source.orders SET net_amount=1 WHERE order_id='O-001'"))
     assert changed['status']=='success'
     assert not engine.catalog.fresh('gold.counts')
+
+
+def test_stale_recompute_and_incompatible_schema(engine):
+    engine.workflow({'case_id':'retail-medallion','notebook_id':'n'})
+    run = engine.execute(request('SELECT 1 AS incompatible', output_asset='bronze.orders'))
+    assert run['status'] == 'success'
+    assert not engine.catalog.fresh('gold.customer_revenue')
+    bad = engine.execute(request('SELECT net_amount FROM bronze.orders'))
+    assert bad['status'] == 'error'
+    fixed = engine.workflow({'case_id':'retail-medallion','notebook_id':'n'})
+    assert fixed['status'] == 'success'
+    assert all(c['passed'] for c in engine.handle({'op':'check','case_id':'retail-medallion'}).values())
+
+
+def test_duckdb_workspace_isolation(tmp_path):
+    manager = KernelManager('duckdb', True, timeout=10)
+    try:
+        assert manager.call('a', tmp_path/'a', request('SELECT 42 AS n', output_asset='gold.private'))['status'] == 'success'
+        assert manager.call('b', tmp_path/'b', request('SELECT * FROM gold.private'))['status'] == 'error'
+        manager.call('a', tmp_path/'a', request('private_value=42', 'python'))
+        assert manager.call('b', tmp_path/'b', request('display(private_value)', 'python'))['status'] == 'error'
+        assert manager.call('a', tmp_path/'a', request('SELECT * FROM gold.private'))['result']['rows'] == [{'n':42}]
+    finally:
+        manager.close()
+
+
+def test_atomic_replace_retries_windows_sharing_locks(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    from apps.api.datapass import atomic
+    source, target = tmp_path/'new.tmp', tmp_path/'saved.json'
+    source.write_text('new')
+    target.write_text('previous')
+    original = Path.replace
+    attempts = []
+    def locked_replace(self, destination):
+        attempts.append(1)
+        if len(attempts) < 3:
+            assert target.read_text() == 'previous'
+            raise PermissionError('temporary sharing lock')
+        return original(self, destination)
+    monkeypatch.setattr(atomic, 'os', SimpleNamespace(name='nt'))
+    monkeypatch.setattr(atomic.time, 'sleep', lambda _: None)
+    monkeypatch.setattr(Path, 'replace', locked_replace)
+    atomic.replace_file(source, target)
+    assert target.read_text() == 'new' and len(attempts) == 3
+
+    source.write_text('unsaved')
+    monkeypatch.setattr(Path, 'replace', lambda *_: (_ for _ in ()).throw(PermissionError('permanent lock')))
+    with pytest.raises(PermissionError):
+        atomic.replace_file(source, target)
+    assert target.read_text() == 'new'

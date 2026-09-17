@@ -6,7 +6,9 @@ Root 0.1.0 is the new integration baseline. Do not keep releasing unrelated top-
 
 ## Order of work
 
-First run `01_ROOT_INTEGRATION.md` and then use `09_RELEASE_QA.md` for the broad external verification pass: actual React/DuckDB build gates are still open. Then deepen the generic notebook and Spark kernel using `02_NOTEBOOK_MOSAIC.md` and `03_SPARKLAB_KERNEL.md`. Once shared interfaces are stable, pipeline, Airflow/dbt, BI and ML specialists can work concurrently in their own module folders. Curriculum work can proceed against the frozen case schema.
+Core Integration Pass 1 closed the actual React/DuckDB build gates with the evidence in `docs/VERIFICATION.md`. Rerun those gates after future shared-core changes through the dedicated external QA/test pass in `09_RELEASE_QA.md`.
+
+The next implementation emphasis is the generic notebook/workbench and Spark kernel using `02_NOTEBOOK_MOSAIC.md` and `03_SPARKLAB_KERNEL.md`, while preserving the explicit Interview / LeetCode compatibility contract in `architecture-reference/INTERVIEW_LEETCODE_REQUIREMENTS.md`. Once shared interfaces are stable, pipeline, Airflow/dbt, BI and ML specialists can work concurrently in their own module folders. Curriculum work can proceed against the frozen case schema.
 
 Do not give every specialist permission to replace packages/contracts, the API, the root package.json or Mosaic. The integrator merges only bounded changes with evidence. Each contribution must name the root version/contract version it targets.
 
@@ -28,8 +30,8 @@ State the exact feature implemented, files changed, essential checks actually ru
 
 ## Prompt index
 
-- `01_ROOT_INTEGRATION.md`: Root integrator - first mandatory implementation pass.
-- `02_NOTEBOOK_MOSAIC.md`: Notebook specialist - preserve the generic engine.
+- `01_ROOT_INTEGRATION.md`: Root integrator - shared-core maintenance/integration.
+- `02_NOTEBOOK_MOSAIC.md`: Notebook specialist - preserve and deepen the generic engine.
 - `03_SPARKLAB_KERNEL.md`: SparkLab specialist - semantic truth before visual realism.
 - `04_PIPELINES_WAREHOUSE.md`: ADF/Fabric pipeline and warehouse specialist.
 - `05_AIRFLOW_DBT.md`: Airflow/dbt specialist - three independent learning paths.

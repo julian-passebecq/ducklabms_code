@@ -4,7 +4,7 @@
 
 Stop developing independent top-level applications. Continue specialist work **inside one versioned root**. A case study chooses its tools; a tool does not own its own project database, notebook format, authentication or run history.
 
-This package implements Root 0.1.0. It establishes the shared services and a small connected curriculum; it is not the finished combined product. The next mandatory pass is the real React/DuckDB build gate on a machine with package access.
+This package implements Root 0.1.0. It establishes the shared services and a small connected curriculum; it is not the finished combined product. Core Integration Pass 1 closes the real React/DuckDB gates; see docs/VERIFICATION.md for the September 18 evidence and remaining scope limits.
 
 ## Read in this order
 
@@ -14,7 +14,7 @@ This package implements Root 0.1.0. It establishes the shared services and a sma
 4. `docs/VERIFICATION.md`: executed tests versus unverified release gates.
 5. `docs/agents/00_COORDINATION.md`: which specialist prompt to use next.
 
-## Immediate acceptance target
+## Reproducible core acceptance journey
 
 Build the React app with the real dependencies, launch with DuckDB, create a Retail revenue lakehouse workspace, run the four steps, save/reopen, switch all notebook layouts, export/import ipynb, then mutate an upstream table and verify that downstream acceptance fails until recomputed. Record screenshots of the actual React app, not the diagnostic client.
 

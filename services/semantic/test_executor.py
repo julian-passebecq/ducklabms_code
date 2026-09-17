@@ -1,4 +1,5 @@
 import json
+import importlib.util
 from pathlib import Path
 
 import pytest
@@ -30,7 +31,8 @@ def compiled_sql(code: str) -> str:
 def test_reference_fixture_executes_real_rows():
     result = execute_reference_sql(compiled_sql(GOOD_CODE), "retail")
     assert result.status == "executed"
-    assert result.engine == "SQLite reference fixture"
+    expected = 'DuckDB' if importlib.util.find_spec('duckdb') else 'SQLite'
+    assert result.engine == f"{expected} reference fixture"
     assert result.row_count == 5
     assert result.columns == ["customer_id", "revenue", "orders"]
     assert any(row["customer_id"] == "CORPORATE_ACCOUNT_01" and row["revenue"] == 4500.0 for row in result.rows)

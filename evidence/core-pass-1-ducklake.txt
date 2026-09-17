@@ -1,0 +1,1 @@
+Real DuckLake attach/write/Parquet/reopen passed. Files: 1

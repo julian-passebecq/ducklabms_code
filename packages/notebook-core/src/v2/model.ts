@@ -286,7 +286,7 @@ export function moveNotebookGroup(view: NotebookView, blocks: WorkbenchPanel[], 
   const blockIds = reordered.flat()
 
   const layoutById = new Map(view.layout.map((item) => [item.i, item]))
-  const nextLayout: Layout = []
+  const nextLayout: Layout[number][] = []
   let y = 0
   for (const id of blockIds) {
     const current = layoutById.get(id)
@@ -350,7 +350,7 @@ export function canMoveNotebookGroup(view: NotebookView, blocks: WorkbenchPanel[
 export function resetViewLayoutGeometry(view: NotebookView, baseline: Layout): NotebookView {
   const baselineById = new Map(baseline.map((item) => [item.i, item]))
   const currentById = new Map(view.layout.map((item) => [item.i, item]))
-  const nextLayout: Layout = []
+  const nextLayout: Layout[number][] = []
 
   if (view.id === 'notebook') {
     let y = 0
