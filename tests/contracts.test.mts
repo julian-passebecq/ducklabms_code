@@ -19,3 +19,20 @@ test('stale or changed inputs invalidate report freshness',()=>{const run={statu
 test('new cells appear in all persistent layouts',()=>{const n=addCell(createCaseNotebook(c),'markdown');const id=n.blocks.at(-1).id;for(const v of n.views)assert.ok(v.blockIds.includes(id))});
 test('incompatible module contract rejected',()=>assert.throws(()=>requireModuleCompatibility({id:'x',contract_version:2})));
 test('custom practice geometry survives project save and restore',()=>{const n=createCaseNotebook(c);const layout=practiceView(n,c.steps[0].id).layout.map(i=>({...i,h:i.h+1}));const doc={...n,practiceLayouts:{[c.steps[0].id]:layout}};const out=restoreNotebook(doc);assert.deepEqual(practiceView(out,c.steps[0].id).layout.map(i=>i.h),layout.map(i=>i.h))});
+
+test('workflow evidence follows imported case cell identity and survives reopen',()=>{
+ const n=importNotebook(JSON.stringify(exportNotebook(createCaseNotebook(c))),'retail.ipynb');
+ const block=n.blocks.find(b=>b.stepId==='ingest');
+ const run={id:'workflow-run',notebook_id:n.id,cell_id:'ingest',status:'success',sequence:1,result:{columns:['n'],rows:[{n:12}],total_rows:1,truncated:false}};
+ const updated=recordExecution(n,run);
+ assert.equal(updated.executions[block.id].id,run.id);
+ assert.equal(updated.executedSource[block.id],sourceOf(n,block));
+ assert.equal(attachServerEvidence(restoreNotebook(updated),[run]).executions[block.id].id,run.id);
+ assert.equal(recordExecution(n,{...run,notebook_id:'other'}),n);
+});
+test('corrupt import and duplicate project identities fail without changing source',()=>{
+ const n=createCaseNotebook(c);
+ assert.throws(()=>importNotebook('{bad','broken.ipynb'));
+ assert.throws(()=>restoreNotebook({...n,blocks:[...n.blocks,n.blocks[0]]}),/duplicate block IDs/);
+ assert.equal(sourceOf(n,n.blocks[0]),c.steps[0].code);
+});

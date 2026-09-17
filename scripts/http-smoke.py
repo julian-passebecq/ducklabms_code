@@ -2,13 +2,15 @@
 import argparse,json
 from pathlib import Path
 import httpx
-p=argparse.ArgumentParser();p.add_argument('--token',required=True);p.add_argument('--url',default='http://127.0.0.1:8000');args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--token',required=True);p.add_argument('--url',default='http://127.0.0.1:8000');p.add_argument('--storage',choices=['duckdb','ducklake','sqlite']);args=p.parse_args()
 checks=[]
 with httpx.Client(base_url=args.url,headers={'Authorization':'Bearer '+args.token},timeout=30) as client:
  for path in ('/','/diagnostic-assets/app.js','/diagnostic-assets/style.css'):
   assert client.get(path).status_code==200;checks.append('serves '+path)
  cases=client.get('/api/cases').json();assert len(cases)==8;checks.append('eight case definitions over HTTP')
  w=client.post('/api/workspaces',json={'case_id':'retail-medallion'}).json();id=w['id']
+ storage=client.get(f'/api/workspaces/{id}/capabilities').json()['storage']
+ if args.storage:assert storage==args.storage,(storage,args.storage)
  result=client.post(f'/api/workspaces/{id}/workflow',json={}).json()
  assert result['status']=='success',result
  assert result['runs'][-1]['result']['rows']==[{'total_revenue':4985.0,'valid_orders':10,'customers':5}]
@@ -20,6 +22,6 @@ with httpx.Client(base_url=args.url,headers={'Authorization':'Bearer '+args.toke
  before=client.get(f'/api/workspaces/{id}/catalog').json()
  client.post(f'/api/workspaces/{id}/restart',json={}).raise_for_status()
  after=client.get(f'/api/workspaces/{id}/catalog').json();assert before==after;checks.append('catalog persists through worker restart')
- report={'kind':'real local HTTP integration; not browser or React','passed':len(checks),'checks':checks}
+ report={'kind':'real local HTTP integration; not browser or React','storage':storage,'passed':len(checks),'checks':checks}
  print(json.dumps(report,indent=2))
  (Path(__file__).resolve().parents[1]/'evidence/http-smoke.json').write_text(json.dumps(report,indent=2))

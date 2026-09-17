@@ -1,0 +1,23 @@
+datapass-studio-root@0.1.0 D:\PROJ\ducklabms_code
+├── @datapass/contracts@0.1.0 -> .\packages\contracts
+├─┬ @datapass/notebook-core@0.1.0 -> .\packages\notebook-core
+│ └── react-grid-layout@2.2.3
+├─┬ @datapass/web@0.1.0 -> .\apps\web
+│ ├── @datapass/contracts@0.1.0 deduped -> .\packages\contracts
+│ ├── @datapass/notebook-core@0.1.0 deduped -> .\packages\notebook-core
+│ ├── @fluentui/react-components@9.74.7
+│ ├── @fluentui/react-icons@2.0.341
+│ ├── @monaco-editor/react@4.7.0
+│ ├── @types/react-dom@19.3.0
+│ ├── @types/react@19.3.0
+│ ├── @vitejs/plugin-react@4.7.0
+│ ├── monaco-editor@0.52.2
+│ ├── react-dom@19.3.0
+│ ├── react-grid-layout@2.2.3 deduped
+│ ├── react-resizable@3.0.5
+│ ├── react@19.3.0
+│ ├── typescript@5.9.3 deduped
+│ └── vite@6.4.3
+├── @playwright/test@1.63.0
+└── typescript@5.9.3
+

@@ -1,0 +1,13 @@
+[WebServer] INFO:     Started server process [35272]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+
+Running 2 tests using 1 worker
+
+(node:43592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey (19.1s)
+  ok 2 tests\browser\core.spec.ts:67:1 › editing, keyboard execution, stale lineage, recovery and distinct run scopes (25.1s)
+
+  2 passed (52.0s)
