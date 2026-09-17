@@ -1,0 +1,261 @@
+Power BI Learning Studio V11 final QA
+Date: 2026-09-17
+
+=== npm run check ===
+
+> power-bi-learning-studio@11.0.0 check
+> node scripts/check.mjs
+
+Content checks passed.
+
+=== npm run check:deep ===
+
+> power-bi-learning-studio@11.0.0 check:deep
+> node scripts/deep-check.mjs
+
+PASS: package.json version is 11.0.0
+PASS: Coverage registry counts match V11 release contract (13/13/16/23/20/12/7/12/12/5/13/8/6)
+PASS: README release counts match source contract
+PASS: 5 case studies loaded
+PASS: 44 guided steps have valid views/check contracts
+PASS: Performance view is wired into simulator rail
+PASS: Source-add controls are wired
+PASS: Power Query advanced editor and profiling present
+PASS: Report build/format/interaction/accessibility controls present
+PASS: Incremental and granular refresh controls present
+PASS: Service release and permission controls present
+PASS: Copilot readiness controls present
+PASS: Refresh operation and history simulation present
+PASS: Model health scanner present
+PASS: Relationship deletion is wired through shared model state
+PASS: Service status prioritizes staged Power Query transitions, including last-source deletion
+PASS: Global reset button uses an event-safe zero-argument reset wrapper
+PASS: Power Query hides profiling and source/navigation steps until a real query exists
+PASS: Blocked refresh operations render as warnings rather than success
+PASS: V11 workspace schema fields present in pure migration module
+PASS: Case-study sessions are isolated, seeded, resumable, and independently restartable
+PASS: Global lab reset clears all saved case-study sessions
+PASS: Case Studies recovers invalid/reset persisted case identity before validation
+PASS: 12 decision scenarios loaded
+PASS: 8 troubleshooting scenarios have valid answer/root-cause contracts
+PASS: Troubleshooting center UI is wired
+PASS: Nested workspace + visual/filter/relationship migration normalization present
+PASS: Troubleshooting tickets are included in global search
+PASS: Power Query keeps Applied Steps per query and exposes Close & Apply state
+PASS: Power Query blocks transformations and apply operations until a real query/source exists
+PASS: Selected-visual formatting and interactions persist to visual state
+PASS: Analytics-pane overlays persist per visual and survive workspace migration
+PASS: Visual/page/report filter scopes persist in workspace state
+PASS: Data view distinguishes the loaded model snapshot from staged Power Query edits
+PASS: Service workspace tabs filter the simulated inventory
+PASS: Copilot approval is prerequisite-gated
+PASS: Governed pre-release readiness is wired
+PASS: Governed release readiness blocks unapplied Power Query changes
+PASS: Service inventory reflects latest semantic-model refresh outcome
+PASS: Semantic-model operations block until staged Power Query changes are applied
+PASS: Refresh evidence tracks the loaded query-transformation snapshot
+PASS: Performance evidence becomes visibly stale after report/model changes
+PASS: Performance Analyzer table and inspector share scaled timing rows
+PASS: Refresh readiness covers Import, DirectQuery, Composite, private gateways, and cloud credentials
+PASS: Scenario-specific surfaces and storage/source compatibility are wired
+PASS: Case studies explicitly validate Close & Apply before downstream modeling/report work
+PASS: Legacy Power Query state migrates into query-aware log + applied snapshot state
+PASS: Persisted relationship, refresh, and Service scalar state is type/enum normalized
+PASS: Measure/DAX formulas and authoring enums are normalized
+PASS: Workspace migration prunes query state whose source no longer exists
+PASS: Performance evidence signatures follow the loaded query snapshot rather than staged edits
+PASS: Relationship cardinality/filter/active state is stored per relationship
+PASS: Power Query source/step changes use query-aware log and applied-state snapshots
+PASS: Behavior regression gate is present
+PASS: Sequential workflow regression gate is present
+PASS: Pure workspace migration gate is present
+PASS: CSS parser gate is present
+PASS: All relative source imports resolve
+
+Deep checks passed: 5 cases / 44 steps / 12 decision scenarios.
+
+=== npm run check:state ===
+
+> power-bi-learning-studio@11.0.0 check:state
+> node scripts/state-check.mjs
+
+PASS: 5 cases / 44 steps satisfy pure workspace-state contracts
+
+=== npm run check:behavior ===
+
+> power-bi-learning-studio@11.0.0 check:behavior
+> node scripts/behavior-check.mjs
+
+PASS: Import operation blocks when no source is connected
+PASS: Private SQL Import requires gateway mapping
+PASS: Private SQL Import requires credentials
+PASS: Private SQL Import becomes ready with gateway + credentials
+PASS: Cloud Azure SQL Import does not require the on-premises gateway toggle
+PASS: Cloud Import still requires source credentials in the learning model
+PASS: Direct Lake uses a different operational readiness path
+PASS: Direct Lake rejects non-OneLake source paths in the global learning storage model
+PASS: DirectQuery rejects file connectors that do not advertise DirectQuery
+PASS: Pure Direct Lake mode rejects mixed non-OneLake sources and points learners toward composite architecture
+PASS: Import rejects a live-model connector that has no Import mode
+PASS: Private SQL DirectQuery also requires a gateway path
+PASS: Private SQL DirectQuery requires source credentials
+PASS: Private SQL DirectQuery becomes operational only after gateway + credentials
+PASS: Cloud DirectQuery still requires connection credentials
+PASS: Cloud DirectQuery does not require the on-premises gateway toggle
+PASS: Composite model honors the private-source gateway path
+PASS: Copilot approval is blocked before semantic preparation prerequisites
+PASS: Copilot approval cannot bypass missing prerequisites
+PASS: Copilot approval succeeds after descriptions + AI preparation
+PASS: Turning off an AI prerequisite revokes simulated Copilot approval
+PASS: Power Query refuses to create transformation state for a query that is not backed by a connected source
+PASS: Adding a new query/source creates pending Power Query changes
+PASS: Global transformation count still supports case-study progress
+PASS: Power Query Applied Steps are isolated per query
+PASS: Close & Apply snapshots both sources and per-query Applied Steps
+PASS: Guided Close & Apply contract passes only on an applied query snapshot
+PASS: Editing after Close & Apply marks the model load state pending again
+PASS: Guided Close & Apply contract becomes incomplete after new query edits
+PASS: Undoing back to the applied query snapshot clears the pending state
+PASS: Query-aware transform log preserves a same-named step on another query
+PASS: Undoing past the applied snapshot correctly becomes a pending model change
+PASS: Per-query undo cannot delete a same-named Applied Step from another query
+PASS: Deleting a query removes its source and query-scoped Applied Steps
+PASS: Deleting a query also removes its entries from the global transformation log
+PASS: Deleting the last loaded query creates a staged Power Query change until Close & Apply
+PASS: Service preserves the loaded-model interpretation when the last source deletion is only staged
+PASS: Governed release guidance prioritizes Close & Apply when the last source deletion is staged
+PASS: Relationship creation stores per-relationship metadata
+PASS: Model health detects bidirectional filtering on the specific edited relationship
+PASS: Release readiness fails when any relationship still uses a broad Both path
+PASS: Apply-to-all repair removes bidirectional paths without flattening other relationship metadata
+PASS: Relationship health matches persisted metadata by relationship name when arrays are reordered
+PASS: Relationship health does not swap filter-direction metadata after relationship reordering
+PASS: Deleting a selected relationship removes exactly that relationship
+PASS: Relationship deletion preserves the surviving relationship metadata
+PASS: Relationship deletion changes the performance evidence signature and therefore invalidates prior model evidence
+PASS: Scenario profile resolves Wind case metadata consistently
+PASS: Scenario profile resolves Finance case metadata consistently
+PASS: Scenario TMDL templates use real expressions rather than self-referential measure definitions
+PASS: Explicit Finance case identity takes precedence over incidental source additions
+PASS: Sales/governance case identity does not silently switch scenario because of an incidental OneLake source
+PASS: Performance rows scale consistently with report visual density for both table and inspector consumers
+PASS: Performance evidence is current immediately after recording against the active report/model signature
+PASS: Adding or changing report/model objects makes prior Performance Analyzer evidence stale
+PASS: Changing storage architecture also invalidates prior Performance Analyzer evidence
+PASS: Changing the report theme invalidates prior Performance Analyzer evidence
+PASS: Changing visual rendering options invalidates prior Performance Analyzer evidence
+PASS: Staged Power Query edits do not invalidate evidence for the still-loaded semantic model before Close & Apply
+PASS: Close & Apply changes the loaded-model signature and correctly makes prior performance evidence stale
+PASS: Guided verification cannot pass with stale performance evidence
+PASS: Historical DAX text cannot satisfy a current-object formula contract
+PASS: Current DAX object formula satisfies the visual-calculation contract
+PASS: Service inventory follows the active case scenario
+PASS: Service semantic-model status does not imply a refresh state before a source is configured
+PASS: Configured Import model starts as Not run instead of claiming a completed refresh
+PASS: Service semantic-model status reflects the latest failed simulated refresh for the current configuration
+PASS: Service inventory propagates the latest semantic-model refresh failure
+PASS: Current refresh evidence is shown when it matches the active source/storage configuration
+PASS: Changing the refresh/source context invalidates stale completed refresh evidence
+PASS: Unapplied Power Query edits override stale refresh-complete status in Service
+PASS: Semantic-model operations are blocked while Power Query/source changes are still staged
+PASS: Refresh history captures current configuration evidence after queries are applied
+PASS: Staged query edits take precedence over old completed refresh evidence
+PASS: Close & Apply of changed query logic invalidates prior Import refresh evidence
+PASS: Service Reports tab filters to reports
+PASS: Service Semantic models tab filters correctly
+PASS: Service Dashboards tab filters correctly
+PASS: Service Dataflows tab filters correctly
+PASS: Service All tab returns the full simulated inventory
+PASS: Release readiness exposes five independent failing gates for a blank/broken workspace
+PASS: Release readiness blocks an incompatible storage/source architecture
+PASS: Release readiness blocks unapplied Power Query changes
+PASS: Release readiness rejects a governed model whose core relationships are inactive
+PASS: Release readiness rejects an unexplained many-to-many core path in the governed star-schema exercise
+PASS: Release readiness turns green only when model, connectivity, performance, security, and loaded-query checks pass
+PASS: Guided releaseReady contract requires the same all-green governed release state
+PASS: Case sessions persist independently per project
+PASS: Switching cases can resume the target project session
+PASS: Restarting one case clears only that project session
+PASS: Malformed array-shaped case-session storage is sanitized to an empty session registry
+PASS: Case-session persistence recovers after malformed stored JSON shape instead of silently losing new sessions
+PASS: Invalid individual case-session entries are ignored while valid sessions remain available
+PASS: Global lab reset can clear every saved case-study session instead of leaving hidden resumable state behind
+PASS: Malformed scalar workspace flags fall back to safe typed defaults
+PASS: Malformed relationship scalar metadata is normalized to valid model options
+PASS: Malformed refresh scalar settings are normalized instead of leaking into controls
+PASS: Malformed Service enums and impossible Copilot approval are repaired during normalization
+PASS: Malformed performance/history scalar evidence is sanitized before operational panes consume it
+
+Behavior checks passed.
+
+=== npm run check:migration ===
+
+> power-bi-learning-studio@11.0.0 check:migration
+> node scripts/migration-check.mjs
+
+PASS: Legacy global transforms migrate into the first source query
+PASS: Legacy transforms gain query-aware log entries
+PASS: Legacy global relationship properties migrate to each existing relationship
+PASS: Legacy visuals gain an empty visual-filter collection
+PASS: Previously clean legacy workspace remains clean after migration
+PASS: V4 query map reconstructs a query-aware transformation log
+PASS: Clean V4 query state is treated as the applied snapshot
+PASS: Nested refresh defaults survive partial legacy state
+PASS: Nested Service defaults survive partial legacy state
+PASS: Explicit dirty state remains dirty during migration
+PASS: Dirty post-apply migration preserves the known applied source set
+PASS: Unknown pre-V5 applied-step snapshot is not fabricated for dirty legacy state
+PASS: Page/report filter state survives normalization
+PASS: Visual-scope filter state survives normalization
+PASS: Malformed core array fields fall back to safe workspace defaults
+PASS: Malformed DAX/model collections are sanitized before panes attempt to map them
+PASS: Malformed authoring collections are sanitized instead of being spread as strings/objects
+PASS: Malformed performance evidence fields are normalized to safe V8 defaults
+PASS: Malformed nested objects fall back to default Service/refresh structures
+PASS: Malformed persisted scalar flags fall back to typed workspace defaults
+PASS: Malformed relationship enums/booleans are normalized
+PASS: Malformed refresh scalar fields are normalized
+PASS: Malformed Service enums and invalid Copilot approval are normalized
+PASS: Migration recomputes dirty state from snapshots instead of trusting a stale persisted false flag
+PASS: Visual analytics overlays survive workspace normalization
+PASS: Normalization prunes orphan current-query state for sources that no longer exist
+PASS: Normalization prunes orphan applied-query snapshots that no longer belong to applied sources
+PASS: Theme and refresh-mode values are normalized to supported simulator enums
+PASS: Visual metadata cannot override the authoritative visual type or inject an unsupported interaction mode
+PASS: Malformed measure/DAX formulas are normalized to safe strings before editors and signatures consume them
+PASS: Relationship migration matches named metadata to the correct relationship after array reordering
+PASS: Relationship migration preserves the correct named cardinality after reordering
+PASS: Workspace migration removes duplicate source identities while preserving source order
+PASS: Workspace migration removes duplicate relationship identities and keeps metadata aligned
+PASS: Unknown persisted refresh-history statuses are cleared instead of leaking unsupported operational states into Service
+
+Migration checks passed.
+
+=== npm run check:syntax ===
+
+> power-bi-learning-studio@11.0.0 check:syntax
+> node scripts/syntax-check.cjs
+
+Syntax checks passed: 22 JS/JSX/MJS files.
+
+=== npm run check:css ===
+
+> power-bi-learning-studio@11.0.0 check:css
+> node scripts/css-check.cjs
+
+CSS parse passed: 1008 rules / 76871 characters.
+
+=== npm run check:workflow ===
+
+> power-bi-learning-studio@11.0.0 check:workflow
+> node scripts/workflow-check.mjs
+
+PASS: sales360: 9/9 sequential steps remain satisfiable
+PASS: windops: 6/6 sequential steps remain satisfiable
+PASS: finance: 7/7 sequential steps remain satisfiable
+PASS: executive-governed: 11/11 sequential steps remain satisfiable
+PASS: broken-bi-rescue: 11/11 sequential steps remain satisfiable
+
+Workflow checks passed: 5 cases / 44 sequential steps.
+
+npm/Vite build: NOT VERIFIED - npm install timed out in sandbox; partial artifacts removed.

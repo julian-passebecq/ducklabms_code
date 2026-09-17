@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f6cbd" />
+    <meta name="description" content="A deterministic Airflow and dbt teaching simulator for learning DAG orchestration, dbt lineage, tests, retries, failures and hybrid projects." />
+    <title>Orchestration Studio — Airflow + dbt learning simulator</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.3.0",
+          "react/jsx-runtime": "https://esm.sh/react@19.3.0/jsx-runtime",
+          "react-dom": "https://esm.sh/react-dom@19.3.0?external=react",
+          "react-dom/client": "https://esm.sh/react-dom@19.3.0/client?external=react",
+          "@fluentui/react-components": "https://esm.sh/@fluentui/react-components@9.74.7?external=react,react-dom"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"><div class="boot-fallback" role="status"><strong>Loading Orchestration Studio…</strong><span>React and Fluent UI are loaded from pinned browser modules.</span></div></div>
+    <script>
+      window.showBootError = () => {
+        if (document.documentElement.dataset.appReady === 'true') return;
+        const root = document.getElementById('root');
+        if (!root) return;
+        root.innerHTML = '<div class="boot-fallback boot-error" role="alert"><strong>UI runtime could not be loaded.</strong><span>This package currently uses pinned React and Fluent UI modules from esm.sh. Connect the browser to the internet and reload. The Airflow/dbt simulator source and tests remain local; no Airflow or dbt service is required.</span></div>';
+      };
+      window.setTimeout(window.showBootError, 3500);
+    </script>
+    <noscript>This teaching simulator requires JavaScript.</noscript>
+    <script type="module">import('/src/main.js').catch(() => window.showBootError());</script>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+import fs from 'node:fs';
+
+const checks = [];
+const read = (p) => fs.readFileSync(p, 'utf8');
+const pkg = JSON.parse(read('package.json'));
+const app = read('src/App.tsx');
+const pipeline = read('src/components/PipelineStudio.tsx');
+const graph = read('src/graph-engine/LearningGraph.tsx');
+const props = read('src/components/PropertiesPanel.tsx');
+const monitor = read('src/components/MonitorView.tsx');
+const engine = read('src/lib/pipeline.ts');
+const expressions = read('src/lib/expressions.ts');
+const settings = read('src/components/PipelineSettingsDialog.tsx');
+const expressionBuilder = read('src/components/ExpressionBuilder.tsx');
+const debugParameters = read('src/components/DebugParametersDialog.tsx');
+const storage = read('src/lib/storage.ts');
+const mapping = read('src/components/AzureMappingDataFlowStudio.tsx');
+const realtime = read('src/components/FabricRealTimeStudio.tsx');
+const dbx = read('src/components/DatabricksStudios.tsx');
+const cases = read('src/data/caseStudies.ts');
+const curriculum = read('src/data/curriculum.ts');
+
+function assert(name, condition) {
+  checks.push({ name, ok: Boolean(condition) });
+  if (!condition) process.exitCode = 1;
+}
+
+assert('Package version is V5 or later', Number(pkg.version.split('.')[1] ?? 0) >= 5);
+assert('Fluent UI dependency declared', Boolean(pkg.dependencies['@fluentui/react-components']));
+assert('XYFlow dependency declared', Boolean(pkg.dependencies['@xyflow/react']));
+assert('FluentProvider wraps application', app.includes('FluentProvider'));
+assert('Shared LearningGraph exists', graph.includes('export function LearningGraph'));
+assert('Graph supports drag/drop', graph.includes('onDropPayload') && graph.includes('screenToFlowPosition'));
+assert('Graph supports node and edge selection', graph.includes('onEdgeClick') && graph.includes('selectedEdgeId'));
+assert('Graph supports node context menu', graph.includes('onNodeContextMenu'));
+assert('Graph supports keyboard deletion', graph.includes("deleteKeyCode={['Backspace', 'Delete']}"));
+assert('Graph includes zoom controls and minimap', graph.includes('<Controls') && graph.includes('<MiniMap'));
+assert('Pipeline has undo/redo', pipeline.includes('const undo =') && pipeline.includes('const redo ='));
+assert('Pipeline supports palette drag-drop', pipeline.includes('onDropAdd'));
+assert('Pipeline settings dialog is wired', pipeline.includes('PipelineSettingsDialog') && settings.includes('Parameters & variables'));
+assert('Pipeline parameters persist in App', app.includes('setParameters') && storage.includes('parameters?: PipelineParameter[]'));
+assert('Pipeline variables persist in App', app.includes('setVariables') && storage.includes('variables?: PipelineVariable[]'));
+assert('Debug prompts for runtime parameters', pipeline.includes('DebugParametersDialog') && debugParameters.includes('Pipeline parameters'));
+assert('Set/Append/Until activities are in orchestration palette', engine.includes("setVariable: 'Set variable'") && engine.includes("appendVariable: 'Append variable'") && engine.includes("until: 'Until'"));
+assert('Variable activities mutate debug state', engine.includes('applyVariableActivities') && pipeline.includes('applyVariableActivities'));
+assert('Until activity supports nested child activities', props.includes('Until activities') && engine.includes("case 'until'"));
+assert('Dynamic-content builder is wired', props.includes('ExpressionBuilder') && expressionBuilder.includes('Add dynamic content'));
+assert('Expression engine resolves pipeline parameters', expressions.includes('pipeline\\(\\)\\.parameters'));
+assert('Expression engine supports activity outputs', expressions.includes("@activity('${node.name}').output.value"));
+assert('Expression validation rejects unknown syntax', expressions.includes('expressionLooksValid'));
+assert('Copy activity has Source/Sink/Mapping tabs', props.includes("value=\"Source\"") && props.includes("value=\"Sink\"") && props.includes("value=\"Mapping\""));
+assert('Copy configuration models query/format/mapping', engine.includes('sourceQuery') && engine.includes('sinkFormat') && engine.includes('parallelCopies'));
+assert('ForEach has inner activity sequence', props.includes('ForEach activities') && engine.includes('innerActivities'));
+assert('If Condition has true and false nested branches', props.includes('True activities') && props.includes('False activities') && engine.includes('trueActivities') && engine.includes('falseActivities'));
+assert('Dynamic-content references are validated before Debug', engine.includes('expressionReferenceProblems') && (engine.includes('missing pipeline parameter') || engine.includes("'pipeline parameter'")) && (engine.includes('missing pipeline variable') || engine.includes("'pipeline variable'")));
+assert('Pipeline has collapsible authoring panes', pipeline.includes('paletteOpen') && pipeline.includes('propertiesOpen') && pipeline.includes('tutorialOpen'));
+assert('Pipeline has node context actions', pipeline.includes('Duplicate activity') && pipeline.includes('Reset run status'));
+assert('Pipeline schedule editor is wired', pipeline.includes('ScheduleDialog') && fs.existsSync('src/components/ScheduleDialog.tsx'));
+assert('Dependency conditions are editable', props.includes('Dependency condition') && props.includes('Completed') && props.includes('Skipped'));
+assert('Debug failure simulation exists', props.includes('Simulate failure in Debug') && engine.includes('simulateFailure'));
+assert('Debug engine understands dependency outcomes', engine.includes('dependencyMatches') && engine.includes('buildDebugPlan'));
+assert('Validation detects dependency cycles', engine.includes('hasDependencyCycle') && engine.includes('dependency cycle'));
+assert('Monitor filters runs', monitor.includes('const filtered = useMemo'));
+assert('Monitor exports CSV', monitor.includes('pipeline-runs.csv') && monitor.includes('createObjectURL'));
+assert('Monitor has list and Gantt views', monitor.includes("'List' | 'Gantt'") && monitor.includes('RunGantt'));
+assert('Monitor Gantt renders activity bars', monitor.includes('gantt-bar') && monitor.includes('gantt-track'));
+assert('ADF Mapping Data Flow uses LearningGraph', mapping.includes('<LearningGraph'));
+assert('Fabric Eventstream uses LearningGraph', realtime.includes('<LearningGraph'));
+assert('Databricks Lakeflow surfaces use LearningGraph', (dbx.match(/<LearningGraph/g) ?? []).length >= 2);
+assert('Power BI remains placeholder only', app.includes("case 'powerbi-placeholder'") && app.includes('reserved for the next pass'));
+assert('Three Fabric case studies retained', (cases.match(/difficulty:/g) ?? []).length >= 3);
+assert('Fabric curriculum retained', curriculum.includes('fabricModules'));
+assert('Databricks curriculum retained', curriculum.includes('databricksModules'));
+
+const failed = checks.filter((c) => !c.ok);
+for (const c of checks) console.log(`${c.ok ? 'PASS' : 'FAIL'}  ${c.name}`);
+console.log(`\n${checks.length - failed.length}/${checks.length} V5 static/regression QA checks passed.`);
+if (failed.length) process.exit(1);

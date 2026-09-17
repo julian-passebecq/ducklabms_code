@@ -1,0 +1,32 @@
+{
+  "name": "project-command-center-fluent2",
+  "private": true,
+  "version": "0.5.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build-preflight.mjs && tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --pretty false",
+    "test:catalog": "node scripts/catalog-smoke.mjs",
+    "test:source": "node scripts/source-smoke.mjs",
+    "test:typecheck-smoke": "tsc -p tests/tsconfig.smoke.json --pretty false",
+    "test": "npm run test:catalog && npm run test:case-studies && npm run test:evidence && npm run test:source && npm run test:ui-contract && npm run test:typecheck-smoke",
+    "test:case-studies": "node scripts/case-study-smoke.mjs",
+    "test:evidence": "node scripts/evidence-smoke.mjs",
+    "test:ui-contract": "node scripts/ui-contract-smoke.mjs",
+    "doctor": "node scripts/doctor.mjs"
+  },
+  "dependencies": {
+    "@fluentui/react-components": "^9.74.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "id": "retail_customer_skew_04",
+  "title": "Retail 04 · Customer-key skew",
+  "version": "2026-09-17",
+  "grader": "retail_skew",
+  "simulation": "retail_skew",
+  "dataset": {
+    "fact": "silver.orders",
+    "format": "Parquet",
+    "lakehouse": "DuckLake"
+  },
+  "statistics": {
+    "fact_rows": 184229821,
+    "fact_bytes_gb": 26.4,
+    "source_files": 286,
+    "dimension_rows": 43281,
+    "dimension_bytes_mb": 6.4,
+    "shuffle_partitions": 200,
+    "median_partition_mb": 91,
+    "largest_partition_mb": 1656,
+    "hot_partition": 143,
+    "hot_key": "CORPORATE_ACCOUNT_01"
+  },
+  "spark_defaults": {
+    "auto_broadcast_threshold_mb": 10,
+    "adaptive_enabled": true,
+    "advisory_partition_mb": 64,
+    "skew_factor": 5,
+    "skew_threshold_mb": 256
+  },
+  "objective": "Aggregate revenue and order count by customer_id, diagnose the known hot customer partition, and understand why repartitioning by the same skewed key does not remove skew.",
+  "accepted_strategies": [
+    "keep AQE enabled",
+    "diagnose the hot key before changing cluster size",
+    "avoid repartitioning by the same skewed key as a fake fix"
+  ],
+  "anti_patterns": [
+    "repartition(1)",
+    "repartition by customer_id as a skew fix",
+    "increase cluster size without addressing the hot key",
+    "collect large result to driver"
+  ],
+  "truth": {
+    "aggregation_shuffle_remains": true,
+    "aqe_skew_candidate": true,
+    "hot_key": "CORPORATE_ACCOUNT_01",
+    "result_semantics": "customer_id → revenue, orders"
+  },
+  "fixture_truth": {
+    "fixture": "retail",
+    "scope": "bounded correctness oracle",
+    "columns": [
+      "customer_id",
+      "revenue",
+      "orders"
+    ],
+    "rows": [
+      {
+        "customer_id": "C001",
+        "revenue": 150.0,
+        "orders": 2
+      },
+      {
+        "customer_id": "C002",
+        "revenue": 225.0,
+        "orders": 2
+      },
+      {
+        "customer_id": "C005",
+        "revenue": 100.0,
+        "orders": 2
+      },
+      {
+        "customer_id": "C006",
+        "revenue": 10.0,
+        "orders": 1
+      },
+      {
+        "customer_id": "CORPORATE_ACCOUNT_01",
+        "revenue": 4500.0,
+        "orders": 3
+      }
+    ]
+  },
+  "case": "retail"
+}

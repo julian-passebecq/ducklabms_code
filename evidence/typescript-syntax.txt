@@ -1,0 +1,5 @@
+
+> datapass-studio-root@0.1.0 test:syntax
+> node scripts/syntax-check.cjs
+
+{"check":"TypeScript/TSX syntax only","files":15,"errors":0,"notVerified":["dependency resolution","full typecheck","Vite bundle","React rendering"]}

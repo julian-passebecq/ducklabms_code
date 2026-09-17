@@ -1,0 +1,6 @@
+...................................ss................................... [ 93%]
+.....                                                                    [100%]
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_root.py:205: DuckDB package unavailable in this environment; real-engine validation is a release gate.
+SKIPPED [1] tests/test_root.py:213: Polars package unavailable; no simulated replacement is counted as a pass.
+75 passed, 2 skipped in 4.03s

@@ -1,0 +1,1 @@
+{"status":"BLOCKED_NOT_PASSED","client":"offline diagnostic HTML, NOT React","reason":"Chromium enterprise URLBlocklist blocks all navigation. No browser policy was modified. Browser test remains a release gate.","passed":0}

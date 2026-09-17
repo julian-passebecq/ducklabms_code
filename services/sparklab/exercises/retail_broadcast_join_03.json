@@ -1,0 +1,89 @@
+{
+  "id": "retail_broadcast_join_03",
+  "title": "Retail 03 · Large fact / small dimension join",
+  "version": "2026-09-17",
+  "grader": "retail_broadcast",
+  "simulation": "retail_join",
+  "dataset": {
+    "fact": "silver.orders",
+    "dimension": "silver.dim_customer_segment",
+    "format": "Parquet",
+    "lakehouse": "DuckLake"
+  },
+  "statistics": {
+    "fact_rows": 184229821,
+    "fact_bytes_gb": 26.4,
+    "source_files": 286,
+    "dimension_rows": 43281,
+    "dimension_bytes_mb": 6.4,
+    "shuffle_partitions": 200,
+    "median_partition_mb": 91,
+    "largest_partition_mb": 1656,
+    "hot_partition": 143,
+    "hot_key": "CORPORATE_ACCOUNT_01",
+    "catalog_statistics_available": false
+  },
+  "spark_defaults": {
+    "auto_broadcast_threshold_mb": 10,
+    "adaptive_enabled": true,
+    "advisory_partition_mb": 64,
+    "skew_factor": 5,
+    "skew_threshold_mb": 256
+  },
+  "objective": "Return customer revenue and order counts. Start from a shuffle join caused by missing catalog size statistics, then use an explicit broadcast hint to avoid the fact-side join shuffle.",
+  "accepted_strategies": [
+    "F.broadcast(dimension)",
+    "broadcast hint"
+  ],
+  "anti_patterns": [
+    "collect dimension to driver",
+    "repartition fact without a key/reason",
+    "repartition(1)",
+    "assume broadcast removes the downstream groupBy shuffle"
+  ],
+  "truth": {
+    "preferred_join": "BroadcastHashJoin",
+    "baseline_join": "SortMergeJoin",
+    "join_shuffle_avoided": true,
+    "aggregation_shuffle_remains": true,
+    "aqe_skew_candidate": true,
+    "result_semantics": "customer_id → revenue, orders"
+  },
+  "fixture_truth": {
+    "fixture": "retail",
+    "scope": "bounded correctness oracle",
+    "columns": [
+      "customer_id",
+      "revenue",
+      "orders"
+    ],
+    "rows": [
+      {
+        "customer_id": "C001",
+        "revenue": 150.0,
+        "orders": 2
+      },
+      {
+        "customer_id": "C002",
+        "revenue": 225.0,
+        "orders": 2
+      },
+      {
+        "customer_id": "C005",
+        "revenue": 100.0,
+        "orders": 2
+      },
+      {
+        "customer_id": "C006",
+        "revenue": 10.0,
+        "orders": 1
+      },
+      {
+        "customer_id": "CORPORATE_ACCOUNT_01",
+        "revenue": 4500.0,
+        "orders": 3
+      }
+    ]
+  },
+  "case": "retail"
+}

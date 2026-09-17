@@ -1,0 +1,46 @@
+{
+  "name": "fabric-azure-data-engineering-learning-studio",
+  "private": true,
+  "version": "0.21.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --pretty false",
+    "qa": "node scripts/qa-v21.mjs && node scripts/qa-engine-v21.mjs && node scripts/qa-v20.mjs && node scripts/qa-engine-v20.mjs && node scripts/qa-v19.mjs && node scripts/qa-engine-v19.mjs && node scripts/qa-v18.mjs && node scripts/qa-engine-v18.mjs && node scripts/qa-v17.mjs && node scripts/qa-engine-v17.mjs && node scripts/qa-v16.mjs && node scripts/qa-engine-v16.mjs && node scripts/qa-v15.mjs && node scripts/qa-engine-v15.mjs && node scripts/qa-v14.mjs && node scripts/qa-engine-v14.mjs && node scripts/qa-v13.mjs && node scripts/qa-engine-v13.mjs && node scripts/qa-v12.mjs && node scripts/qa-engine-v12.mjs && node scripts/qa-v11.mjs && node scripts/qa-engine-v11.mjs && node scripts/qa-v10.mjs && node scripts/qa-engine-v10.mjs && node scripts/qa-v9.mjs && node scripts/qa-engine-v9.mjs && node scripts/qa-v8.mjs && node scripts/qa-engine-v8.mjs && node scripts/qa-v7.mjs && node scripts/qa-engine-v7.mjs && node scripts/qa-v6.mjs && node scripts/qa-engine-v6.mjs && node scripts/qa-v5.mjs && node scripts/qa-engine-v5.mjs && node scripts/qa_static.mjs",
+    "qa:engine": "node scripts/qa-engine-v21.mjs",
+    "qa:v6": "node scripts/qa-v6.mjs && node scripts/qa-engine-v6.mjs",
+    "qa:v5": "node scripts/qa-v5.mjs && node scripts/qa-engine-v5.mjs",
+    "qa:semantic": "node scripts/qa-semantic-v6.mjs",
+    "qa:v7": "node scripts/qa-v7.mjs && node scripts/qa-engine-v7.mjs",
+    "qa:v8": "node scripts/qa-v8.mjs && node scripts/qa-engine-v8.mjs",
+    "qa:v9": "node scripts/qa-v9.mjs && node scripts/qa-engine-v9.mjs",
+    "qa:v10": "node scripts/qa-v10.mjs && node scripts/qa-engine-v10.mjs",
+    "qa:v11": "node scripts/qa-v11.mjs && node scripts/qa-engine-v11.mjs",
+    "qa:v12": "node scripts/qa-v12.mjs && node scripts/qa-engine-v12.mjs",
+    "qa:v13": "node scripts/qa-v13.mjs && node scripts/qa-engine-v13.mjs",
+    "qa:v14": "node scripts/qa-v14.mjs && node scripts/qa-engine-v14.mjs",
+    "qa:v15": "node scripts/qa-v15.mjs && node scripts/qa-engine-v15.mjs",
+    "qa:v16": "node scripts/qa-v16.mjs && node scripts/qa-engine-v16.mjs",
+    "qa:v17": "node scripts/qa-v17.mjs && node scripts/qa-engine-v17.mjs",
+    "qa:v18": "node scripts/qa-v18.mjs && node scripts/qa-engine-v18.mjs",
+    "qa:v19": "node scripts/qa-v19.mjs && node scripts/qa-engine-v19.mjs",
+    "qa:v20": "node scripts/qa-v20.mjs && node scripts/qa-engine-v20.mjs",
+    "qa:v21": "node scripts/qa-v21.mjs && node scripts/qa-engine-v21.mjs"
+  },
+  "dependencies": {
+    "@motherduck/wasm-client": "1.5.5-r.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "@fluentui/react-components": "^9.0.0",
+    "@xyflow/react": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "6.1.1",
+    "typescript": "7.0.2",
+    "vite": "8.3.0"
+  }
+}
