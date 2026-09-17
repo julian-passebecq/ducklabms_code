@@ -1,0 +1,11 @@
+name: ducklake_studio_nyc
+version: 0.1.0
+config-version: 2
+profile: ducklake_studio_nyc
+model-paths: ["models"]
+models:
+  ducklake_studio_nyc:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

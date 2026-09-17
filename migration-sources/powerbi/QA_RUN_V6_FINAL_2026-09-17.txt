@@ -1,0 +1,143 @@
+Power BI Learning Studio V6 - Final dependency-independent QA
+Date: 2026-09-17
+
+===== npm run check =====
+Content checks passed.
+
+===== npm run check:deep =====
+PASS: package.json version is 6.0.0
+PASS: Coverage registry counts match V6 release contract (13/13/16/23/20/12/7/12/12/5/13/8/6)
+PASS: README release counts match source contract
+PASS: 5 case studies loaded
+PASS: 41 guided steps have valid views/check contracts
+PASS: Performance view is wired into simulator rail
+PASS: Source-add controls are wired
+PASS: Power Query advanced editor and profiling present
+PASS: Report build/format/interaction/accessibility controls present
+PASS: Incremental and granular refresh controls present
+PASS: Service release and permission controls present
+PASS: Copilot readiness controls present
+PASS: Refresh operation and history simulation present
+PASS: Model health scanner present
+PASS: V6 workspace schema fields present in pure migration module
+PASS: Case-study sessions are isolated, seeded, and resumable
+PASS: 12 decision scenarios loaded
+PASS: 8 troubleshooting scenarios have valid answer/root-cause contracts
+PASS: Troubleshooting center UI is wired
+PASS: Nested workspace + visual/filter/relationship migration normalization present
+PASS: Troubleshooting tickets are included in global search
+PASS: Power Query keeps Applied Steps per query and exposes Close & Apply state
+PASS: Selected-visual formatting and interactions persist to visual state
+PASS: Visual/page/report filter scopes persist in workspace state
+PASS: Service workspace tabs filter the simulated inventory
+PASS: Copilot approval is prerequisite-gated
+PASS: Governed pre-release readiness is wired
+PASS: Refresh readiness covers Import, DirectQuery, Composite, private gateways, and cloud credentials
+PASS: Scenario-specific surfaces and storage/source compatibility are wired
+PASS: Case studies explicitly validate Close & Apply before downstream modeling/report work
+PASS: Legacy Power Query state migrates into query-aware log + applied snapshot state
+PASS: Relationship cardinality/filter/active state is stored per relationship
+PASS: Power Query source/step changes use query-aware log and applied-state snapshots
+PASS: Behavior regression gate is present
+PASS: Sequential workflow regression gate is present
+PASS: Pure workspace migration gate is present
+PASS: CSS parser gate is present
+PASS: All relative source imports resolve
+
+Deep checks passed: 5 cases / 41 steps / 12 decision scenarios.
+
+===== npm run check:state =====
+PASS: 5 cases / 41 steps satisfy pure workspace-state contracts
+
+===== npm run check:behavior =====
+PASS: Import operation blocks when no source is connected
+PASS: Private SQL Import requires gateway mapping
+PASS: Private SQL Import requires credentials
+PASS: Private SQL Import becomes ready with gateway + credentials
+PASS: Cloud Azure SQL Import does not require the on-premises gateway toggle
+PASS: Cloud Import still requires source credentials in the learning model
+PASS: Direct Lake uses a different operational readiness path
+PASS: Direct Lake rejects non-OneLake source paths in the global learning storage model
+PASS: DirectQuery rejects file connectors that do not advertise DirectQuery
+PASS: Pure Direct Lake mode rejects mixed non-OneLake sources and points learners toward composite architecture
+PASS: Import rejects a live-model connector that has no Import mode
+PASS: Private SQL DirectQuery also requires a gateway path
+PASS: Private SQL DirectQuery requires source credentials
+PASS: Private SQL DirectQuery becomes operational only after gateway + credentials
+PASS: Cloud DirectQuery still requires connection credentials
+PASS: Cloud DirectQuery does not require the on-premises gateway toggle
+PASS: Composite model honors the private-source gateway path
+PASS: Copilot approval is blocked before semantic preparation prerequisites
+PASS: Copilot approval cannot bypass missing prerequisites
+PASS: Copilot approval succeeds after descriptions + AI preparation
+PASS: Turning off an AI prerequisite revokes simulated Copilot approval
+PASS: Adding a new query/source creates pending Power Query changes
+PASS: Global transformation count still supports case-study progress
+PASS: Power Query Applied Steps are isolated per query
+PASS: Close & Apply snapshots both sources and per-query Applied Steps
+PASS: Guided Close & Apply contract passes only on an applied query snapshot
+PASS: Editing after Close & Apply marks the model load state pending again
+PASS: Guided Close & Apply contract becomes incomplete after new query edits
+PASS: Undoing back to the applied query snapshot clears the pending state
+PASS: Query-aware transform log preserves a same-named step on another query
+PASS: Undoing past the applied snapshot correctly becomes a pending model change
+PASS: Per-query undo cannot delete a same-named Applied Step from another query
+PASS: Deleting a query removes its source and query-scoped Applied Steps
+PASS: Deleting a query also removes its entries from the global transformation log
+PASS: Relationship creation stores per-relationship metadata
+PASS: Model health detects bidirectional filtering on the specific edited relationship
+PASS: Release readiness fails when any relationship still uses a broad Both path
+PASS: Apply-to-all repair removes bidirectional paths without flattening other relationship metadata
+PASS: Scenario profile resolves Wind case metadata consistently
+PASS: Scenario profile resolves Finance case metadata consistently
+PASS: Scenario TMDL templates use real expressions rather than self-referential measure definitions
+PASS: Explicit Finance case identity takes precedence over incidental source additions
+PASS: Sales/governance case identity does not silently switch scenario because of an incidental OneLake source
+PASS: Service inventory follows the active case scenario
+PASS: Service Reports tab filters to reports
+PASS: Service Semantic models tab filters correctly
+PASS: Service Dashboards tab filters correctly
+PASS: Service Dataflows tab filters correctly
+PASS: Service All tab returns the full simulated inventory
+PASS: Release readiness exposes four independent failing gates for a blank/broken workspace
+PASS: Release readiness blocks an incompatible storage/source architecture
+PASS: Release readiness turns green only when model, connectivity, performance, and security checks pass
+
+Behavior checks passed.
+
+===== npm run check:workflow =====
+PASS: sales360: 9/9 sequential steps remain satisfiable
+PASS: windops: 6/6 sequential steps remain satisfiable
+PASS: finance: 7/7 sequential steps remain satisfiable
+PASS: executive-governed: 11/11 sequential steps remain satisfiable
+PASS: broken-bi-rescue: 8/8 sequential steps remain satisfiable
+
+Workflow checks passed: 5 cases / 41 sequential steps.
+
+===== npm run check:migration =====
+PASS: Legacy global transforms migrate into the first source query
+PASS: Legacy transforms gain query-aware log entries
+PASS: Legacy global relationship properties migrate to each existing relationship
+PASS: Legacy visuals gain an empty visual-filter collection
+PASS: Previously clean legacy workspace remains clean after migration
+PASS: V4 query map reconstructs a query-aware transformation log
+PASS: Clean V4 query state is treated as the applied snapshot
+PASS: Nested refresh defaults survive partial legacy state
+PASS: Nested Service defaults survive partial legacy state
+PASS: Explicit dirty state remains dirty during migration
+PASS: Dirty post-apply migration preserves the known applied source set
+PASS: Unknown pre-V5 applied-step snapshot is not fabricated for dirty legacy state
+PASS: Page/report filter state survives normalization
+PASS: Visual-scope filter state survives normalization
+PASS: Malformed array fields fall back to safe workspace defaults
+
+Migration checks passed.
+
+===== npm run check:syntax =====
+Syntax checks passed: 21 JS/JSX/MJS files.
+
+===== npm run check:css =====
+CSS parse passed: 992 rules / 75343 characters.
+
+===== npm install/build availability =====
+npm install --prefer-offline --no-audit --no-fund was attempted with a 90-second timeout and timed out in this sandbox; Vite build was therefore not claimed here.

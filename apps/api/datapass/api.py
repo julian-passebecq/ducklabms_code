@@ -1,0 +1,219 @@
+from __future__ import annotations
+from contextlib import asynccontextmanager
+from dataclasses import asdict
+import json
+import os
+from pathlib import Path
+import secrets
+from typing import Literal
+
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from starlette.middleware.trustedhost import TrustedHostMiddleware
+
+from .content import ROOT, CONTENT, get_case, cases
+from .documents import Documents, RevisionConflict
+from .kernels import KernelManager, KernelTimeout
+from services.sparklab.runtime import load_cluster_profiles
+
+
+class StrictModel(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+
+
+class CreateWorkspace(StrictModel):
+    case_id: str = Field(min_length=1,max_length=64)
+
+
+class SaveNotebook(StrictModel):
+    revision: int = Field(ge=0)
+    notebook: dict
+
+
+class ExecuteCell(StrictModel):
+    notebook_id: str = Field(min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
+    cell_id: str = Field(min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
+    step_id: str | None = Field(default=None,max_length=100)
+    language: Literal['sql','sparklab','python','polars','dbt']
+    code: str = Field(min_length=1,max_length=40000)
+    output_asset: str | None = Field(default=None,max_length=100)
+    profile: str = Field(default='generic_8x8',max_length=80)
+    aqe: bool = True
+
+
+class RunWorkflow(StrictModel):
+    notebook_id: str = Field(default='case-notebook',min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
+    overrides: dict[str,str] = Field(default_factory=dict)
+    profile: str = Field(default='generic_8x8',max_length=80)
+    aqe: bool = True
+
+    @field_validator('overrides')
+    @classmethod
+    def bounded_overrides(cls,value):
+        if len(value)>30 or any(len(code)>40000 for code in value.values()):
+            raise ValueError('Workflow overrides exceed the source limit.')
+        return value
+
+
+def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=None, trusted_python=None, timeout=20.0):
+    data_dir = data_dir or Path(os.environ.get('DATAPASS_DATA_DIR',str(ROOT/'.local'/'workspaces')))
+    token = token or os.environ.get('DATAPASS_TOKEN') or secrets.token_urlsafe(32)
+    mode = mode or os.environ.get('DATAPASS_STORAGE','auto')
+    trusted = trusted_python if trusted_python is not None else os.environ.get('DATAPASS_TRUSTED_PYTHON')=='1'
+    docs = Documents(data_dir)
+    manager = KernelManager(mode, trusted, timeout)
+
+    @asynccontextmanager
+    async def lifespan(app):
+        yield
+        manager.close()
+
+    app = FastAPI(title='Datapass Studio Root',version='0.1.0',lifespan=lifespan)
+    app.state.manager,app.state.documents = manager,docs
+    origins = ['http://127.0.0.1:8000','http://localhost:8000','http://127.0.0.1:5173','http://localhost:5173']
+    app.add_middleware(CORSMiddleware,allow_origins=origins,allow_methods=['GET','POST','PUT','OPTIONS'],allow_headers=['Authorization','Content-Type'])
+    app.add_middleware(TrustedHostMiddleware,allowed_hosts=['127.0.0.1','localhost'])
+
+    @app.middleware('http')
+    async def local_boundary(request: Request, call_next):
+        origin = request.headers.get('origin')
+        if origin and origin not in origins:
+            return JSONResponse({'detail':'Untrusted browser origin.'},status_code=403)
+        if request.url.path.startswith('/api/') and request.url.path != '/api/health' and request.method != 'OPTIONS':
+            auth = request.headers.get('authorization','')
+            if not secrets.compare_digest(auth, f'Bearer {token}'):
+                return JSONResponse({'detail':'A local session token is required. Use the URL printed by start.py.'},status_code=401)
+        try:
+            body_size = int(request.headers.get('content-length','0') or '0')
+        except ValueError:
+            return JSONResponse({'detail':'Invalid Content-Length.'},status_code=400)
+        if body_size > 2_500_000:
+            return JSONResponse({'detail':'Request exceeds 2.5 MB.'},status_code=413)
+        response = await call_next(request)
+        response.headers['X-Content-Type-Options']='nosniff'
+        response.headers['Referrer-Policy']='no-referrer'
+        response.headers['Cache-Control']='no-store'
+        return response
+
+    @app.exception_handler(RevisionConflict)
+    async def conflict(request,error):
+        return JSONResponse({'detail':str(error)},status_code=409)
+
+    @app.exception_handler(ValueError)
+    async def bad_input(request,error):
+        return JSONResponse({'detail':str(error)},status_code=422)
+
+    @app.exception_handler(KeyError)
+    @app.exception_handler(FileNotFoundError)
+    async def not_found(request,error):
+        return JSONResponse({'detail':'Workspace, case or step not found.'},status_code=404)
+
+    @app.exception_handler(KernelTimeout)
+    async def timed_out(request,error):
+        return JSONResponse({'detail':str(error)},status_code=408)
+
+    @app.exception_handler(RuntimeError)
+    async def unavailable(request,error):
+        return JSONResponse({'detail':str(error)},status_code=503)
+
+    def command(id,body):
+        docs.get(id)
+        return manager.call(id,docs.folder(id)/'data',body)
+
+    @app.get('/api/health')
+    def health():
+        return {'status':'ok','application':'Datapass Studio Root','version':'0.1.0','scope':'local single-user'}
+
+    @app.get('/api/cases')
+    def list_cases():
+        return cases()
+
+    @app.get('/api/modules')
+    def modules():
+        return json.loads((CONTENT/'modules.json').read_text())
+
+    @app.get('/api/profiles')
+    def profiles():
+        return [{**asdict(p),'max_cores':p.max_cores,'truth':'virtual model, not a vendor SKU guarantee'} for p in load_cluster_profiles(str(ROOT/'services/sparklab/cluster_profiles.json')).values()]
+
+    @app.get('/api/workspaces')
+    def workspaces():
+        return docs.all()
+
+    @app.post('/api/workspaces',status_code=201)
+    def new_workspace(body:CreateWorkspace):
+        return docs.create(body.case_id)
+
+    @app.get('/api/workspaces/{id}')
+    def workspace(id:str):
+        return docs.get(id)
+
+    @app.put('/api/workspaces/{id}/notebook')
+    def save(id:str,body:SaveNotebook):
+        return docs.save_notebook(id,body.revision,body.notebook)
+
+    @app.get('/api/workspaces/{id}/capabilities')
+    def capabilities(id:str):
+        return command(id,{'op':'capabilities'})
+
+    @app.get('/api/workspaces/{id}/catalog')
+    def catalog(id:str):
+        return command(id,{'op':'catalog'})
+
+    @app.post('/api/workspaces/{id}/execute')
+    def execute(id:str,body:ExecuteCell):
+        workspace = docs.get(id)
+        case = get_case(workspace['case_id'])
+        steps = {s['id']:s for s in case['steps']}
+        request = {**body.model_dump(),'op':'execute','case_id':case['id']}
+        if body.step_id:
+            if body.step_id not in steps:
+                raise KeyError('Unknown step.')
+            expected_asset = steps[body.step_id].get('output_asset')
+            if body.output_asset != expected_asset:
+                raise ValueError('A graded step must publish to its registered output asset. Add an ungraded cell for experiments.')
+            request['check'] = steps[body.step_id].get('check')
+            request['truth_pack'] = steps[body.step_id].get('truth_pack') if body.language=='sparklab' else None
+        result = command(id,request)
+        result['workspace_revision'] = docs.record(id,result,body.step_id)
+        return result
+
+    @app.post('/api/workspaces/{id}/workflow')
+    def workflow(id:str,body:RunWorkflow):
+        workspace = docs.get(id)
+        result = command(id,{'op':'workflow','case_id':workspace['case_id'],**body.model_dump()})
+        revision = workspace['revision']
+        for run in result['runs']:
+            revision = docs.record(id,run,run['cell_id'])
+        result['workspace_revision'] = revision
+        return result
+
+    @app.post('/api/workspaces/{id}/check')
+    def check(id:str):
+        workspace = docs.get(id)
+        return command(id,{'op':'check','case_id':workspace['case_id']})
+
+    @app.post('/api/workspaces/{id}/restart')
+    def restart(id:str):
+        docs.get(id)
+        return manager.restart(id)
+
+    @app.get('/diagnostic')
+    def diagnostic():
+        return FileResponse(ROOT/'diagnostic/index.html')
+
+    app.mount('/diagnostic-assets',StaticFiles(directory=ROOT/'diagnostic'),name='diagnostic-assets')
+    dist = ROOT/'apps/web/dist'
+    if dist.exists():
+        app.mount('/',StaticFiles(directory=dist,html=True),name='web')
+    else:
+        @app.get('/')
+        def unbuilt():
+            return FileResponse(ROOT/'diagnostic/index.html')
+    return app
+
+
+app = create_app()

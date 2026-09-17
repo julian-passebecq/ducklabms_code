@@ -1,0 +1,59 @@
+Power BI Learning Studio V3 - QA run
+Date: 2026-09-17
+
+== Content gate ==
+Content checks passed.
+
+== Deep contract gate ==
+PASS: Coverage registry counts match V3 release contract (13/13/16/23/20/12/7/12/12/5/13/8/6)
+PASS: README release counts match source contract
+PASS: 5 case studies loaded
+PASS: 38 guided steps have valid views/check contracts
+PASS: Performance view is wired into simulator rail
+PASS: Source-add controls are wired
+PASS: Power Query advanced editor and profiling present
+PASS: Report build/format/interaction/accessibility controls present
+PASS: Incremental and granular refresh controls present
+PASS: Service release and permission controls present
+PASS: Copilot readiness controls present
+PASS: Refresh operation and history simulation present
+PASS: Model health scanner present
+PASS: V3 workspace schema fields present
+PASS: Case-study sessions are isolated, seeded, and resumable
+PASS: 12 decision scenarios loaded
+PASS: 8 troubleshooting scenarios have valid answer/root-cause contracts
+PASS: Troubleshooting center UI is wired
+PASS: Nested workspace + visual-detail migration normalization present
+PASS: All relative source imports resolve
+
+Deep checks passed: 5 cases / 38 steps / 12 decision scenarios.
+
+== Pure workspace-state gate ==
+PASS: 5 cases / 38 steps satisfy pure workspace-state contracts
+
+== Syntax gate ==
+Syntax checks passed: 16 JS/JSX/MJS files.
+
+== CSS structural gate ==
+CSS braces: 952 open / 952 close
+PASS: stylesheet brace balance
+
+== Registry summary ==
+modules=13
+daxTopics=13
+connectors=23
+visuals=20
+powerQueryConcepts=12
+refreshPatterns=7
+decisionScenarios=12
+troubleshootingScenarios=8
+aiReadinessChecklist=6
+caseStudies=5
+caseSteps=38
+latestUpdates=13
+
+== Bundle gate ==
+NOT RUN: npm install timed out in this sandbox; no local node_modules available.
+
+== Archive integrity gate ==
+PASS: final release ZIP tested with unzip -t; no compressed-data errors.

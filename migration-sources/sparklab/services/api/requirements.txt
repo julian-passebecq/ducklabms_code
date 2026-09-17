@@ -1,0 +1,6 @@
+fastapi>=0.128,<1
+pydantic>=2.13,<3
+uvicorn[standard]>=0.48,<1
+# Optional real result engines for the next execution pass:
+# duckdb>=1.4
+# polars>=1.34

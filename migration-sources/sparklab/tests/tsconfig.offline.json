@@ -1,0 +1,8 @@
+{
+  "extends": "../tsconfig.app.json",
+  "compilerOptions": {
+    "types": [],
+    "skipLibCheck": true
+  },
+  "include": ["../src", "types/react-shim.d.ts"]
+}

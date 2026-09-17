@@ -1,0 +1,8 @@
+{
+  "extends": "../tsconfig.node.json",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true
+  },
+  "files": ["./v212-node-stubs.d.ts", "../vite.config.ts"]
+}

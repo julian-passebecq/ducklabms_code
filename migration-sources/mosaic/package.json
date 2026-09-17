@@ -1,0 +1,43 @@
+{
+  "name": "mosaic-notebook-layout-engine",
+  "private": true,
+  "version": "2.1.7",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "smoke": "node scripts/v2-smoke.mjs",
+    "check:v2": "node scripts/v2-audit.mjs",
+    "verify:source": "npm run smoke && npm run check:v2 && npm run check:model && npm run check:ipynb && npm run check:ergonomics && npm run check:v213 && npm run check:v214 && npm run check:v215 && npm run check:v216 && npm run check:v217 && npm run check:syntax && npm run check:internal-types && npm run check:node-types",
+    "check:model": "node scripts/v2-model-test.mjs",
+    "check:ipynb": "node scripts/v21-ipynb-test.mjs",
+    "check:syntax": "node scripts/v21-syntax-test.mjs",
+    "check:internal-types": "tsc -p scripts/tsconfig.v21.internal.json",
+    "check:ergonomics": "node scripts/v212-ergonomics-test.mjs",
+    "check:node-types": "tsc -p scripts/tsconfig.v212.node-internal.json",
+    "check:v213": "node scripts/v213-hardening-test.mjs",
+    "check:v214": "node scripts/v214-hardening-test.mjs",
+    "check:v215": "node scripts/v215-hardening-test.mjs",
+    "check:v216": "node scripts/v216-hardening-test.mjs",
+    "check:v217": "node scripts/v217-hardening-test.mjs"
+  },
+  "dependencies": {
+    "@duckdb/duckdb-wasm": "^1.33.0",
+    "@fluentui/react-components": "^9.74.7",
+    "@fluentui/react-icons": "^2.0.341",
+    "@monaco-editor/react": "^4.7.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-grid-layout": "^2.2.3",
+    "react-resizable": "^3.0.5",
+    "apache-arrow": "^21.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5"
+  }
+}

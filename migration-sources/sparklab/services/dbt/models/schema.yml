@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: silver
+    schema: silver
+    tables:
+      - name: trips
+
+models:
+  - name: stg_trips
+    columns:
+      - name: service_date
+        data_tests: [not_null]
+  - name: fct_daily_metrics
+    columns:
+      - name: metric_date
+        data_tests: [not_null, unique]
+      - name: revenue
+        data_tests: [not_null]
