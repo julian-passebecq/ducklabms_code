@@ -39,6 +39,8 @@ class ExerciseRequest(StrictModel):
     language: Literal['sql','sparklab','python','polars','dbt']
     source_revision: int = Field(ge=0)
     mode: Literal['run','submit']
+    profile: str = Field(default='generic_8x8',max_length=80)
+    aqe: bool = True
 
 
 class ReviewRequest(StrictModel):
@@ -211,7 +213,7 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
 
     @app.get('/api/profiles')
     def profiles():
-        return [{**asdict(p),'max_cores':p.max_cores,'truth':'virtual model, not a vendor SKU guarantee'} for p in load_cluster_profiles(str(ROOT/'services/sparklab/cluster_profiles.json')).values()]
+        return [p.contract() for p in load_cluster_profiles(str(ROOT/'services/sparklab/cluster_profiles.json')).values()]
 
     @app.get('/api/workspaces')
     def workspaces():

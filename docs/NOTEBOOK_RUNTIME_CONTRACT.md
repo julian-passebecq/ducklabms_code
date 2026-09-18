@@ -36,3 +36,10 @@ Shared operations include `createExerciseNotebook`, `resetToStarter`, `resetExer
 Interview adds a shared browser block and three-zone preset. ensureExerciseBrowser upgrades saved documents without replacing source or custom geometry; Reset layout explicitly applies the new preset. Root JSON persists solutionRevealed as a visibility preference; reference source remains server-owned. Python display(value, columns=...) can preserve an empty output schema; Polars column names survive empty results.
 
 Versioned packs provide public definitions and private fixtures. SQL/Python/Polars/SparkLab grading uses the shared Engine and ExerciseAttempt store. See EXERCISE_PACKS.md and NOTEBOOK_INTERVIEW_PASS_2_HANDOFF.md for boundaries and deferred QA.
+
+
+## SparkLab Runtime Pass 1 additive contract
+
+`/api/profiles` exposes schema-version-1 fictional runtime profiles, including driver/executor resources, partition targets, AQE defaults, throughput/startup assumptions and an internal credit rate. Existing IDs remain valid. Notebook and exercise requests carry `profile` and `aqe`; neither is an input to relational compilation or result grading. The root capability response exposes the support table from `services/sparklab/capabilities.py`.
+
+SparkLab transformations remain lazy. Notebook Run executes the final DataFrame as a bounded preview action. The successful execution may attach a versioned plan-driven `simulation` with structured logical nodes, task/stage evidence, assumptions, fictional Datapass Credits and profile/AQE comparisons. A modeling failure is `unavailable` evidence, not a substituted or failed semantic result. Hidden exercise runs are not returned. Saved evidence identifies its profile; selector changes apply to subsequent runs.

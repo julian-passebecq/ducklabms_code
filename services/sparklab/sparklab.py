@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
 import json
+import re
 
 
 @dataclass(frozen=True, eq=False)
@@ -25,10 +26,12 @@ class WindowSpec:
         return WindowSpec(tuple(cols), self.order_exprs, self.frame)
 
     def orderBy(self, *cols: str | "Expr") -> "WindowSpec":
-        exprs = tuple(_sql(c) for c in cols)
+        exprs = tuple(_order_sql(c) for c in cols)
         return WindowSpec(self.partition_cols, exprs, self.frame)
 
     def rowsBetween(self, start: int, end: int) -> "WindowSpec":
+        if type(start) is not int or type(end) is not int or start > end:
+            raise ValueError('rowsBetween requires integer bounds with start <= end')
         return WindowSpec(self.partition_cols, self.order_exprs, f"ROWS BETWEEN {_frame_bound(start)} AND {_frame_bound(end)}")
 
     def sql(self) -> str:
@@ -56,7 +59,7 @@ class Window:
 
     @staticmethod
     def orderBy(*cols: str | "Expr") -> WindowSpec:
-        return WindowSpec(order_exprs=tuple(_sql(c) for c in cols))
+        return WindowSpec(order_exprs=tuple(_order_sql(c) for c in cols))
 
 
 @dataclass(frozen=True, eq=False)
@@ -68,13 +71,17 @@ class Expr:
         return Expr(self.sql, name)
 
     def over(self, window: WindowSpec) -> "Expr":
+        if self.sql.startswith(('ROW_NUMBER()', 'LAG(', 'LEAD(')) and not window.order_exprs:
+            raise ValueError('Ranking and offset windows require orderBy; include a tie-breaker for deterministic rows')
+        if self.sql.startswith(('LAG(', 'LEAD(')) and window.frame:
+            raise ValueError('lag/lead do not accept an explicit window frame; apply rowsBetween only to aggregates')
         return Expr(f"{self.sql} OVER ({window.sql()})", self.label)
 
     def desc(self) -> "Expr":
-        return Expr(f"{self.sql} DESC", self.label)
+        return Expr(f"{self.sql} DESC NULLS LAST", self.label)
 
     def asc(self) -> "Expr":
-        return Expr(f"{self.sql} ASC", self.label)
+        return Expr(f"{self.sql} ASC NULLS FIRST", self.label)
 
     def isNull(self) -> "Expr":
         return Expr(f"({self.sql} IS NULL)")
@@ -92,7 +99,10 @@ class Expr:
             "boolean": "BOOLEAN", "bool": "BOOLEAN",
             "date": "DATE", "timestamp": "TIMESTAMP",
         }
-        if normalized.startswith("decimal(") and normalized.endswith(")"):
+        if re.fullmatch(r"decimal\(\s*\d{1,2}\s*,\s*\d{1,2}\s*\)", normalized):
+            precision, scale = map(int, re.findall(r'\d+', normalized))
+            if not 1 <= precision <= 38 or not 0 <= scale <= precision:
+                raise ValueError('decimal precision must be 1..38 and scale 0..precision')
             target = normalized.upper()
         else:
             target = simple.get(normalized)
@@ -139,6 +149,13 @@ class Expr:
     def __mul__(self, other: Any): return self._bin('*', other)
     def __truediv__(self, other: Any): return self._bin('/', other)
 
+    def eqNullSafe(self, other: Any):
+        rhs = other.sql if isinstance(other, Expr) else _literal(other)
+        return Expr(f"({self.sql} IS NOT DISTINCT FROM {rhs})")
+
+    def __bool__(self):
+        raise ValueError('Spark Columns use parenthesized & and |, not Python truth evaluation')
+
 
 def _quote(name: str) -> str:
     return '"' + name.replace('"', '""') + '"'
@@ -161,7 +178,10 @@ def _frame_bound(value: int) -> str:
 
 class functions:
     @staticmethod
-    def col(name: str) -> Expr: return Expr(_quote(name))
+    def col(name: str) -> Expr:
+        if not isinstance(name, str) or '.' in name:
+            raise ValueError('Qualified/nested columns are unsupported; rename columns before joining')
+        return Expr(_quote(name), name)
     @staticmethod
     def lit(value: Any) -> Expr: return Expr(_literal(value))
     @staticmethod
@@ -210,6 +230,11 @@ def _sql(v: str | Expr) -> str:
     return '*' if v == '*' else _quote(v)
 
 
+def _order_sql(v: str | Expr) -> str:
+    sql = _sql(v)
+    return sql if re.search(r'\b(ASC|DESC)\b', sql) else sql + ' ASC NULLS FIRST'
+
+
 @dataclass
 class Op:
     kind: str
@@ -243,6 +268,10 @@ class DataFrame:
     where = filter
 
     def select(self, *cols: str | Expr) -> "DataFrame":
+        if len(cols) == 1 and isinstance(cols[0], (list, tuple)):
+            cols = tuple(cols[0])
+        if not cols or any(not isinstance(c, (str, Expr)) for c in cols):
+            raise ValueError('select requires column names or expressions')
         c = self._clone(); c.ops.append(Op('select', {'cols': cols})); return c
 
     def withColumn(self, name: str, expr: Expr) -> "DataFrame":
@@ -252,23 +281,29 @@ class DataFrame:
         c = self._clone(); c.ops.append(Op('drop', {'cols': tuple(cols)})); return c
 
     def dropDuplicates(self, cols: Iterable[str] | None = None) -> "DataFrame":
-        c = self._clone(); c.ops.append(Op('dedupe', {'cols': tuple(cols or ())})); return c
+        if isinstance(cols, str):
+            raise ValueError('dropDuplicates expects a list of column names')
+        c = self._clone(); c.ops.append(Op('dedupe', {'cols': None if cols is None else tuple(cols)})); return c
 
     def distinct(self) -> "DataFrame":
         c = self._clone(); c.ops.append(Op('distinct')); return c
 
     def groupBy(self, *keys: str) -> GroupedData:
+        if len(keys) == 1 and isinstance(keys[0], (list, tuple)):
+            keys = tuple(keys[0])
         return GroupedData(self, keys)
 
     def join(self, other: "DataFrame", on: str | Iterable[str], how: str = 'inner') -> "DataFrame":
-        normalized = how.lower()
-        allowed = {'inner', 'left', 'right', 'full', 'left_outer', 'right_outer', 'full_outer'}
+        normalized = {'outer':'full', 'leftouter':'left', 'rightouter':'right', 'fullouter':'full', 'leftsemi':'left_semi', 'semi':'left_semi', 'leftanti':'left_anti', 'anti':'left_anti'}.get(how.lower(), how.lower())
+        allowed = {'inner', 'left', 'right', 'full', 'left_outer', 'right_outer', 'full_outer', 'left_semi', 'left_anti'}
         if normalized not in allowed:
             raise ValueError(f"Unsupported join type: {how}")
         if isinstance(on, str):
             keys = (on,)
+        elif isinstance(on, (list, tuple)) and all(isinstance(key, str) for key in on):
+            keys = tuple(on)
         else:
-            keys = tuple(str(key) for key in on)
+            raise ValueError('join supports same-name string keys; rename columns before joining. Predicate joins are unsupported.')
         if not keys:
             raise ValueError("join() requires at least one key")
         c = self._clone()
@@ -281,15 +316,32 @@ class DataFrame:
         c = self._clone(); c.ops.append(Op('rename', {'existing': existing, 'new': new})); return c
 
     def orderBy(self, *cols: str | Expr) -> "DataFrame":
+        if len(cols) == 1 and isinstance(cols[0], (list, tuple)):
+            cols = tuple(cols[0])
+        if not cols:
+            raise ValueError('orderBy requires at least one column')
         c = self._clone(); c.ops.append(Op('orderBy', {'cols': tuple(cols)})); return c
 
+    sort = orderBy
+
+    def alias(self, name: str) -> "DataFrame":
+        if not isinstance(name, str) or not re.fullmatch(r'[A-Za-z_]\w*', name):
+            raise ValueError('alias requires a simple name; qualified-column joins are unsupported')
+        c = self._clone(); c.ops.append(Op('alias', {'name': name})); return c
+
     def limit(self, n: int) -> "DataFrame":
+        if type(n) is not int or n < 0:
+            raise ValueError('limit requires a non-negative integer')
         c = self._clone(); c.ops.append(Op('limit', {'n': n})); return c
 
     def repartition(self, n: int, *keys: str) -> "DataFrame":
+        if type(n) is not int or not 1 <= n <= 4096:
+            raise ValueError('Partition count must be an integer from 1 to 4096')
         c = self._clone(); c.ops.append(Op('repartition', {'n': n, 'keys': keys})); return c
 
     def coalesce(self, n: int) -> "DataFrame":
+        if type(n) is not int or not 1 <= n <= 4096:
+            raise ValueError('Partition count must be an integer from 1 to 4096')
         c = self._clone(); c.ops.append(Op('coalesce', {'n': n})); return c
 
 
@@ -333,11 +385,13 @@ class DataFrame:
                     labels.append(expr.label)
                 columns = list(op.detail['keys']) + labels
             elif op.kind == 'join':
+                if op.detail['how'] in {'left_semi', 'left_anti'}:
+                    continue
                 other_cols = op.detail['other'].current_columns()
                 if other_cols is None:
                     return None
                 keys = set(op.detail['on'])
-                columns = columns + [c for c in other_cols if c not in keys]
+                columns = list(op.detail['on']) + [c for c in columns if c not in keys] + [c for c in other_cols if c not in keys]
         return columns
 
     def current_columns(self) -> list[str] | None:
@@ -386,15 +440,15 @@ class DataFrame:
                 query = f'SELECT {projection} FROM ({query}) q{idx}'
             elif op.kind == 'dedupe':
                 cols = op.detail['cols']
-                if not cols:
+                if cols is None:
                     query = f'SELECT DISTINCT * FROM ({query}) q{idx}'
                 else:
-                    keys = ', '.join(_quote(c) for c in cols)
+                    keys = 'PARTITION BY ' + ', '.join(_quote(c) for c in cols) if cols else ''
                     known = self._columns_before(idx)
                     projection = ', '.join(_quote(c) for c in known) if known is not None else '* EXCLUDE (__sparklab_rn)'
                     query = (
                         f'SELECT {projection} FROM ('
-                        f'SELECT *, ROW_NUMBER() OVER (PARTITION BY {keys}) AS __sparklab_rn '
+                        f'SELECT *, ROW_NUMBER() OVER ({keys}) AS __sparklab_rn '
                         f'FROM ({query}) q{idx}_src) q{idx}_ranked WHERE __sparklab_rn = 1'
                     )
             elif op.kind == 'distinct':
@@ -408,19 +462,29 @@ class DataFrame:
                     query += f' GROUP BY {keys}'
             elif op.kind == 'join':
                 other: DataFrame = op.detail['other']
-                join_sql = _join_sql(op.detail['how'])
                 keys = tuple(op.detail["on"])
                 key_set = set(keys)
+                if op.detail['how'] in {'left_semi', 'left_anti'}:
+                    predicate = ' AND '.join(f'l.{_quote(k)} = r.{_quote(k)}' for k in keys)
+                    negation = 'NOT ' if op.detail['how'] == 'left_anti' else ''
+                    query = f'SELECT l.* FROM ({query}) l WHERE {negation}EXISTS (SELECT 1 FROM ({other.sql}) r WHERE {predicate})'
+                    continue
+                join_sql = _join_sql(op.detail['how'])
+                left_cols = self._columns_before(idx)
                 right_cols = other.current_columns()
-                if right_cols is not None:
+                if right_cols is not None and left_cols is not None:
+                    if (set(left_cols) & set(right_cols)) - key_set:
+                        raise ValueError('Duplicate non-key join columns are unsupported; use withColumnRenamed before join')
                     right_projection = ', '.join(f'r.{_quote(c)}' for c in right_cols if c not in key_set)
-                    projection = 'l.*' + (f', {right_projection}' if right_projection else '')
+                    output_left = list(keys) + [c for c in left_cols if c not in key_set]
+                    left_projection = ', '.join(f'COALESCE(l.{_quote(c)}, r.{_quote(c)}) AS {_quote(c)}' if c in key_set else f'l.{_quote(c)}' for c in output_left)
+                    projection = left_projection + (f', {right_projection}' if right_projection else '')
                 else:
-                    projection = 'l.*, r.*'
+                    raise ValueError('join requires known schemas; use registered catalog tables')
                 using = ', '.join(_quote(key) for key in keys)
                 query = f'SELECT {projection} FROM ({query}) l {join_sql} ({other.sql}) r USING ({using})'
             elif op.kind == 'orderBy':
-                order = ', '.join(_sql(c) for c in op.detail['cols'])
+                order = ', '.join(_sql(c) + (' ASC NULLS FIRST' if isinstance(c, str) or not re.search(r'\b(ASC|DESC)\b', c.sql) else '') for c in op.detail['cols'])
                 query = f'SELECT * FROM ({query}) q{idx} ORDER BY {order}'
             elif op.kind == 'limit':
                 query = f'SELECT * FROM ({query}) q{idx} LIMIT {int(op.detail["n"])}'
@@ -470,6 +534,8 @@ class SparkSession:
         return cls(data[case])
 
     def table(self, name: str) -> DataFrame:
+        if not isinstance(name, str) or not re.fullmatch(r'[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)?', name):
+            raise ValueError('spark.table requires a simple catalog table name')
         return DataFrame(self, name)
 
     def _estimate(self, df: DataFrame) -> dict[str, Any]:

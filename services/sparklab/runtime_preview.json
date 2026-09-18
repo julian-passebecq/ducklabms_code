@@ -782,6 +782,267 @@
           }
         ]
       }
+    },
+    "local_small": {
+      "baseline": {
+        "duration_s": 514.484,
+        "core_hours": 0.7146,
+        "worker_core_hours": 0.5716,
+        "driver_core_hours": 0.1429,
+        "task_core_hours": 0.5644,
+        "cluster_utilization_pct": 98.7,
+        "memory_gb_hours": 1.4291,
+        "driver_memory_gb_hours": 0.2858,
+        "node_hours": 0.4287,
+        "worker_node_hours": 0.2858,
+        "shuffle_gb": 52.806,
+        "spill_gb": 0.0,
+        "plan_decision": {
+          "initial_join": "SortMergeJoin",
+          "final_join": "SortMergeJoin",
+          "reason": "no broadcast hint and no catalog size statistics in this calibrated scenario",
+          "join_shuffle_avoided": false
+        },
+        "cost": {
+          "sparklab": {
+            "scc": 3.383,
+            "eur_per_scc": 0.1,
+            "estimated_eur": 0.338,
+            "label": "SparkLab training price"
+          },
+          "fabric_like": {
+            "cu_hours": null,
+            "price_input_eur_per_cu_hour": null,
+            "estimated_eur": null,
+            "label": "Fabric-equivalent usage estimate; not an Azure invoice"
+          },
+          "databricks_like": {
+            "dbu_equivalent": null,
+            "price_input_usd_per_dbu": null,
+            "estimated_usd": null,
+            "label": "DBU-equivalent teaching adapter; use dated vendor list price for money"
+          }
+        },
+        "stages": [
+          {
+            "id": 1,
+            "name": "Parquet scan + filter",
+            "tasks": 286,
+            "workers": 2,
+            "slots": 4,
+            "duration_s": 101.067,
+            "spill_gb": 0.0,
+            "max_task_s": 2.111,
+            "p50_task_s": 1.401,
+            "p95_task_s": 1.774,
+            "max_partition_mb": 151.237,
+            "skewed_tasks": 0,
+            "notes": []
+          },
+          {
+            "id": 2,
+            "name": "SortMergeJoin + Exchange",
+            "tasks": 225,
+            "workers": 2,
+            "slots": 4,
+            "duration_s": 218.13,
+            "spill_gb": 0.0,
+            "max_task_s": 6.515,
+            "p50_task_s": 2.759,
+            "p95_task_s": 6.29,
+            "max_partition_mb": 209.823,
+            "skewed_tasks": 0,
+            "notes": [
+              "AQE split 1656 MB skewed partition into 26 ~64 MB tasks",
+              "Catalog statistics are intentionally unavailable in this exercise; no static auto-broadcast"
+            ]
+          },
+          {
+            "id": 3,
+            "name": "Exchange + HashAggregate(customer_id)",
+            "tasks": 225,
+            "workers": 2,
+            "slots": 4,
+            "duration_s": 195.287,
+            "spill_gb": 0.0,
+            "max_task_s": 5.815,
+            "p50_task_s": 2.477,
+            "p95_task_s": 5.615,
+            "max_partition_mb": 209.823,
+            "skewed_tasks": 0,
+            "notes": [
+              "AQE split 1656 MB skewed partition into 26 ~64 MB tasks"
+            ]
+          }
+        ]
+      },
+      "optimized": {
+        "duration_s": 401.686,
+        "core_hours": 0.5579,
+        "worker_core_hours": 0.4463,
+        "driver_core_hours": 0.1116,
+        "task_core_hours": 0.4414,
+        "cluster_utilization_pct": 98.9,
+        "memory_gb_hours": 1.1158,
+        "driver_memory_gb_hours": 0.2232,
+        "node_hours": 0.3347,
+        "worker_node_hours": 0.2232,
+        "shuffle_gb": 26.4,
+        "spill_gb": 0.0,
+        "plan_decision": {
+          "initial_join": "BroadcastHashJoin",
+          "final_join": "BroadcastHashJoin",
+          "reason": "explicit broadcast hint",
+          "join_shuffle_avoided": true
+        },
+        "cost": {
+          "sparklab": {
+            "scc": 1.9,
+            "eur_per_scc": 0.1,
+            "estimated_eur": 0.19,
+            "label": "SparkLab training price"
+          },
+          "fabric_like": {
+            "cu_hours": null,
+            "price_input_eur_per_cu_hour": null,
+            "estimated_eur": null,
+            "label": "Fabric-equivalent usage estimate; not an Azure invoice"
+          },
+          "databricks_like": {
+            "dbu_equivalent": null,
+            "price_input_usd_per_dbu": null,
+            "estimated_usd": null,
+            "label": "DBU-equivalent teaching adapter; use dated vendor list price for money"
+          }
+        },
+        "stages": [
+          {
+            "id": 1,
+            "name": "Parquet scan + filter",
+            "tasks": 286,
+            "workers": 2,
+            "slots": 4,
+            "duration_s": 101.067,
+            "spill_gb": 0.0,
+            "max_task_s": 2.111,
+            "p50_task_s": 1.401,
+            "p95_task_s": 1.774,
+            "max_partition_mb": 151.237,
+            "skewed_tasks": 0,
+            "notes": []
+          },
+          {
+            "id": 2,
+            "name": "BroadcastHashJoin",
+            "tasks": 286,
+            "workers": 2,
+            "slots": 4,
+            "duration_s": 105.332,
+            "spill_gb": 0.0,
+            "max_task_s": 2.205,
+            "p50_task_s": 1.461,
+            "p95_task_s": 1.852,
+            "max_partition_mb": 151.237,
+            "skewed_tasks": 0,
+            "notes": [
+              "Explicit broadcast build side: 6.4 MB; fact-side join shuffle avoided"
+            ]
+          },
+          {
+            "id": 3,
+            "name": "Exchange + HashAggregate(customer_id)",
+            "tasks": 225,
+            "workers": 2,
+            "slots": 4,
+            "duration_s": 195.287,
+            "spill_gb": 0.0,
+            "max_task_s": 5.815,
+            "p50_task_s": 2.477,
+            "p95_task_s": 5.615,
+            "max_partition_mb": 209.823,
+            "skewed_tasks": 0,
+            "notes": [
+              "AQE split 1656 MB skewed partition into 26 ~64 MB tasks"
+            ]
+          }
+        ]
+      },
+      "skew": {
+        "duration_s": 296.354,
+        "core_hours": 0.4116,
+        "worker_core_hours": 0.3293,
+        "driver_core_hours": 0.0823,
+        "task_core_hours": 0.3253,
+        "cluster_utilization_pct": 98.8,
+        "memory_gb_hours": 0.8232,
+        "driver_memory_gb_hours": 0.1646,
+        "node_hours": 0.247,
+        "worker_node_hours": 0.1646,
+        "shuffle_gb": 26.4,
+        "spill_gb": 0.0,
+        "plan_decision": {
+          "initial_join": null,
+          "final_join": null,
+          "reason": "aggregation-only skew exercise",
+          "join_shuffle_avoided": null,
+          "aqe_skew_split": true
+        },
+        "cost": {
+          "sparklab": {
+            "scc": 1.748,
+            "eur_per_scc": 0.1,
+            "estimated_eur": 0.175,
+            "label": "SparkLab training price"
+          },
+          "fabric_like": {
+            "cu_hours": null,
+            "price_input_eur_per_cu_hour": null,
+            "estimated_eur": null,
+            "label": "Fabric-equivalent usage estimate; not an Azure invoice"
+          },
+          "databricks_like": {
+            "dbu_equivalent": null,
+            "price_input_usd_per_dbu": null,
+            "estimated_usd": null,
+            "label": "DBU-equivalent teaching adapter; use dated vendor list price for money"
+          }
+        },
+        "stages": [
+          {
+            "id": 1,
+            "name": "Parquet scan + filter",
+            "tasks": 286,
+            "workers": 2,
+            "slots": 4,
+            "duration_s": 101.067,
+            "spill_gb": 0.0,
+            "max_task_s": 2.111,
+            "p50_task_s": 1.401,
+            "p95_task_s": 1.774,
+            "max_partition_mb": 151.237,
+            "skewed_tasks": 0,
+            "notes": []
+          },
+          {
+            "id": 2,
+            "name": "Exchange + HashAggregate(customer_id)",
+            "tasks": 225,
+            "workers": 2,
+            "slots": 4,
+            "duration_s": 195.287,
+            "spill_gb": 0.0,
+            "max_task_s": 5.815,
+            "p50_task_s": 2.477,
+            "p95_task_s": 5.615,
+            "max_partition_mb": 209.823,
+            "skewed_tasks": 0,
+            "notes": [
+              "AQE split 1656 MB skewed partition into 26 ~64 MB tasks",
+              "Known hot key: CORPORATE_ACCOUNT_01"
+            ]
+          }
+        ]
+      }
     }
   },
   "workspace": {

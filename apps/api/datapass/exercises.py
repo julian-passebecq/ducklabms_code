@@ -41,7 +41,8 @@ def _fixture_sql(rows, columns):
     def literal(value):
         if value is None: return 'NULL'
         if isinstance(value, bool): return 'TRUE' if value else 'FALSE'
-        if isinstance(value, (int, float)): return str(value)
+        if isinstance(value, float): return f'CAST({value!r} AS DOUBLE)'
+        if isinstance(value, int): return str(value)
         return "'" + str(value).replace("'", "''") + "'"
     def identifier(name):
         return '"' + name.replace('"', '""') + '"'
@@ -66,6 +67,8 @@ def grade(engine, request):
         columns = list(spec.data_context[0].columns) if spec.data_context else list(fixture.input_rows[0]) if fixture.input_rows else ['value']
         if spec.language in {'sql','sparklab'}:
             internal['_exercise_fixture_sql'] = _fixture_sql(fixture.input_rows, columns)
+            internal['_exercise_columns'] = columns
+            internal['_exercise_input_count'] = len(fixture.input_rows)
             if spec.language == 'sql':
                 try:
                     validate_sql(code, read_only=True)

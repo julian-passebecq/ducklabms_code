@@ -1,3 +1,4 @@
+import {SparkInspector} from './SparkInspector';
 import {Badge,Button} from '@fluentui/react-components';
 import {useState} from 'react';
 import type {Execution,ResultTable} from '../../../packages/contracts/src/index.ts';
@@ -12,8 +13,9 @@ export function ResultView({run,stale=false,historical=false}:{run?:Execution;st
  {run.error&&<pre className="error-output">{run.error.type}: {run.error.message}</pre>}
  {run.stdout&&<pre className="stdout-output">{run.stdout}</pre>}
  {run.result&&<DataTable result={run.result}/>}
+ {run.language==='sparklab'&&run.simulation&&<SparkInspector simulation={run.simulation}/>}
  {detail&&<div className="execution-details"><p><b>Execution:</b> {run.id}<br/><b>Session:</b> {run.session_generation}<br/><b>Source SHA-256:</b> {run.source_hash}</p>{run.compiled_sql&&<><h4>Executed SQL</h4><pre>{run.compiled_sql}</pre></>}{run.check&&<p>{run.check.message}</p>}
- {run.simulation&&<><h4>Virtual cluster model</h4><p>{run.simulation.truth??run.simulation.reason}</p>{run.simulation.metrics&&<><div className="metric-row"><div><b>{run.simulation.metrics.total_duration_s.toFixed(1)} s</b><span>Modeled duration</span></div><div><b>{run.simulation.metrics.shuffle_gb.toFixed(2)} GB</b><span>Modeled shuffle</span></div><div><b>{run.simulation.cost?.sparklab.scc.toFixed(3)}</b><span>Training credits</span></div></div><p>{run.simulation.physical_fixture_rows} physical fact rows. {run.simulation.virtual_fact_rows?.toLocaleString()} virtual fact rows. Vendor currency totals are not supplied.</p>{run.simulation.metrics.stages.map(s=><div className="stage-line" key={s.stage_id}><span>{s.name}</span><span>{s.task_count} modeled tasks &middot; {s.duration_s.toFixed(1)} s</span></div>)}</>}</>}
+
  </div>}
  </div>;
 }

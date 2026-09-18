@@ -1425,6 +1425,17 @@
               "submit"
             ],
             "title": "Mode"
+          },
+          "profile": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Profile",
+            "default": "generic_8x8"
+          },
+          "aqe": {
+            "type": "boolean",
+            "title": "Aqe",
+            "default": true
           }
         },
         "additionalProperties": false,

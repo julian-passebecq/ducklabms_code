@@ -19,9 +19,7 @@ from .catalog import Catalog, json_value, references
 from .content import ROOT, compile_dbt, get_case, topological_steps
 from services.sparklab.safe_parser import SafeSparkParser, SparkLabSyntaxError
 from services.sparklab.sparklab import SparkSession
-from services.sparklab.runtime import load_cluster_profiles, simulate_retail_job
-from services.sparklab.cost import price_job
-from services.sparklab.grader import grade_retail
+from services.sparklab.runtime import load_cluster_profiles
 
 SPARK_HOME = ROOT / 'services' / 'sparklab'
 
@@ -85,6 +83,7 @@ class Engine:
             ],
             'session_generation': self.generation,
             'distributed_spark': False,
+            'sparklab': __import__('services.sparklab.capabilities', fromlist=['SUPPORT']).SUPPORT,
         }
 
     def parser(self, notebook_id: str):
@@ -158,48 +157,64 @@ class Engine:
         return result, output.getvalue(), sorted(dependencies)
 
     def simulate(self, request: dict, parsed, result: dict):
-        pack_id = request.get('truth_pack')
-        if not pack_id:
-            return None
-        if pack_id != 'retail_broadcast_join_03':
-            raise ValueError('This root currently connects only the retail broadcast truth pack. Other uploaded packs are retained for migration.')
-        pack = json.loads((SPARK_HOME / 'exercises' / f'{pack_id}.json').read_text())
-        # Compare the full physical input fixture before attaching the virtual-scale scenario.
-        try:
-            from services.semantic.executor import _execute_sqlite
-            # Immutable shipped fixtures, not mutable workspace source tables.
-            expected_orders = _execute_sqlite('SELECT * FROM silver.orders ORDER BY order_id', 'retail', 200)[2]
-            expected_segments = _execute_sqlite('SELECT * FROM silver.dim_customer_segment ORDER BY segment_id', 'retail', 200)[2]
-            orders = self.catalog.query('SELECT * FROM silver.orders ORDER BY order_id')
-            segments = self.catalog.query('SELECT * FROM silver.dim_customer_segment ORDER BY segment_id')
-            input_match = (not orders['truncated'] and not segments['truncated'] and
-                           orders['rows'] == expected_orders and segments['rows'] == expected_segments)
-        except Exception:
-            input_match = False
-        if not input_match:
-            return {'status':'unavailable','reason':'The workspace does not match the bounded reference fixture; modeled cluster metrics were withheld.'}
+        from services.sparklab.physical import simulate_plan, credits, logical_plan
         profiles = load_cluster_profiles(str(SPARK_HOME / 'cluster_profiles.json'))
         profile_id = request.get('profile', 'generic_8x8')
         if profile_id not in profiles:
             raise ValueError('Unknown virtual cluster profile.')
         profile = profiles[profile_id]
-        broadcast = any(op.kind == 'join' and bool(op.detail.get('broadcast')) for op in parsed.dataframe.ops)
-        job = simulate_retail_job(pack, profile, request.get('aqe', True), broadcast=broadcast)
-        metrics = job.as_dict()
-        # The inherited confidence percentages were authored model inputs, not validation evidence.
-        metrics.pop('truth_confidence', None)
-        for stage in metrics['stages']:
-            stage['task_count'] = len(stage['tasks'])
-            stage['tasks'] = stage['tasks'][:12]
-            stage['task_preview_only'] = stage['task_count'] > 12
-        correct = not result['truncated'] and compare_rows(result['rows'], pack['fixture_truth']['rows'])
-        return {
-            'status':'modeled','truth':'scenario-grounded simulation; not real Spark or measured performance',
-            'physical_fixture_rows':12,'virtual_fact_rows':pack['statistics']['fact_rows'],
-            'profile_id':profile_id,'metrics':metrics,
-            'cost':price_job(job, profile),
-            'grade':grade_retail(request['code'],parsed.dataframe,job.as_dict(),pack,semantic_verified=correct),
-        }
+        aqe = request.get('aqe', profile.aqe_default)
+        statistics = {}
+        for node in logical_plan(parsed.dataframe):
+            if node['operation'] == 'scan':
+                name = node['source']
+                if name == 'input' and request.get('_exercise_fixture_sql'):
+                    count = request.get('_exercise_input_count', 0)
+                else:
+                    count = self.catalog.query(f'SELECT COUNT(*) AS n FROM {name}')['rows'][0]['n']
+                statistics[name] = {'rows':count, 'bytes':count*128}
+        pack_id = request.get('truth_pack')
+        pack = None
+        if pack_id:
+            if pack_id not in {'retail_broadcast_join_03','finance_account_window_03'}:
+                return {'status':'unavailable','reason':'No registered immutable truth pack.'}
+            pack = json.loads((SPARK_HOME / 'exercises' / f'{pack_id}.json').read_text())
+            from services.semantic.executor import _execute_sqlite
+            tables = (['silver.orders','silver.dim_customer_segment'] if pack_id.startswith('retail') else ['silver.transactions'])
+            for table in tables:
+                expected = _execute_sqlite(f'SELECT * FROM {table}', pack.get('case', 'retail'), 200)[2]
+                actual = self.catalog.query(f'SELECT * FROM {table}')
+                if actual['truncated'] or not compare_rows(actual['rows'], expected):
+                    return {'status':'unavailable','reason':'Immutable reference input changed; scenario metrics withheld.'}
+            if not set(statistics).issubset(tables):
+                return {'status':'unavailable','reason':'Submitted plan reads inputs outside this truth pack.'}
+            fact = tables[0]
+            if fact in statistics:
+                stats = pack['statistics']
+                statistics[fact] = {'rows':stats['fact_rows'], 'bytes':stats['fact_bytes_gb']*1073741824,
+                                    'partitions':stats['source_files'],
+                                    'hot_fraction':stats['largest_partition_mb']/(stats['fact_bytes_gb']*1024)}
+            if len(tables)>1 and tables[1] in statistics:
+                statistics[tables[1]].update(bytes=pack['statistics'].get('dimension_bytes_mb', 2)*1048576,
+                                             rows=pack['statistics'].get('dimension_rows',4),
+                                             catalog_statistics_available=pack['statistics'].get('catalog_statistics_available',True))
+        job, metrics, nodes = simulate_plan(parsed.dataframe, statistics, profile, aqe, result.get('total_rows'))
+        comparisons = []
+        for other in profiles.values():
+            for adaptive in (False, True):
+                variant, _, _ = simulate_plan(parsed.dataframe, statistics, other, adaptive)
+                comparisons.append({'profile_id':other.id,'aqe':adaptive,'duration_s':variant.total_duration_s,
+                                    'credits':credits(variant, other)['total'],
+                                    'duration_delta_s':round(variant.total_duration_s-job.total_duration_s,3),
+                                    'reason':'Same logical plan and input assumptions; virtual slots, throughput, startup and AQE task grouping differ.'})
+        return {'status':'modeled','schema_version':1, 'truth':'Local semantic result + simulated distributed execution',
+                'profile_id':profile_id, 'aqe':aqe, 'metrics':metrics, 'logical_plan':nodes,
+                'action':parsed.action, 'datapass_credits':credits(job, profile), 'comparisons':comparisons,
+                'assumptions':{'input_statistics':statistics, 'kind':'authored virtual scale' if pack else 'catalog row counts; assumed 128 bytes per row',
+                               'calibration':'No real Spark benchmark calibration',
+                               'intermediates':'Cardinality and bytes carried forward without selectivity estimates; serial operator-stage dispatch, not Spark codegen fusion; scan counts are real only outside virtual truth-pack scale',
+                               'cache':'Unavailable; cache/reuse not modeled'},
+                'semantic_match':(not result['truncated'] and compare_rows(result['rows'],pack['fixture_truth']['rows'])) if pack else None}
 
     def execute(self, request: dict):
         start = time.perf_counter()
@@ -225,7 +240,18 @@ class Engine:
             elif language == 'sparklab':
                 # A rejected cell cannot partially overwrite earlier Spark symbols.
                 candidate = deepcopy(self.parser(request['notebook_id']))
+                # Refresh schemas from the shared catalog, including saved notebook symbols.
+                tables = candidate.spark.profile.setdefault('tables', {})
+                for asset in self.catalog.listing():
+                    tables[asset['name']] = {'columns':self.catalog.query(f"SELECT * FROM {asset['name']} LIMIT 0")['columns']}
+                if request.get('_exercise_columns'):
+                    tables['input'] = {'columns':request['_exercise_columns']}
                 parsed = candidate.parse(request['code'])
+                if request.get('profile', 'generic_8x8') not in load_cluster_profiles(str(SPARK_HOME / 'cluster_profiles.json')):
+                    raise ValueError('Unknown virtual cluster profile.')
+                columns = parsed.dataframe.current_columns()
+                if columns is not None and len(columns) != len(set(columns)):
+                    raise ValueError('Duplicate result column names cannot be represented faithfully; select distinct aliases.')
                 compiled_sql = parsed.dataframe.sql
             elif language in {'python', 'polars'}:
                 result, run['stdout'], python_inputs = self._python(request)
@@ -244,8 +270,12 @@ class Engine:
                 run['compiled_sql'] = compiled_sql
             if parsed is not None:
                 self.parsers[request['notebook_id']] = candidate
-                run['training_plan'] = parsed.dataframe.explain_training()
-                run['simulation'] = self.simulate(request, parsed, result)
+                # Physical evidence failure cannot invalidate a successfully computed semantic result.
+                try:
+                    run['simulation'] = self.simulate(request, parsed, result)
+                except Exception as error:
+                    run['simulation'] = {'status':'unavailable','reason':str(error)}
+                run['training_plan'] = {'truth':'structured teaching plan', 'nodes':run['simulation'].get('logical_plan', [])}
             run.update(status='success', result=result)
             if request.get('check'):
                 run['check'] = self.check(request['check'])

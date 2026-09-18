@@ -17,3 +17,14 @@
 .exercise-context{padding:12px;border-bottom:1px solid #e1e4e8}
 .exercise-context pre,.lesson-pane pre{white-space:pre-wrap;overflow-wrap:anywhere}
 .practice-toolbar{flex-wrap:wrap}
+
+/* SparkLab shares the root runtime strip, result view and Fluent controls. */
+.runtime-strip { flex-wrap: wrap; }
+.spark-runtime-details { flex-basis: 100%; max-width: 100%; padding: 8px 0; }
+.spark-runtime-details summary { cursor: pointer; }
+.spark-runtime-details table, .spark-inspector table { border-collapse: collapse; width: 100%; }
+.spark-runtime-details td, .spark-runtime-details th, .spark-inspector td, .spark-inspector th { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+.spark-inspector { margin-top: 16px; padding-top: 12px; border-top: 1px solid #ddd; min-width: 0; }
+.spark-inspector [role=tablist] { display: flex; flex-wrap: wrap; }
+.spark-pane { padding: 12px 0; max-height: 560px; overflow: auto; }
+.spark-pane pre { white-space: pre-wrap; overflow-wrap: anywhere; }

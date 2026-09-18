@@ -1,3 +1,4 @@
+import {SparkInspector} from './SparkInspector';
 import {isExecutionFresh,requireModuleCompatibility} from '../../../packages/contracts/src/index.ts';
 import type {ReactNode} from 'react';
 import type {Asset,CaseStudy,Execution,ModuleManifest,RuntimeClient} from '../../../packages/contracts/src/index.ts';
@@ -20,10 +21,10 @@ const modulePanels:Record<string,ToolPanelId[]>={
  'data-factory':['brief','graph','catalog'], 'fabric-notebook':['brief','catalog'],
  warehouse:['brief','catalog'],dbt:['brief','graph','catalog'],airflow:['brief','graph'],
  'power-bi':['brief','report','catalog'],'databricks-notebook':['brief','catalog'],
- 'polars-notebook':['brief','catalog'],sparklab:['brief','catalog'],
+ 'polars-notebook':['brief','catalog'],sparklab:['brief','graph','catalog'],
 };
 export function buildRegistry(manifests:ModuleManifest[]):Map<string,ToolPlugin>{
- return new Map(manifests.map(manifest=>{requireModuleCompatibility(manifest);return [manifest.id,{manifest,description:manifest.status==='foundation'?'Shared foundation; specialist migration is bounded by the module contract.':'',panels:(modulePanels[manifest.id]??['brief']).map(id=>panels[id])}]}));
+ return new Map(manifests.map(manifest=>{requireModuleCompatibility(manifest);return [manifest.id,{manifest,description:manifest.status==='foundation'?'Shared foundation; specialist migration is bounded by the module contract.':'',panels:(modulePanels[manifest.id]??['brief']).map(id=>manifest.id==='sparklab'&&id==='graph'?{id,render:(context:ToolContext)=><SparkRunSurface context={context}/>} : panels[id])}]}));
 }
 export function renderToolPanel(registry:Map<string,ToolPlugin>,id:ToolPanelId,context:ToolContext):ReactNode {
  const registered=context.caseStudy.modules.flatMap(module=>registry.get(module)?.panels??[]).find(panel=>panel.id===id);
@@ -43,4 +44,9 @@ export function CatalogSurface({context,onInspect}:{context:ToolContext;onInspec
 export function ReportSurface({context}:{context:ToolContext}){
  const report=[...context.runs].reverse().find(r=>r.cell_id==='report'&&r.status==='success');
  return <div className="surface-page"><div className="section-eyebrow">POWER BI LEARNING / SQL-BACKED KPI</div><h1>Revenue overview</h1><p className="lead">The report consumes the Gold table. This foundation is not a DAX evaluation engine or a Power BI embedded report.</p>{report?.result?<>{!isExecutionFresh(report,context.assets)&&<p className="notice">Historical result: upstream data changed or provenance is unavailable. Rerun the KPI step.</p>}<div className="metric-row report-metrics">{Object.entries(report.result.rows[0]??{}).map(([key,value])=><div key={key}><span>{key.replaceAll('_',' ')}</span><b>{typeof value==='number'?value.toLocaleString():String(value)}</b></div>)}</div><DataTable result={report.result}/></>:<div className="empty-state"><h2>Run the KPI step to create this preview</h2><p>Do not substitute sample cards for uncomputed results.</p><Button onClick={()=>context.onSelectStep('report')}>Open KPI step</Button></div>}<h2>Next specialist boundary</h2><p>The uploaded Power BI Studio contains its own DAX, model and reporting lessons. Migrate those as a semantic-model module that reads root assets; do not recreate the data store or notebook engine.</p></div>;
+}
+
+function SparkRunSurface({context}:{context:ToolContext}) {
+ const run=[...context.runs].reverse().find(r=>r.language==='sparklab'&&r.simulation);
+ return <div className="surface-page"><h1>SparkLab run evidence</h1>{run?.simulation?<SparkInspector simulation={run.simulation}/>:<p>Run a SparkLab cell to inspect its plan and virtual stages.</p>}</div>;
 }

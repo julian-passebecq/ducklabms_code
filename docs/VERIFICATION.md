@@ -77,3 +77,8 @@ No blocking Core Pass 1 gate remains. Vite reports large chunks (including lazy 
 Real: local DuckDB/SQLite SQL, bounded SparkLab semantics over actual catalog rows, opted-in trusted CPython/Polars, measured local execution time, real DuckLake storage in its explicit mode. Simulated: virtual Spark workers/partitions/durations/shuffle/costs only for the supported immutable truth pack; these are not real clusters or invoices. Profile changes do not change physical results. Unsupported: full PySpark/Jupyter protocol, arbitrary SQL external I/O, full T-SQL/DAX/dbt/Airflow/ADF semantics, MotherDuck, multi-user service and hardened hostile-code isolation.
 
 Existing limits remain: bounded SQL parsing/lineage, no crash-atomic transaction across JSON metadata and database files, preview/publication limits, no streaming run progress, and trusted Python has the local user's privileges. Original specialist features remain unmigrated as documented in the source audit. Passing local gates does not turn Root 0.1.0 into v0.2.
+
+
+## SparkLab Runtime Pass 1 coding evidence — September 18, 2026
+
+This implementation pass ran only targeted runtime tests and one strict frontend typecheck. The initial focused tests exposed fixture numeric coercion; the affected cases passed after explicit DOUBLE fixture generation. Exact commands/results and residual limits are in `SPARKLAB_RUNTIME_PASS_1_HANDOFF.md`. New browser/build/regression/startup/DuckLake/PySpark-oracle verification is **DEFERRED TO EXTERNAL QA**; earlier release evidence above does not certify these changes.
