@@ -133,16 +133,26 @@ export function createExerciseNotebook(exercise:ExerciseDefinition):RootNotebook
  const browser:RootBlock={id:'exercise-browser',type:'markdown',title:'Problems and progress',role:'exercise-browser',exerciseId:exercise.id};
  const blocks=[problem,code,output,help,browser];
  const blockState={[sourceKey(code)]:exercise.starter_source,[sourceKey(problem)]:exercise.prompt,[sourceKey(help)]:exercise.explanation};
- const views=createImportedViews(blocks,new Map(blocks.map(b=>[b.id,String(blockState[sourceKey(b)]??'')])));
+ const genericViews=createImportedViews(blocks,new Map(blocks.map(b=>[b.id,String(blockState[sourceKey(b)]??'')]))).map(v=>({...v,blockIds:v.blockIds.filter(id=>id!==browser.id),layout:v.layout.filter(i=>i.i!==browser.id)}));
  const interview:NotebookView={id:'interview',label:'Interview',description:'Problem, source, output and guidance; geometry does not change execution order.',blockIds:[browser.id,problem.id,code.id,output.id,help.id],layout:interviewLayout()};
- return {schemaVersion:1,id:`exercise-${exercise.id}-${exercise.version}`,title:exercise.title,exercise:{id:exercise.id,version:exercise.version},blocks,views:[...views,interview].map(v=>({...v,defaultLayout:v.layout})),blockState,info:null,executions:{},executedSource:{}};
+ return {schemaVersion:1,id:`exercise-${exercise.id}-${exercise.version}`,title:exercise.title,exercise:{id:exercise.id,version:exercise.version},blocks,views:[...genericViews,interview].map(v=>({...v,defaultLayout:v.layout})),blockState,info:null,executions:{},executedSource:{}};
 }
 
-/** Upgrade Pass 1 documents without replacing source, notes or saved geometry. */
+/** Upgrade Pass 1/2 documents without replacing source, notes or saved geometry. */
 export function ensureExerciseBrowser(n:RootNotebook):RootNotebook {
- if(!n.exercise||n.blocks.some(b=>b.role==='exercise-browser'))return n;
- const block:RootBlock={id:'exercise-browser',type:'markdown',title:'Problems and progress',role:'exercise-browser',exerciseId:n.exercise.id};
- return {...n,blocks:[block,...n.blocks],views:n.views.map(v=>{const y=Math.max(0,...v.layout.map(i=>i.y+i.h));const item={i:block.id,x:0,y,w:3,h:22,minW:2,minH:5};return {...v,blockIds:[block.id,...v.blockIds],layout:[...v.layout,item],defaultLayout:v.id==='interview'?[...interviewLayout(),...(v.defaultLayout??v.layout).filter(i=>!['problem','answer','answer-output','guidance'].includes(i.i))]:[...(v.defaultLayout??v.layout),item]}})};
+ if(!n.exercise)return n;
+ const existing=n.blocks.find(b=>b.role==='exercise-browser');
+ const block:RootBlock=existing??{id:'exercise-browser',type:'markdown',title:'Problems and progress',role:'exercise-browser',exerciseId:n.exercise.id};
+ const blocks=existing?n.blocks:[block,...n.blocks];
+ const views=n.views.map(v=>{
+  const withoutBrowser={...v,blockIds:v.blockIds.filter(id=>id!==block.id),layout:v.layout.filter(i=>i.i!==block.id),collapsedIds:v.collapsedIds?.filter(id=>id!==block.id),defaultLayout:v.defaultLayout?.filter(i=>i.i!==block.id)};
+  if(v.id!=='interview')return withoutBrowser;
+  const hasBrowser=v.blockIds.includes(block.id);
+  const y=Math.max(0,...v.layout.map(i=>i.y+i.h));
+  const item={i:block.id,x:0,y,w:3,h:22,minW:2,minH:5};
+  return {...v,blockIds:hasBrowser?v.blockIds:[block.id,...v.blockIds],layout:hasBrowser?v.layout:[...v.layout,item],collapsedIds:v.collapsedIds,defaultLayout:[...interviewLayout(),...(v.defaultLayout??v.layout).filter(i=>!['exercise-browser','problem','answer','answer-output','guidance'].includes(i.i))]};
+ });
+ return {...n,blocks,views};
 }
 
 export function clearOutputs(n:RootNotebook,ids:string[]):RootNotebook {
