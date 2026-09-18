@@ -25,8 +25,13 @@ export interface ExerciseDefinition {
  hints:string[];solution:{available:boolean;reveal:'explicit'};explanation:string;follow_ups:string[];
  canonical_placement:{domain:string;topic:string};related_associations:string[];
  recommendation?:{rank:number;reason:string};validator_version:string;
- validation:{kind:'rows';ordered:false;duplicate_sensitive:true;relative_tolerance:number;absolute_tolerance:number};
+ validation:{kind:'rows';ordered:boolean;duplicate_sensitive:boolean;relative_tolerance:number;absolute_tolerance:number;required_columns?:string[];exact_schema?:string[];forbidden_extra_columns?:boolean;row_count?:number;null_semantics?:'equal'|'forbidden';aggregates?:Record<string,'sum'|'count'|'min'|'max'>;source_contract?:'python-function-solve'};
+ pack?:{id:string;version:string};runtime_requirements?:string[];provenance?:Record<string,string>;constraints?:Record<string,string>;
+ data_context?:Array<{name:string;columns:Record<string,string>;sample_rows:Record<string,unknown>[];catalog_ref?:string}>;
+ output_schema?:Record<string,string>;context_refs?:string[];truth?:TruthKind;
 }
+export interface ExerciseProgress {exercise_id:string;version:string;attempt_count:number;solved:boolean;latest_result:'passed'|'failed'|'error'|null;last_attempted:string|null;best_status:'passed'|'failed'|'error'|null;review:boolean}
+export interface PracticeProgress {exercises:Record<string,ExerciseProgress>;topics:Record<string,{total:number;solved:number}>;difficulty:Record<string,{total:number;solved:number}>}
 export interface PracticeReview {review:boolean;confidence:'low'|'medium'|'high';difficulty:'easy'|'medium'|'hard'}
 export interface ExerciseRequest {exercise_id:string;exercise_version:string;notebook_id:string;cell_id:string;code:string;language:KernelId;source_revision:number;mode:'run'|'submit'}
 export interface ExerciseCheck {id:string;visibility:'visible'|'hidden'|'edge';passed:boolean;status:'passed'|'failed';execution_id:string;execution_status:string;elapsed_ms:number;message:string;input_versions:Record<string,string|null>;actual?:Record<string,unknown>[];expected?:Record<string,unknown>[]}

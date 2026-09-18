@@ -39,10 +39,24 @@ class Recommendation(Contract):
 
 class RowValidation(Contract):
     kind: Literal['rows'] = 'rows'
-    ordered: Literal[False] = False
-    duplicate_sensitive: Literal[True] = True
-    relative_tolerance: float = 1e-9
-    absolute_tolerance: float = 1e-8
+    ordered: bool = False
+    duplicate_sensitive: bool = True
+    relative_tolerance: float = Field(default=1e-9, ge=0, allow_inf_nan=False)
+    absolute_tolerance: float = Field(default=1e-8, ge=0, allow_inf_nan=False)
+    required_columns: list[str] = Field(default_factory=list)
+    exact_schema: list[str] | None = None
+    forbidden_extra_columns: bool = True
+    row_count: int | None = Field(default=None, ge=0)
+    null_semantics: Literal['equal', 'forbidden'] = 'equal'
+    aggregates: dict[str, Literal['sum','count','min','max']] = Field(default_factory=dict)
+    source_contract: Literal['python-function-solve'] | None = None
+
+
+class DataContext(Contract):
+    name: str
+    columns: dict[str, str]
+    sample_rows: list[dict[str, Any]] = Field(default_factory=list)
+    catalog_ref: str | None = None
 
 
 class ExerciseDefinition(Contract):
@@ -72,6 +86,14 @@ class ExerciseDefinition(Contract):
     recommendation: Recommendation | None = None
     validator_version: str
     validation: RowValidation = Field(default_factory=RowValidation)
+    pack: VersionRef | None = None
+    runtime_requirements: list[str] = Field(default_factory=list)
+    provenance: dict[str, str] = Field(default_factory=dict)
+    constraints: dict[str, str] = Field(default_factory=dict)
+    data_context: list[DataContext] = Field(default_factory=list)
+    output_schema: dict[str, str] = Field(default_factory=dict)
+    context_refs: list[str] = Field(default_factory=list)
+    truth: Literal['real','semantic-emulation','simulated','unsupported'] = 'real'
 
 
 class RuntimeIdentity(Contract):

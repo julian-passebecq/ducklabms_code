@@ -76,9 +76,13 @@ class Documents:
             exercise = notebook.get('exercise')
             if isinstance(exercise, dict) and isinstance(exercise.get('id'), str):
                 from .exercises import definition
-                spec = definition(exercise['id'])
-                scope = spec['language']+'/'+spec['canonical_placement']['topic']
-                doc.setdefault('practice_resume', {})[scope] = spec['id']
+                try:
+                    spec = definition(exercise['id'])
+                except KeyError:
+                    spec = None  # Disabled/uninstalled packs must not prevent saving a draft.
+                if spec:
+                    scope = spec['language']+'/'+spec['canonical_placement']['topic']
+                    doc.setdefault('practice_resume', {})[scope] = spec['id']
             doc['revision'] += 1
             doc['updated_at'] = datetime.now(timezone.utc).isoformat()
             return self._write(doc)
@@ -114,6 +118,34 @@ class Documents:
             doc['revision'] += 1
             doc['updated_at'] = datetime.now(timezone.utc).isoformat()
             return self._write(doc)
+
+    def practice_progress(self, id: str):
+        """Full durable attempt aggregation, independent of the 200-row history page."""
+        from .exercises import definitions
+        with self.lock:
+            workspace = self.get(id)
+            specs = definitions()
+            progress = {s['id']:dict(exercise_id=s['id'],version=s['version'],attempt_count=0,
+                        solved=False,latest_result=None,last_attempted=None,best_status=None,
+                        review=workspace.get('practice_review',{}).get(s['id'],{}).get('review',False)) for s in specs}
+            rank = {'error':0,'failed':1,'passed':2}
+            for path in (self.folder(id)/'attempts').glob('*.json'):
+                attempt = json.loads(path.read_text())
+                item = progress.get(attempt['exercise_id'])
+                if item is None or item['version'] != attempt['exercise_version']: continue
+                item['attempt_count'] += 1
+                item['solved'] |= attempt['status']=='passed'
+                if item['last_attempted'] is None or attempt['created_at'] > item['last_attempted']:
+                    item['last_attempted'],item['latest_result'] = attempt['created_at'],attempt['status']
+                if rank[attempt['status']] > rank.get(item['best_status'],-1): item['best_status']=attempt['status']
+            def grouped(key):
+                groups = {}
+                for spec in specs:
+                    for name in spec[key] if isinstance(spec[key],list) else [spec[key]]:
+                        group = groups.setdefault(name,dict(total=0,solved=0))
+                        group['total']+=1;group['solved']+=int(progress[spec['id']]['solved'])
+                return groups
+            return dict(exercises=progress,topics=grouped('topics'),difficulty=grouped('difficulty'))
 
     def record(self, id: str, event: dict, step_id: str | None):
         with self.lock:

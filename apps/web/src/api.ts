@@ -1,4 +1,4 @@
-import type {Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace,ExerciseDefinition,ExerciseRequest,ExerciseResult,ExerciseAttempt,PracticeReview} from '../../../packages/contracts/src/index.ts';
+import type {Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace,ExerciseDefinition,ExerciseRequest,ExerciseResult,ExerciseAttempt,PracticeReview,PracticeProgress} from '../../../packages/contracts/src/index.ts';
 import type {RootNotebook} from './notebook';
 
 const STORAGE='datapass-local-token';
@@ -17,6 +17,7 @@ export class ApiClient implements RuntimeClient {
   return data as T;
  }
  cases=()=>this.request<CaseStudy[]>('/cases');
+ progress=(id:string)=>this.request<PracticeProgress>(`/workspaces/${id}/practice/progress`);
  exercises=()=>this.request<ExerciseDefinition[]>('/exercises');
  solution=(id:string)=>this.request<{source:string;exercise_version:string}>(`/exercises/${encodeURIComponent(id)}/solution`,{method:'POST'});
  attempts=(id:string)=>this.request<ExerciseAttempt[]>(`/workspaces/${id}/attempts`);

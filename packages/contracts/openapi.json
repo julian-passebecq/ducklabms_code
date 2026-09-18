@@ -59,6 +59,59 @@
         }
       }
     },
+    "/api/exercise-packs": {
+      "get": {
+        "summary": "List Exercise Packs",
+        "operationId": "list_exercise_packs_api_exercise_packs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workspaces/{id}/practice/progress": {
+      "get": {
+        "summary": "Practice Progress",
+        "operationId": "practice_progress_api_workspaces__id__practice_progress_get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/exercises/{exercise_id}/solution": {
       "post": {
         "summary": "Reveal Solution",
@@ -691,6 +744,47 @@
         "type": "object",
         "title": "CreateWorkspace"
       },
+      "DataContext": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "columns": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Columns"
+          },
+          "sample_rows": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Sample Rows"
+          },
+          "catalog_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Ref"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "columns"
+        ],
+        "title": "DataContext"
+      },
       "ExecuteCell": {
         "properties": {
           "notebook_id": {
@@ -1181,6 +1275,69 @@
           },
           "validation": {
             "$ref": "#/components/schemas/RowValidation"
+          },
+          "pack": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VersionRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "runtime_requirements": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Runtime Requirements"
+          },
+          "provenance": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Provenance"
+          },
+          "constraints": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Constraints"
+          },
+          "data_context": {
+            "items": {
+              "$ref": "#/components/schemas/DataContext"
+            },
+            "type": "array",
+            "title": "Data Context"
+          },
+          "output_schema": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Output Schema"
+          },
+          "context_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Context Refs"
+          },
+          "truth": {
+            "type": "string",
+            "enum": [
+              "real",
+              "semantic-emulation",
+              "simulated",
+              "unsupported"
+            ],
+            "title": "Truth",
+            "default": "real"
           }
         },
         "additionalProperties": false,
@@ -1466,25 +1623,97 @@
           },
           "ordered": {
             "type": "boolean",
-            "const": false,
             "title": "Ordered",
             "default": false
           },
           "duplicate_sensitive": {
             "type": "boolean",
-            "const": true,
             "title": "Duplicate Sensitive",
             "default": true
           },
           "relative_tolerance": {
             "type": "number",
+            "minimum": 0.0,
             "title": "Relative Tolerance",
             "default": 1e-09
           },
           "absolute_tolerance": {
             "type": "number",
+            "minimum": 0.0,
             "title": "Absolute Tolerance",
             "default": 1e-08
+          },
+          "required_columns": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Required Columns"
+          },
+          "exact_schema": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exact Schema"
+          },
+          "forbidden_extra_columns": {
+            "type": "boolean",
+            "title": "Forbidden Extra Columns",
+            "default": true
+          },
+          "row_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Row Count"
+          },
+          "null_semantics": {
+            "type": "string",
+            "enum": [
+              "equal",
+              "forbidden"
+            ],
+            "title": "Null Semantics",
+            "default": "equal"
+          },
+          "aggregates": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "sum",
+                "count",
+                "min",
+                "max"
+              ]
+            },
+            "type": "object",
+            "title": "Aggregates"
+          },
+          "source_contract": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "python-function-solve"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Contract"
           }
         },
         "additionalProperties": false,

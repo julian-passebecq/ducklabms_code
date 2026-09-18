@@ -155,6 +155,14 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
     def list_exercises():
         return exercises.definitions()
 
+    @app.get('/api/exercise-packs')
+    def list_exercise_packs():
+        return exercises.PACKS.discovery()
+
+    @app.get('/api/workspaces/{id}/practice/progress')
+    def practice_progress(id: str):
+        return docs.practice_progress(id)
+
     @app.post('/api/exercises/{exercise_id}/solution')
     def reveal_solution(exercise_id: str):
         return exercises.solution(exercise_id)

@@ -30,3 +30,9 @@ Root JSON exports include layout geometry. ipynb export carries the original Mos
 The named Interview view uses the same Mosaic blocks and semantic Notebook order. Root JSON adds exercise/starter identity, cleared-output markers, source-verified checkpoints and skin preferences. `hydrateServerEvidence` verifies source against server hashes. Reset/clear prevents old evidence from reappearing; `recordExecution` captures submitted source for late results.
 
 Shared operations include `createExerciseNotebook`, `resetToStarter`, `resetExercise`, `clearOutputs`, `removeBlock`, and `resetLayout`. View-only hide leaves canonical order unchanged; document deletion groups code/output references. One-operation undo is invalidated by later content edits. Full practice/session fidelity uses root JSON; ipynb retains its interchange role. See `NOTEBOOK_INTERVIEW_PASS_1_HANDOFF.md` for scope, narrow evidence and checks **DEFERRED TO EXTERNAL QA**.
+
+## Notebook + Interview Practice Pass 2
+
+Interview adds a shared browser block and three-zone preset. ensureExerciseBrowser upgrades saved documents without replacing source or custom geometry; Reset layout explicitly applies the new preset. Root JSON persists solutionRevealed as a visibility preference; reference source remains server-owned. Python display(value, columns=...) can preserve an empty output schema; Polars column names survive empty results.
+
+Versioned packs provide public definitions and private fixtures. SQL/Python/Polars/SparkLab grading uses the shared Engine and ExerciseAttempt store. See EXERCISE_PACKS.md and NOTEBOOK_INTERVIEW_PASS_2_HANDOFF.md for boundaries and deferred QA.

@@ -61,3 +61,8 @@ No independent application, notebook format, catalog, database abstraction, prov
 ## Notebook + Interview Practice Pass 1
 
 Reused Mosaic view creation, scoped removal/grouping and layout reset helpers. Extended the shared notebook wrapper, existing Monaco adapter, RuntimeClient, worker and Documents store. Applied CodeDELeet audit concepts (canonical versus related placement; resume versus recommendation; scoped practice state; durable draft versus cache; safe candidate import) without importing its shell, browser store, editor stack or runtime. The two SQL exercises are internal demos; no CodeDELeet corpus is claimed as migrated. See NOTEBOOK_INTERVIEW_PASS_1_HANDOFF.md for implementation and deferred QA.
+
+
+## Notebook / Interview Pass 2 migration ledger
+
+Shared Mosaic now hosts browser/progress, editor/results and context/guidance/history zones. Existing editor, catalog and execution ownership is retained. The bounded CodeDELeet adapter emits disabled packs and explicit migration reports; no actual corpus was found or migrated. Five internal-demo exercises cover SQL/Python/Polars/SparkLab. See NOTEBOOK_INTERVIEW_PASS_2_HANDOFF.md for scope and verification DEFERRED TO EXTERNAL QA.

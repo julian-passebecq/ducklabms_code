@@ -7,3 +7,13 @@
 @media(max-width:700px){.explorer-toggle{display:inline-flex!important}.explorer{display:none}.explorer.explorer-open{display:flex;position:absolute;z-index:10;left:53px;top:48px;bottom:0;width:246px;box-shadow:4px 0 16px #0002}.app-header{padding:0 12px;gap:8px}.header-right{gap:8px}.header-right>.fui-Badge{display:none}.layout-bar [role=tablist]{width:100%}.runtime-strip>div{flex-wrap:wrap}.workspace-heading{flex-wrap:wrap}.breadcrumb{height:auto;min-height:37px;flex-wrap:wrap;padding:8px 12px;gap:6px}.status-bar{gap:8px;flex-wrap:wrap;height:auto;min-height:26px}}
 
 .practice-filters,.practice-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 16px}.practice-toolbar{border-bottom:1px solid #e1e7eb;background:#f7faf9}.practice-filters>div{min-width:140px}.interview-browser{overflow:auto}.exercise-evidence{padding:12px 16px;border-top:1px solid #ddd}.exercise-evidence article{padding:12px 0;border-top:1px solid #ddd}.block-actions{flex-wrap:wrap;justify-content:flex-end}.block-header{flex-wrap:wrap;height:auto;min-height:38px}.block-body{overflow:auto}.add-cell{flex-wrap:wrap}.skin-fabric .block-header{background:#e9f5ef}.skin-databricks .block-header{background:#fff0e9}.skin-neutral .block-header{background:#f7f8fa}.lesson-pane details{margin:12px 0}.lesson-pane h3{margin-top:14px}
+.compact-browser.surface-page{padding:8px;min-width:0}
+.compact-browser h1{font-size:18px}
+.compact-browser .practice-filters,.compact-browser .case-grid{display:flex;flex-direction:column;gap:10px}
+.compact-browser .case-card{padding:12px;min-width:0}
+.compact-browser .case-card h2{font-size:15px}
+.compact-browser .case-card p,.compact-browser>p{font-size:12px}
+.compact-browser small{display:block}
+.exercise-context{padding:12px;border-bottom:1px solid #e1e4e8}
+.exercise-context pre,.lesson-pane pre{white-space:pre-wrap;overflow-wrap:anywhere}
+.practice-toolbar{flex-wrap:wrap}

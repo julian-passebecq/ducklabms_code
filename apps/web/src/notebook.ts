@@ -6,8 +6,8 @@ import { buildIpynbDocument } from '../../../packages/notebook-core/src/v2/ipynb
 import { parseProjectSnapshot } from '../../../packages/notebook-core/src/v2/projectExport.ts';
 import {projectRemovalIds,resetViewLayoutGeometry} from '../../../packages/notebook-core/src/v2/model.ts';
 
-export interface RootBlock extends WorkbenchPanel {kernel?:KernelId;stepId?:string;outputAsset?:string|null;role?:'code'|'help'|'result'|'note'|'problem'|'exercise-help';readOnly?:boolean;starterSource?:string;exerciseId?:string}
-export interface RootNotebook {schemaVersion:1;id:string;title:string;blocks:RootBlock[];views:NotebookView[];blockState:Record<string,unknown>;info:ImportedNotebookInfo|null;executions:Record<string,Execution>;executedSource:Record<string,string>;practiceLayouts?:Record<string,NotebookView['layout']>;exercise?:{id:string;version:string};revealedHints?:number;skin?:'neutral'|'fabric'|'databricks';outputCheckpoints?:Record<string,string>;clearedOutputs?:string[]}
+export interface RootBlock extends WorkbenchPanel {kernel?:KernelId;stepId?:string;outputAsset?:string|null;role?:'code'|'help'|'result'|'note'|'problem'|'exercise-help'|'exercise-browser';readOnly?:boolean;starterSource?:string;exerciseId?:string}
+export interface RootNotebook {schemaVersion:1;id:string;title:string;blocks:RootBlock[];views:NotebookView[];blockState:Record<string,unknown>;info:ImportedNotebookInfo|null;executions:Record<string,Execution>;executedSource:Record<string,string>;practiceLayouts?:Record<string,NotebookView['layout']>;exercise?:{id:string;version:string};revealedHints?:number;solutionRevealed?:boolean;skin?:'neutral'|'fabric'|'databricks';outputCheckpoints?:Record<string,string>;clearedOutputs?:string[]}
 const codeTypes=new Set(['sql','python','polars']);
 export const isRunnable=(b:RootBlock)=>codeTypes.has(b.type)&&!b.readOnly;
 export const sourceKey=(b:RootBlock)=>`mosaic:v2:${b.type==='markdown'?'markdown':'code'}:${b.id}`;
@@ -86,7 +86,7 @@ export function restoreNotebook(value:unknown):RootNotebook {
  const normalized=parseProjectSnapshot(JSON.stringify({format:'mosaic-v2-notebook-project',version:'2.1.7',currentViewId:'notebook',blocks:doc.blocks,views:[...doc.views,...practiceViews],datasets:[],notebookInfo:doc.info,result:{columns:[],rows:[]},blockState:doc.blockState}));
  const byId=new Map(doc.blocks.map(b=>[b.id,b]));
  const blocks:RootBlock[]=normalized.blocks.map(b=>{const old=byId.get(b.id);return {...b,kernel:old?.kernel&&['sql','sparklab','python','polars','dbt'].includes(old.kernel)?old.kernel:undefined,stepId:typeof old?.stepId==='string'?old.stepId:undefined,outputAsset:typeof old?.outputAsset==='string'?old.outputAsset:null,role:old?.role,readOnly:!!old?.readOnly,starterSource:typeof old?.starterSource==='string'?old.starterSource:undefined,exerciseId:typeof old?.exerciseId==='string'?old.exerciseId:undefined}});
- return {schemaVersion:1,id:typeof doc.id==='string'&&/^[A-Za-z0-9_-]{1,100}$/.test(doc.id)?doc.id:'case-notebook',title:String(doc.title??'Notebook'),blocks,views:normalized.views.filter(v=>!v.id.startsWith('saved-practice-')),practiceLayouts:Object.fromEntries(normalized.views.filter(v=>v.id.startsWith('saved-practice-')).map(v=>[v.id.slice(15),v.layout])),blockState:normalized.blockState,info:normalized.notebookInfo,executions:{},executedSource:{},exercise:doc.exercise&&typeof doc.exercise.id==='string'&&typeof doc.exercise.version==='string'?doc.exercise:undefined,revealedHints:Number.isInteger(doc.revealedHints)?Math.max(0,Math.min(100,doc.revealedHints!)):0,skin:['neutral','fabric','databricks'].includes(doc.skin??'')?doc.skin:'neutral',outputCheckpoints:Object.fromEntries(Object.entries(doc.outputCheckpoints??{}).filter(([id,run])=>byId.has(id)&&typeof run==='string')),clearedOutputs:Array.isArray(doc.clearedOutputs)?doc.clearedOutputs.filter(id=>typeof id==='string'):[]};
+ return {schemaVersion:1,id:typeof doc.id==='string'&&/^[A-Za-z0-9_-]{1,100}$/.test(doc.id)?doc.id:'case-notebook',title:String(doc.title??'Notebook'),blocks,views:normalized.views.filter(v=>!v.id.startsWith('saved-practice-')),practiceLayouts:Object.fromEntries(normalized.views.filter(v=>v.id.startsWith('saved-practice-')).map(v=>[v.id.slice(15),v.layout])),blockState:normalized.blockState,info:normalized.notebookInfo,executions:{},executedSource:{},exercise:doc.exercise&&typeof doc.exercise.id==='string'&&typeof doc.exercise.version==='string'?doc.exercise:undefined,solutionRevealed:doc.solutionRevealed===true,revealedHints:Number.isInteger(doc.revealedHints)?Math.max(0,Math.min(100,doc.revealedHints!)):0,skin:['neutral','fabric','databricks'].includes(doc.skin??'')?doc.skin:'neutral',outputCheckpoints:Object.fromEntries(Object.entries(doc.outputCheckpoints??{}).filter(([id,run])=>byId.has(id)&&typeof run==='string')),clearedOutputs:Array.isArray(doc.clearedOutputs)?doc.clearedOutputs.filter(id=>typeof id==='string'):[]};
 }
 
 export function addCell(n:RootNotebook,kernel:KernelId|'markdown'):RootNotebook {
@@ -123,16 +123,26 @@ export async function hydrateServerEvidence(n:RootNotebook,runs:Execution[]):Pro
  return {...next,executedSource};
 }
 
+function interviewLayout():NotebookView['layout'] {return [{i:'exercise-browser',x:0,y:0,w:3,h:26,minW:2,minH:5},{i:'problem',x:3,y:0,w:6,h:8,minW:3,minH:4},{i:'answer',x:3,y:8,w:6,h:12,minW:4,minH:6},{i:'answer-output',x:3,y:20,w:6,h:10,minW:4,minH:5},{i:'guidance',x:9,y:0,w:3,h:30,minW:2,minH:5}]}
+
 export function createExerciseNotebook(exercise:ExerciseDefinition):RootNotebook {
- const code:RootBlock={id:'answer',type:'sql',kernel:exercise.language,title:'Your answer',role:'code',exerciseId:exercise.id,starterSource:exercise.starter_source,notebook:{source:'ipynb',cellId:'answer',cellType:'code',originalIndex:0}};
+ const code:RootBlock={id:'answer',type:exercise.language==='sql'?'sql':exercise.language==='polars'?'polars':'python',kernel:exercise.language,title:'Your answer',role:'code',exerciseId:exercise.id,starterSource:exercise.starter_source,notebook:{source:'ipynb',cellId:'answer',cellType:'code',originalIndex:0}};
  const problem:RootBlock={id:'problem',type:'markdown',title:exercise.title,role:'problem',exerciseId:exercise.id};
  const help:RootBlock={id:'guidance',type:'markdown',title:'Hints, explanation and reflection',role:'exercise-help',exerciseId:exercise.id};
  const output:RootBlock={id:'answer-output',type:'notebook-output',title:'Results and checks',role:'result',exerciseId:exercise.id,notebook:{source:'ipynb',cellId:'answer-output',cellType:'output',parentCellId:'answer',originalIndex:0}};
- const blocks=[problem,code,output,help];
+ const browser:RootBlock={id:'exercise-browser',type:'markdown',title:'Problems and progress',role:'exercise-browser',exerciseId:exercise.id};
+ const blocks=[problem,code,output,help,browser];
  const blockState={[sourceKey(code)]:exercise.starter_source,[sourceKey(problem)]:exercise.prompt,[sourceKey(help)]:exercise.explanation};
  const views=createImportedViews(blocks,new Map(blocks.map(b=>[b.id,String(blockState[sourceKey(b)]??'')])));
- const interview:NotebookView={id:'interview',label:'Interview',description:'Problem, source, output and guidance; geometry does not change execution order.',blockIds:blocks.map(b=>b.id),layout:[{i:'problem',x:0,y:0,w:3,h:22,minW:2,minH:5},{i:'answer',x:3,y:0,w:6,h:12,minW:4,minH:6},{i:'answer-output',x:3,y:12,w:6,h:10,minW:4,minH:5},{i:'guidance',x:9,y:0,w:3,h:22,minW:2,minH:5}]};
+ const interview:NotebookView={id:'interview',label:'Interview',description:'Problem, source, output and guidance; geometry does not change execution order.',blockIds:[browser.id,problem.id,code.id,output.id,help.id],layout:interviewLayout()};
  return {schemaVersion:1,id:`exercise-${exercise.id}-${exercise.version}`,title:exercise.title,exercise:{id:exercise.id,version:exercise.version},blocks,views:[...views,interview].map(v=>({...v,defaultLayout:v.layout})),blockState,info:null,executions:{},executedSource:{}};
+}
+
+/** Upgrade Pass 1 documents without replacing source, notes or saved geometry. */
+export function ensureExerciseBrowser(n:RootNotebook):RootNotebook {
+ if(!n.exercise||n.blocks.some(b=>b.role==='exercise-browser'))return n;
+ const block:RootBlock={id:'exercise-browser',type:'markdown',title:'Problems and progress',role:'exercise-browser',exerciseId:n.exercise.id};
+ return {...n,blocks:[block,...n.blocks],views:n.views.map(v=>{const y=Math.max(0,...v.layout.map(i=>i.y+i.h));const item={i:block.id,x:0,y,w:3,h:22,minW:2,minH:5};return {...v,blockIds:[block.id,...v.blockIds],layout:[...v.layout,item],defaultLayout:v.id==='interview'?[...interviewLayout(),...(v.defaultLayout??v.layout).filter(i=>!['problem','answer','answer-output','guidance'].includes(i.i))]:[...(v.defaultLayout??v.layout),item]}})};
 }
 
 export function clearOutputs(n:RootNotebook,ids:string[]):RootNotebook {
@@ -157,7 +167,7 @@ export function resetExercise(n:RootNotebook,exercise:ExerciseDefinition):RootNo
  let next=resetToStarter(n,ids,Object.fromEntries(ids.map(id=>[id,exercise.starter_source])));
  for(const block of missing){next={...next,blocks:[...next.blocks,block],blockState:{...next.blockState,[sourceKey(block)]:template.blockState[sourceKey(block)]??''}}}
  next={...next,views:next.views.map(view=>{const baseline=template.views.find(v=>v.id===view.id);const additions=missing.filter(b=>baseline?.blockIds.includes(b.id));let bottom=Math.max(0,...view.layout.map(i=>i.y+i.h));return {...view,blockIds:[...view.blockIds,...additions.map(b=>b.id)],layout:[...view.layout,...additions.map(b=>({i:b.id,x:0,y:(bottom+=10)-10,w:12,h:10}))]}})};
- return {...next,revealedHints:0};
+ return {...next,revealedHints:0,solutionRevealed:false};
 }
 
 export function removeBlock(n:RootNotebook,id:string,scope:'view'|'document',viewId:string):RootNotebook {
