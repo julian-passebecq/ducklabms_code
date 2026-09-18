@@ -1,0 +1,35 @@
+Notebook + Interview Practice Pass 1 — essential local checks
+
+COMMAND: npm run typecheck
+> datapass-studio-root@0.1.0 typecheck
+> npm run typecheck --workspace @datapass/web
+> @datapass/web@0.1.0 typecheck
+> tsc --noEmit
+Exit code: 0. No diagnostics. Initial and final typed integration checks passed.
+
+COMMAND: .venv/Scripts/python.exe -m pytest -q tests/test_interview.py
+.....                                                                    [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:45
+DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+5 passed, 1 warning in 2.54s
+Exit code: 0
+
+COMMAND: C:/Users/julia/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe --experimental-strip-types --test tests/interview.test.mts
+✔ interview shares source and semantic order; geometry survives restore and view reset (6.4292ms)
+✔ scoped reset and clear preserve unrelated notes, geometry and source (0.6131ms)
+✔ hide is view-only, reset restores hidden references, deletion groups output (0.9201ms)
+✔ server hashes hydrate current source, edits stay historical, reset cannot resurrect output (8.6885ms)
+✔ failed import leaves current notebook intact; unknown metadata and attachments roundtrip (4.2187ms)
+tests 5; suites 0; pass 5; fail 0; cancelled 0; skipped 0; todo 0
+duration_ms 190.9146
+Exit code: 0
+
+COMMAND: C:/Users/julia/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe --experimental-strip-types --test --test-name-pattern="exercise reset recovers" tests/interview.test.mts
+✔ exercise reset recovers deleted answer and preserves personal notes (2.9261ms)
+tests 1; suites 0; pass 1; fail 0; cancelled 0; skipped 0; todo 0
+duration_ms 198.454
+Exit code: 0
+
+Broad Python/TypeScript/browser/build/startup/DuckLake/regression/release checks:
+DEFERRED TO EXTERNAL QA. No new browser screenshots or production-build evidence.

@@ -1,0 +1,17 @@
+Coding pass only. No full regression, Playwright, browser, startup, DuckLake or release suites run.
+
+Command: npm run typecheck
+Exit: 0
+> datapass-studio-root@0.1.0 typecheck
+> npm run typecheck --workspace @datapass/web
+> @datapass/web@0.1.0 typecheck
+> tsc --noEmit
+No diagnostics.
+
+Command: .venv/Scripts/python.exe -m pytest -q tests/test_exercise_packs.py
+Exit: 0
+........ [100%]
+8 passed in 4.96s
+
+Each command ran once. Final small refinements were not followed by repeat tests.
+Broad verification: DEFERRED TO EXTERNAL QA.

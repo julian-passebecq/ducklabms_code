@@ -12,7 +12,7 @@
     "dev": "npm run dev --workspace @datapass/web",
     "build": "npm run build --workspace @datapass/web",
     "typecheck": "npm run typecheck --workspace @datapass/web",
-    "test": "node --experimental-strip-types --test tests/contracts.test.mts",
+    "test": "node --experimental-strip-types --test tests/contracts.test.mts tests/interview.test.mts",
     "test:syntax": "node scripts/syntax-check.cjs",
     "test:api": "python -m pytest",
     "verify": "npm run typecheck && npm test && npm run build && python -m pytest",

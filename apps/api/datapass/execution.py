@@ -114,6 +114,7 @@ class Engine:
         env = self.python_namespaces.setdefault(notebook_id, {'__name__':'__datapass_notebook__'})
         output = BoundedText()
         shown: list[Any] = []
+        shown_columns: list[str] = []
         dependencies: set[str] = set()
         def query(sql):
             dependencies.update(references(sql))
@@ -131,8 +132,10 @@ class Engine:
             if isinstance(value, dict):
                 return [value]
             return [{'value': json_value(value)}]
-        def display(value):
-            shown.append(normalize(value))
+        def display(value, columns=None):
+            rows = normalize(value)
+            shown.append(rows)
+            shown_columns[:] = list(columns if columns is not None else getattr(value, 'columns', list(rows[0]) if rows else []))
         def publish(name, value):
             return self.catalog.publish_rows(name, normalize(value), request['cell_id'], sorted(dependencies))
         env.update(query=query, display=display, publish=publish)
@@ -151,7 +154,7 @@ class Engine:
         if request.get('output_asset'):
             result = self.catalog.publish_rows(request['output_asset'], rows, request['cell_id'], sorted(dependencies))
         else:
-            result = {'columns':list(rows[0]) if rows else [], 'rows':json_value(rows[:200]),'truncated':len(rows)>200,'total_rows':len(rows)}
+            result = {'columns':shown_columns, 'rows':json_value(rows[:200]),'truncated':len(rows)>200,'total_rows':len(rows)}
         return result, output.getvalue(), sorted(dependencies)
 
     def simulate(self, request: dict, parsed, result: dict):
@@ -229,6 +232,9 @@ class Engine:
             else:
                 raise ValueError('Unsupported kernel. Markdown is not executable.')
             if compiled_sql is not None:
+                # Server-owned exercise fixture scope; never accepted by API models.
+                if request.get('_exercise_fixture_sql'):
+                    compiled_sql = f"WITH input AS ({request['_exercise_fixture_sql']}) SELECT * FROM ({compiled_sql.rstrip().rstrip(';')}) AS submitted"
                 if request.get('output_asset'):
                     result = self.catalog.materialize(request['output_asset'], compiled_sql, request['cell_id'])
                 elif language in {'sparklab','dbt'}:
@@ -287,6 +293,9 @@ class Engine:
             return self.catalog.listing()
         if op == 'execute':
             return self.execute(request)
+        if op == 'exercise':
+            from .exercises import grade
+            return grade(self, request)
         if op == 'workflow':
             return self.workflow(request)
         if op == 'check':

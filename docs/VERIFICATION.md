@@ -1,5 +1,7 @@
 # Verification and release gates
 
+Notebook + Interview Practice Pass 1 adds implementation after the core evidence below. Its narrow checks are in `NOTEBOOK_INTERVIEW_PASS_1_HANDOFF.md` and `evidence/notebook-interview-pass-1-checks.txt`. All broad regression, browser, build and release revalidation for that pass is **DEFERRED TO EXTERNAL QA**. The historical core results below do not certify this new pass.
+
 Date: September 18, 2026 (Europe/Zurich). Scope: Core Integration Pass 1, existing Root 0.1.0, Windows local single-user mode. Branch: `codex/core-integration-pass-1`. No new implementation release number is declared.
 
 ## Executed gates

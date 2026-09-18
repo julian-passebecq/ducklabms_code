@@ -1,6 +1,6 @@
 /** Root v1 contracts. Specialist modules consume these, never create a second runtime. */
 export type KernelId = 'sql' | 'sparklab' | 'python' | 'polars' | 'dbt';
-export type TruthKind = 'real' | 'simulated' | 'unsupported';
+export type TruthKind = 'real' | 'semantic-emulation' | 'simulated' | 'unsupported';
 export interface ResultTable {columns:string[]; rows:Record<string,unknown>[]; total_rows:number|null; truncated:boolean}
 export interface Asset {name:string;layer:string;row_count:number;version?:string;inputs?:Record<string,string>;producer?:string;fresh:boolean}
 export interface Check {status:string;passed:boolean|null;fresh?:boolean;message:string;actual?:Record<string,unknown>[];expected?:Record<string,unknown>[]}
@@ -9,12 +9,34 @@ export interface Execution {id:string;cell_id:string;notebook_id:string;source_h
 export interface CaseStep {id:string;title:string;module:string;language:KernelId;code:string;solution:string;output_asset:string|null;depends_on:string[];concept:string;task:string;hint:string;truth_pack?:string;check?:{sql:string;expected:Record<string,unknown>[]} | null}
 export interface CaseStudy {schema_version:1;id:string;title:string;subtitle:string;domain:string;difficulty:string;minutes:number;description:string;physical_data:string;scale_note?:string;modules:string[];steps:CaseStep[];status:string;version:string}
 export interface ModuleManifest {id:string;title:string;kind:string;persona:string;status:string;contract_version:1}
-export interface Workspace<T=unknown> {id:string;case_id:string;title:string;revision:number;updated_at:string;schema_version:1;notebook:T|null;evidence:Record<string,Execution>;runs:Execution[]}
+export interface Workspace<T=unknown> {id:string;case_id:string|null;title:string;revision:number;updated_at:string;schema_version:1;notebook:T|null;notebooks?:Record<string,T>;practice_resume?:Record<string,string>;practice_review?:Record<string,PracticeReview>;evidence:Record<string,Execution>;runs:Execution[]}
 export interface Capabilities {storage:string;storage_truth:string;ducklake_active:boolean;distributed_spark:boolean;session_generation:string;kernels:Array<{id:KernelId;available:boolean;truth:string}>;motherduck:{enabled:boolean;reason:string}}
 export interface Profile {id:string;name:string;min_workers:number;max_workers:number;cores_per_worker:number;max_cores:number;memory_gb_per_worker:number;truth:string}
 export interface ExecuteRequest {notebook_id:string;cell_id:string;step_id?:string;language:KernelId;code:string;output_asset?:string|null;profile:string;aqe:boolean}
-export interface RuntimeClient {execute(workspaceId:string,request:ExecuteRequest):Promise<Execution>;catalog(workspaceId:string):Promise<Asset[]>;restart(workspaceId:string):Promise<unknown>}
+export interface RuntimeClient {execute(workspaceId:string,request:ExecuteRequest):Promise<Execution>;exercise(workspaceId:string,request:ExerciseRequest):Promise<ExerciseResult>;catalog(workspaceId:string):Promise<Asset[]>;restart(workspaceId:string):Promise<unknown>}
 export interface WorkflowResult {status:'success'|'failed';runs:Execution[];catalog:Asset[];workspace_revision:number;scheduler_truth:string}
+
+/** Public, versionable exercise metadata; hidden answers and solutions are server-owned. */
+export interface ExerciseDefinition {
+ schema_version:1;id:string;version:string;title:string;difficulty:'easy'|'medium'|'hard';topics:string[];tags:string[];
+ origin:'internal-demo'|'authored'|'migrated';language:KernelId;runtime:string;prompt:string;
+ sections:Array<{title:string;body:string}>;starter_source:string;fixtures:Array<{id:string;version:string}>;
+ visible_checks:Array<{id:string;description:string}>;hidden_check_refs:string[];edge_check_refs:string[];
+ hints:string[];solution:{available:boolean;reveal:'explicit'};explanation:string;follow_ups:string[];
+ canonical_placement:{domain:string;topic:string};related_associations:string[];
+ recommendation?:{rank:number;reason:string};validator_version:string;
+ validation:{kind:'rows';ordered:boolean;duplicate_sensitive:boolean;relative_tolerance:number;absolute_tolerance:number;required_columns?:string[];exact_schema?:string[];forbidden_extra_columns?:boolean;row_count?:number;null_semantics?:'equal'|'forbidden';aggregates?:Record<string,'sum'|'count'|'min'|'max'>;source_contract?:'python-function-solve'};
+ pack?:{id:string;version:string};runtime_requirements?:string[];provenance?:Record<string,string>;constraints?:Record<string,string>;
+ data_context?:Array<{name:string;columns:Record<string,string>;sample_rows:Record<string,unknown>[];catalog_ref?:string}>;
+ output_schema?:Record<string,string>;context_refs?:string[];truth?:TruthKind;
+}
+export interface ExerciseProgress {exercise_id:string;version:string;attempt_count:number;solved:boolean;latest_result:'passed'|'failed'|'error'|null;last_attempted:string|null;best_status:'passed'|'failed'|'error'|null;review:boolean}
+export interface PracticeProgress {exercises:Record<string,ExerciseProgress>;topics:Record<string,{total:number;solved:number}>;difficulty:Record<string,{total:number;solved:number}>}
+export interface PracticeReview {review:boolean;confidence:'low'|'medium'|'high';difficulty:'easy'|'medium'|'hard'}
+export interface ExerciseRequest {exercise_id:string;exercise_version:string;notebook_id:string;cell_id:string;code:string;language:KernelId;source_revision:number;mode:'run'|'submit'}
+export interface ExerciseCheck {id:string;visibility:'visible'|'hidden'|'edge';passed:boolean;status:'passed'|'failed';execution_id:string;execution_status:string;elapsed_ms:number;message:string;input_versions:Record<string,string|null>;actual?:Record<string,unknown>[];expected?:Record<string,unknown>[]}
+export interface ExerciseAttempt {schema_version:1;id:string;created_at:string;exercise_id:string;exercise_version:string;notebook_id:string;cell_id:string;source:string;source_hash:string;source_revision:number;validator_version:string;fixtures:Array<{id:string;version:string}>;language:KernelId;status:'passed'|'failed'|'error';checks:ExerciseCheck[];truth:TruthKind;runtime:{adapter:string;engine:string;engine_version:string;session_generation:string};elapsed_ms:number;error?:{type:string;message:string}}
+export interface ExerciseResult {status:'passed'|'failed'|'error';checks:ExerciseCheck[];runs:Execution[];attempt?:ExerciseAttempt;workspace_revision:number;truth:TruthKind;runtime:ExerciseAttempt['runtime'];elapsed_ms:number;error?:{type:string;message:string}}
 
 export function topologicalOrder(steps:Array<{id:string;depends_on:string[]}>):string[] {
  const byId=new Map(steps.map(s=>[s.id,s]));

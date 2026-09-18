@@ -16,6 +16,8 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from .content import ROOT, CONTENT, get_case, cases
 from .documents import Documents, RevisionConflict
+from . import exercises
+from .exercise_contracts import ExerciseDefinition, ExerciseAttempt, ExerciseResult
 from .kernels import KernelManager, KernelTimeout
 from services.sparklab.runtime import load_cluster_profiles
 
@@ -25,7 +27,25 @@ class StrictModel(BaseModel):
 
 
 class CreateWorkspace(StrictModel):
-    case_id: str = Field(min_length=1,max_length=64)
+    case_id: str | None = Field(default=None,min_length=1,max_length=64)
+
+
+class ExerciseRequest(StrictModel):
+    exercise_id: str = Field(max_length=100)
+    exercise_version: str = Field(max_length=40)
+    notebook_id: str = Field(min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
+    cell_id: str = Field(min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
+    code: str = Field(min_length=1,max_length=39000)
+    language: Literal['sql','sparklab','python','polars','dbt']
+    source_revision: int = Field(ge=0)
+    mode: Literal['run','submit']
+
+
+class ReviewRequest(StrictModel):
+    revision: int = Field(ge=0)
+    review: bool
+    confidence: Literal['low','medium','high'] = 'low'
+    difficulty: Literal['easy','medium','hard'] = 'easy'
 
 
 class SaveNotebook(StrictModel):
@@ -131,6 +151,60 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
     def list_cases():
         return cases()
 
+    @app.get('/api/exercises',response_model=list[ExerciseDefinition],response_model_exclude_none=True)
+    def list_exercises():
+        return exercises.definitions()
+
+    @app.get('/api/exercise-packs')
+    def list_exercise_packs():
+        return exercises.PACKS.discovery()
+
+    @app.get('/api/workspaces/{id}/practice/progress')
+    def practice_progress(id: str):
+        return docs.practice_progress(id)
+
+    @app.post('/api/exercises/{exercise_id}/solution')
+    def reveal_solution(exercise_id: str):
+        return exercises.solution(exercise_id)
+
+    @app.get('/api/workspaces/{id}/attempts',response_model=list[ExerciseAttempt],response_model_exclude_none=True)
+    def attempts(id: str):
+        return docs.attempts(id)
+
+    @app.put('/api/workspaces/{id}/practice/{exercise_id}/review')
+    def review(id: str, exercise_id: str, body: ReviewRequest):
+        return docs.review(id, exercise_id, body.revision, body.model_dump(exclude={'revision'}))
+
+    @app.post('/api/workspaces/{id}/exercise',response_model=ExerciseResult,response_model_exclude_none=True)
+    def exercise_action(id: str, body: ExerciseRequest):
+        workspace = docs.get(id)
+        spec = exercises.definition(body.exercise_id)
+        if body.exercise_version != spec['version'] or body.language != spec['language']:
+            raise ValueError('Exercise version or kernel does not match the installed definition.')
+        if workspace['revision'] != body.source_revision:
+            raise RevisionConflict('Save the current source before Run or Submit.')
+        notebook = workspace.get('notebook') or {}
+        block = next((b for b in notebook.get('blocks',[]) if b.get('id')==body.cell_id), {})
+        source = notebook.get('blockState',{}).get(f"mosaic:v2:code:{body.cell_id}")
+        if notebook.get('id') != body.notebook_id or not block or source != body.code:
+            raise ValueError('The submitted source must match the saved notebook checkpoint.')
+        request = {**body.model_dump(),'op':'exercise'}
+        try:
+            result = command(id, request)
+        except (KernelTimeout, RuntimeError) as error:
+            result = dict(status='error',checks=[],runs=[],truth='unsupported',elapsed_ms=0,
+                          runtime={'adapter':spec['runtime'],'engine':'unavailable','engine_version':'unavailable','session_generation':''},
+                          error={'type':type(error).__name__,'message':str(error)})
+        for run in result['runs']:
+            run['workspace_revision'] = docs.record(id,run,None)
+        if body.mode == 'submit':
+            result['attempt'] = exercises.attempt(request,result)
+            if result.get('error'):
+                result['attempt']['error'] = result['error']
+            docs.record_attempt(id,result['attempt'])
+        result['workspace_revision'] = docs.get(id)['revision']
+        return result
+
     @app.get('/api/modules')
     def modules():
         return json.loads((CONTENT/'modules.json').read_text())
@@ -166,7 +240,7 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
     @app.post('/api/workspaces/{id}/execute')
     def execute(id:str,body:ExecuteCell):
         workspace = docs.get(id)
-        case = get_case(workspace['case_id'])
+        case = get_case(workspace['case_id']) if workspace['case_id'] else {'id':None,'steps':[]}
         steps = {s['id']:s for s in case['steps']}
         request = {**body.model_dump(),'op':'execute','case_id':case['id']}
         if body.step_id:
