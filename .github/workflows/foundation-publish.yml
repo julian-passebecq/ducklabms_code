@@ -1,0 +1,62 @@
+name: Foundation candidate publication
+on:
+  push:
+    branches: [codex/modular-root-foundation-pass-1-result]
+    paths: [.github/workflows/foundation-publish.yml]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Verify and apply the exact bounded candidate
+        shell: bash
+        run: |
+          set -eu
+          test "${{ github.ref }}" = refs/heads/codex/modular-root-foundation-pass-1-result
+          git merge-base --is-ancestor dee5b0da0fe1cec4a9bd24179fe63cbf46bba7a3 HEAD
+          python - <<'PY'
+          from pathlib import Path
+          import base64, gzip, hashlib
+          parts = [Path(f'.foundation-delivery/part-{i}.b64').read_text().strip() for i in range(7)]
+          for i, part in enumerate(parts):
+              print(i, len(part), hashlib.sha256(part.encode()).hexdigest())
+          encoded = ''.join(parts)
+          raw = base64.b64decode(encoded, validate=True)
+          assert hashlib.sha256(raw).hexdigest() == '71dbea719438b2bde7af962bc73c89c9f07d1fb4bc364ee13024d7d12c5979c4', 'Transport integrity mismatch; no source changes applied'
+          patch = gzip.decompress(raw)
+          assert hashlib.sha256(patch).hexdigest() == 'a096379fb7a865817695c2eaa3e027bc3002b64a0ccd6dce5c5cfec42e42c85e'
+          Path('/tmp/foundation.patch').write_bytes(patch)
+          PY
+          git apply --check /tmp/foundation.patch
+          git apply /tmp/foundation.patch
+          rm .foundation-delivery/part-{0..6}.b64
+          rm .github/workflows/foundation-source-export.yml .github/workflows/foundation-dependency-export.yml .github/workflows/foundation-publish.yml
+          git add -A
+          test "$(git write-tree)" = "a26a467a8997a224b36eeee19f1799f8350e0f72"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Implement modular root foundation pass 1 (bounded candidate)'
+          git push origin HEAD:refs/heads/codex/modular-root-foundation-pass-1-result
+          mkdir /tmp/foundation-delivery
+          git archive --format=zip HEAD -o /tmp/foundation-delivery/DATAPASS_STUDIO_MODULAR_ROOT_FOUNDATION_PASS_1_SOURCE.zip
+          git rev-parse HEAD HEAD^{tree} > /tmp/foundation-delivery/provenance.txt
+          sha256sum /tmp/foundation-delivery/*.zip > /tmp/foundation-delivery/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: foundation-published-candidate
+          path: /tmp/foundation-delivery/
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: foundation-transport-diagnostic
+          path: .foundation-delivery/*.b64
+          include-hidden-files: true
+          retention-days: 1
