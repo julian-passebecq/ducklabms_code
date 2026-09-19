@@ -1,0 +1,36 @@
+name: Rust DataFusion engine spike
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/rust-datafusion-engine-spike-1
+
+jobs:
+  rust-engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@1.94.0
+        with:
+          components: clippy,rustfmt
+      - name: Rust format check
+        run: cargo fmt --all -- --check
+      - name: Rust tests
+        run: cargo test --workspace
+      - name: Rust clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+  adapter-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install root API requirements
+        run: python -m pip install -r requirements.txt
+      - name: Rust adapter contract tests
+        run: python -m pytest -q tests/test_rust_engine_adapter.py
