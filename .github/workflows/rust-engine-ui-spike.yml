@@ -1,0 +1,24 @@
+name: Rust engine UI spike
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/rust-datafusion-engine-spike-2-ui
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22.12.0'
+          cache: npm
+      - name: Install exact web dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Production build
+        run: npm run build
