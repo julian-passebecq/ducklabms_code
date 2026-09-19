@@ -1,0 +1,19 @@
+[package]
+name = "datapass-engine"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+arrow.workspace = true
+arrow-json.workspace = true
+datafusion.workspace = true
+datapass-lakehouse = { path = "../datapass-lakehouse" }
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

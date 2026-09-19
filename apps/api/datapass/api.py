@@ -20,6 +20,7 @@ from . import exercises
 from .foundation import RootWorkbench, validate_workspace_references
 from .exercise_contracts import ExerciseDefinition, ExerciseAttempt, ExerciseResult
 from .kernels import KernelManager, KernelTimeout
+from .rust_engine import status as rust_engine_status, workspace_query as rust_workspace_query
 from services.sparklab.runtime import load_cluster_profiles
 
 
@@ -70,6 +71,26 @@ class ExecuteCell(StrictModel):
     output_asset: str | None = Field(default=None,max_length=100)
     profile: str = Field(default='generic_8x8',max_length=80)
     aqe: bool = True
+
+
+class RustParquetSource(StrictModel):
+    name: str = Field(min_length=1,max_length=100,pattern=r'^[A-Za-z_][A-Za-z0-9_]*$')
+    path: str = Field(min_length=1,max_length=500)
+
+    @field_validator('path')
+    @classmethod
+    def relative_path_only(cls,value):
+        candidate=Path(value)
+        if candidate.is_absolute() or '..' in candidate.parts:
+            raise ValueError('Parquet sources must use workspace-relative paths.')
+        return value
+
+
+class RustEngineQuery(StrictModel):
+    sql: str = Field(min_length=1,max_length=40000)
+    sources: list[RustParquetSource] = Field(default_factory=list,max_length=32)
+    max_rows: int = Field(default=200,ge=1,le=10000)
+    target_partitions: int = Field(default=4,ge=1,le=64)
 
 
 class RunWorkflow(StrictModel):
@@ -216,6 +237,15 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
     @app.get('/api/modules')
     def modules():
         return json.loads((CONTENT/'modules.json').read_text())
+
+    @app.get('/api/engines/rust')
+    def rust_engine():
+        return rust_engine_status()
+
+    @app.post('/api/workspaces/{id}/engines/rust/query')
+    def rust_query(id: str, body: RustEngineQuery):
+        docs.get(id)
+        return rust_workspace_query(docs.folder(id)/'data', body.model_dump())
 
     @app.get('/api/profiles')
     def profiles():

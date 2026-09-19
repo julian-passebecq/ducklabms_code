@@ -1,0 +1,24 @@
+[workspace]
+members = [
+  "crates/datapass-engine",
+  "crates/datapass-lakehouse",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.94.0"
+license = "MIT"
+
+[workspace.dependencies]
+anyhow = "1.0"
+arrow = { version = "=59.3.0", features = ["prettyprint"] }
+arrow-json = "=59.3.0"
+datafusion = { version = "=55.1.0", default-features = false, features = ["parquet", "recursive_protection", "sql"] }
+datafusion-ducklake = { version = "=0.8.0", default-features = false, features = ["metadata-sqlite", "write-sqlite"] }
+object_store = { version = "=0.13.2", default-features = false, features = ["fs"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tempfile = "3.14"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
