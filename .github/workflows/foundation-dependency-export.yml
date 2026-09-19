@@ -1,0 +1,34 @@
+name: Foundation dependency export
+on:
+  push:
+    branches: [codex/modular-root-foundation-pass-1-result]
+    paths: [.github/workflows/foundation-dependency-export.yml]
+permissions:
+  contents: read
+jobs:
+  dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dee5b0da0fe1cec4a9bd24179fe63cbf46bba7a3
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve the one new graph dependency
+        run: npm install --workspace @datapass/web @xyflow/react@12.8.5 --save-exact --ignore-scripts --no-audit --no-fund
+      - name: Package local verification dependencies
+        run: |
+          mkdir /tmp/foundation-deps
+          tar -czf /tmp/foundation-deps/node_modules.tar.gz node_modules
+          cp package-lock.json /tmp/foundation-deps/package-lock.json
+          cp apps/web/package.json /tmp/foundation-deps/web-package.json
+          node -v > /tmp/foundation-deps/node-version.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: foundation-dependencies
+          path: /tmp/foundation-deps/
+          retention-days: 3
+          compression-level: 0
