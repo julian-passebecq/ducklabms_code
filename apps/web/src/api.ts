@@ -2,6 +2,37 @@ import type {RootWorkbench} from '../../../packages/contracts/src/foundation.ts'
 import type {Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace,ExerciseDefinition,ExerciseRequest,ExerciseResult,ExerciseAttempt,PracticeReview,PracticeProgress} from '../../../packages/contracts/src/index.ts';
 import type {RootNotebook} from './notebook';
 
+export type RustEngineStatus={
+ available:boolean;
+ activation:string;
+ default_runtime_changed:boolean;
+ reason?:string;
+ protocol_version?:number;
+ engine?:string;
+ engine_version?:string;
+ truth?:string;
+ arrow_major?:number;
+ features?:string[];
+};
+export type RustParquetSource={name:string;path:string};
+export type RustEngineQueryRequest={sql:string;sources:RustParquetSource[];max_rows:number;target_partitions:number};
+export type RustEngineField={name:string;data_type:string;nullable:boolean};
+export type RustEngineQueryEvidence={
+ protocol_version:number;
+ engine:string;
+ engine_version:string;
+ truth:string;
+ elapsed_ms:number;
+ row_count:number;
+ preview_row_count:number;
+ truncated:boolean;
+ schema:RustEngineField[];
+ rows:Array<Record<string,unknown>>;
+ logical_plan:string;
+ physical_plan:string;
+ physical_plan_with_metrics:string;
+};
+
 const STORAGE='datapass-local-token';
 export function initialToken():string {
  const hash=new URLSearchParams(location.hash.slice(1));
@@ -26,6 +57,8 @@ export class ApiClient implements RuntimeClient {
  review=(id:string,exercise:string,revision:number,metadata:PracticeReview)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}/practice/${encodeURIComponent(exercise)}/review`,{method:'PUT',body:JSON.stringify({revision,...metadata})});
  modules=()=>this.request<ModuleManifest[]>('/modules');
  profiles=()=>this.request<Profile[]>('/profiles');
+ rustEngine=()=>this.request<RustEngineStatus>('/engines/rust');
+ rustQuery=(id:string,body:RustEngineQueryRequest)=>this.request<RustEngineQueryEvidence>(`/workspaces/${id}/engines/rust/query`,{method:'POST',body:JSON.stringify(body)});
  workspaces=()=>this.request<Array<Pick<Workspace,'id'|'case_id'|'title'|'revision'|'updated_at'>>>('/workspaces');
  create=(case_id:string|null)=>this.request<Workspace<RootNotebook>>('/workspaces',{method:'POST',body:JSON.stringify({case_id})});
  workspace=(id:string)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}`);
