@@ -13,12 +13,13 @@
     "@datapass/notebook-core": "*",
     "@fluentui/react-components": "9.74.7",
     "@fluentui/react-icons": "2.0.341",
+    "@monaco-editor/react": "4.7.0",
+    "@xyflow/react": "12.8.5",
+    "monaco-editor": "0.52.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-grid-layout": "2.2.3",
-    "react-resizable": "3.0.5",
-    "@monaco-editor/react": "4.7.0",
-    "monaco-editor": "0.52.2"
+    "react-resizable": "3.0.5"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

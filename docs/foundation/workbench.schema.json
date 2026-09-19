@@ -1,0 +1,894 @@
+{
+  "$defs": {
+    "CatalogResource": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "revision": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "catalog",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "title",
+        "revision",
+        "kind"
+      ],
+      "title": "CatalogResource",
+      "type": "object"
+    },
+    "DataModelResource": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "revision": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "data-model",
+          "title": "Kind",
+          "type": "string"
+        },
+        "tables": {
+          "items": {
+            "$ref": "#/$defs/ModelTable"
+          },
+          "maxItems": 200,
+          "title": "Tables",
+          "type": "array"
+        },
+        "relationships": {
+          "items": {
+            "$ref": "#/$defs/Relationship"
+          },
+          "maxItems": 500,
+          "title": "Relationships",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "title",
+        "revision",
+        "kind",
+        "tables",
+        "relationships"
+      ],
+      "title": "DataModelResource",
+      "type": "object"
+    },
+    "Dependency": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "source": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Target",
+          "type": "string"
+        },
+        "condition": {
+          "enum": [
+            "success",
+            "completion"
+          ],
+          "title": "Condition",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "target",
+        "condition"
+      ],
+      "title": "Dependency",
+      "type": "object"
+    },
+    "Derivation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "source": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Target",
+          "type": "string"
+        },
+        "note": {
+          "maxLength": 2000,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "target",
+        "note"
+      ],
+      "title": "Derivation",
+      "type": "object"
+    },
+    "EvidenceResource": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "revision": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "evidence",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "title",
+        "revision",
+        "kind"
+      ],
+      "title": "EvidenceResource",
+      "type": "object"
+    },
+    "LineageDataset": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "asset_ref": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Asset Ref"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "asset_ref"
+      ],
+      "title": "LineageDataset",
+      "type": "object"
+    },
+    "LineageResource": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "revision": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "lineage",
+          "title": "Kind",
+          "type": "string"
+        },
+        "datasets": {
+          "items": {
+            "$ref": "#/$defs/LineageDataset"
+          },
+          "maxItems": 200,
+          "title": "Datasets",
+          "type": "array"
+        },
+        "derivations": {
+          "items": {
+            "$ref": "#/$defs/Derivation"
+          },
+          "maxItems": 500,
+          "title": "Derivations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "title",
+        "revision",
+        "kind",
+        "datasets",
+        "derivations"
+      ],
+      "title": "LineageResource",
+      "type": "object"
+    },
+    "ModelColumn": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "data_type": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Data Type",
+          "type": "string"
+        },
+        "key": {
+          "enum": [
+            "none",
+            "primary",
+            "foreign"
+          ],
+          "title": "Key",
+          "type": "string"
+        },
+        "nullable": {
+          "title": "Nullable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "data_type",
+        "key",
+        "nullable"
+      ],
+      "title": "ModelColumn",
+      "type": "object"
+    },
+    "ModelTable": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "asset_ref": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Asset Ref"
+        },
+        "grain": {
+          "maxLength": 2000,
+          "title": "Grain",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "fact",
+            "dimension",
+            "table"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "scd": {
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "title": "Scd",
+          "type": "integer"
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/ModelColumn"
+          },
+          "maxItems": 200,
+          "title": "Columns",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "asset_ref",
+        "grain",
+        "role",
+        "scd",
+        "columns"
+      ],
+      "title": "ModelTable",
+      "type": "object"
+    },
+    "NotebookResource": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "revision": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "notebook",
+          "title": "Kind",
+          "type": "string"
+        },
+        "notebook_id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Notebook Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "title",
+        "revision",
+        "kind",
+        "notebook_id"
+      ],
+      "title": "NotebookResource",
+      "type": "object"
+    },
+    "Pane": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "view_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]{1,100}$",
+            "type": "string"
+          },
+          "maxItems": 120,
+          "title": "View Ids",
+          "type": "array"
+        },
+        "active_view_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]{1,100}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Active View Id"
+        },
+        "weight": {
+          "maximum": 4,
+          "minimum": 0.25,
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "view_ids",
+        "active_view_id",
+        "weight"
+      ],
+      "title": "Pane",
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 100000,
+          "minimum": -100000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 100000,
+          "minimum": -100000,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "Relationship": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "source": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "source_column": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Source Column",
+          "type": "string"
+        },
+        "target": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Target",
+          "type": "string"
+        },
+        "target_column": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Target Column",
+          "type": "string"
+        },
+        "cardinality": {
+          "enum": [
+            "one-to-many",
+            "many-to-one",
+            "one-to-one",
+            "many-to-many"
+          ],
+          "title": "Cardinality",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "source_column",
+        "target",
+        "target_column",
+        "cardinality"
+      ],
+      "title": "Relationship",
+      "type": "object"
+    },
+    "ViewInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "resource_id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "visual",
+            "spec"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "positions": {
+          "maxProperties": 200,
+          "patternProperties": {
+            "^[A-Za-z0-9_-]{1,100}$": {
+              "$ref": "#/$defs/Point"
+            }
+          },
+          "title": "Positions",
+          "type": "object"
+        },
+        "viewport": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Viewport"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "selected_node": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]{1,100}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Selected Node"
+        },
+        "selected_edge": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]{1,100}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Selected Edge"
+        }
+      },
+      "required": [
+        "id",
+        "resource_id",
+        "mode",
+        "positions",
+        "viewport",
+        "selected_node",
+        "selected_edge"
+      ],
+      "title": "ViewInstance",
+      "type": "object"
+    },
+    "Viewport": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 100000,
+          "minimum": -100000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 100000,
+          "minimum": -100000,
+          "title": "Y",
+          "type": "number"
+        },
+        "zoom": {
+          "maximum": 3,
+          "minimum": 0.2,
+          "title": "Zoom",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "zoom"
+      ],
+      "title": "Viewport",
+      "type": "object"
+    },
+    "WorkflowResource": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "revision": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "workflow",
+          "title": "Kind",
+          "type": "string"
+        },
+        "tasks": {
+          "items": {
+            "$ref": "#/$defs/WorkflowTask"
+          },
+          "maxItems": 200,
+          "title": "Tasks",
+          "type": "array"
+        },
+        "dependencies": {
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          },
+          "maxItems": 500,
+          "title": "Dependencies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "title",
+        "revision",
+        "kind",
+        "tasks",
+        "dependencies"
+      ],
+      "title": "WorkflowResource",
+      "type": "object"
+    },
+    "WorkflowTask": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "runtime": {
+          "enum": [
+            "local.sql",
+            "local.sparklab",
+            "local.python",
+            "local.polars",
+            "local.dbt",
+            "remote.motherduck"
+          ],
+          "title": "Runtime",
+          "type": "string"
+        },
+        "notebook_resource_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]{1,100}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Notebook Resource Id"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "runtime",
+        "notebook_resource_id"
+      ],
+      "title": "WorkflowTask",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "resources": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "catalog": "#/$defs/CatalogResource",
+            "data-model": "#/$defs/DataModelResource",
+            "evidence": "#/$defs/EvidenceResource",
+            "lineage": "#/$defs/LineageResource",
+            "notebook": "#/$defs/NotebookResource",
+            "workflow": "#/$defs/WorkflowResource"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/NotebookResource"
+          },
+          {
+            "$ref": "#/$defs/CatalogResource"
+          },
+          {
+            "$ref": "#/$defs/EvidenceResource"
+          },
+          {
+            "$ref": "#/$defs/WorkflowResource"
+          },
+          {
+            "$ref": "#/$defs/LineageResource"
+          },
+          {
+            "$ref": "#/$defs/DataModelResource"
+          }
+        ]
+      },
+      "maxItems": 60,
+      "title": "Resources",
+      "type": "array"
+    },
+    "views": {
+      "items": {
+        "$ref": "#/$defs/ViewInstance"
+      },
+      "maxItems": 120,
+      "title": "Views",
+      "type": "array"
+    },
+    "panes": {
+      "items": {
+        "$ref": "#/$defs/Pane"
+      },
+      "maxItems": 3,
+      "minItems": 1,
+      "title": "Panes",
+      "type": "array"
+    },
+    "active_pane_id": {
+      "pattern": "^[A-Za-z0-9_-]{1,100}$",
+      "title": "Active Pane Id",
+      "type": "string"
+    },
+    "persona": {
+      "enum": [
+        "neutral",
+        "fabric",
+        "warehouse"
+      ],
+      "title": "Persona",
+      "type": "string"
+    },
+    "direction": {
+      "enum": [
+        "horizontal",
+        "vertical"
+      ],
+      "title": "Direction",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "resources",
+    "views",
+    "panes",
+    "active_pane_id",
+    "persona",
+    "direction"
+  ],
+  "title": "RootWorkbench",
+  "type": "object"
+}

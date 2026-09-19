@@ -87,6 +87,23 @@ class Documents:
             doc['updated_at'] = datetime.now(timezone.utc).isoformat()
             return self._write(doc)
 
+    def save_workbench(self, id: str, revision: int, workbench):
+        """Additive workspace state, under the same lock/CAS as notebooks and runs."""
+        from .foundation import RootWorkbench, validate_workspace_references
+        validated = RootWorkbench.model_validate(workbench)
+        value = validated.model_dump(mode='json')
+        if len(json.dumps(value).encode('utf-8')) > 2_000_000:
+            raise ValueError('Workbench exceeds the 2 MB document limit.')
+        with self.lock:
+            doc = self.get(id)
+            if doc['revision'] != revision:
+                raise RevisionConflict('The workspace changed. Your workbench draft was retained; reload or export it before reconciling.')
+            validate_workspace_references(validated, doc)
+            doc['workbench'] = value
+            doc['revision'] += 1
+            doc['updated_at'] = datetime.now(timezone.utc).isoformat()
+            return self._write(doc)
+
     def record_attempt(self, id: str, attempt: dict):
         with self.lock:
             doc = self.get(id)

@@ -1,0 +1,11 @@
+{
+  "repository": "julian-passebecq/ducklabms_code",
+  "baseline_branch": "integration/sparklab-runtime-pass-1",
+  "baseline_commit": "dee5b0da0fe1cec4a9bd24179fe63cbf46bba7a3",
+  "baseline_tree": "d10e3e7a34c21291bf0130d18a306bebab9d3cb2",
+  "delivery_branch": "codex/modular-root-foundation-pass-1-result",
+  "scope": "modular root foundation pass 1",
+  "release_status": "candidate_external_qa_pending",
+  "full_source_package": true,
+  "secondary_agents_used": false
+}

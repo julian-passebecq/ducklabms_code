@@ -1,3 +1,4 @@
+import type {RootWorkbench} from '../../../packages/contracts/src/foundation.ts';
 import type {Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace,ExerciseDefinition,ExerciseRequest,ExerciseResult,ExerciseAttempt,PracticeReview,PracticeProgress} from '../../../packages/contracts/src/index.ts';
 import type {RootNotebook} from './notebook';
 
@@ -29,6 +30,9 @@ export class ApiClient implements RuntimeClient {
  create=(case_id:string|null)=>this.request<Workspace<RootNotebook>>('/workspaces',{method:'POST',body:JSON.stringify({case_id})});
  workspace=(id:string)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}`);
  save=(id:string,revision:number,notebook:RootNotebook)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}/notebook`,{method:'PUT',body:JSON.stringify({revision,notebook})});
+ validateWorkbench=(id:string,workbench:unknown)=>this.request<{status:'valid';truth:'design_only';workbench:RootWorkbench}>(`/workspaces/${id}/workbench/validate`,{method:'POST',body:JSON.stringify(workbench)});
+ saveWorkbench=(id:string,revision:number,workbench:RootWorkbench)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}/workbench`,{method:'PUT',body:JSON.stringify({revision,workbench})});
+ foundationSchema=()=>this.request<Record<string,unknown>>('/foundation/schema');
  catalog=(id:string)=>this.request<Asset[]>(`/workspaces/${id}/catalog`);
  capabilities=(id:string)=>this.request<Capabilities>(`/workspaces/${id}/capabilities`);
  execute=(id:string,request:ExecuteRequest)=>this.request<Execution>(`/workspaces/${id}/execute`,{method:'POST',body:JSON.stringify(request)});

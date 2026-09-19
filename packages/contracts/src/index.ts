@@ -1,3 +1,4 @@
+import type {RootWorkbench} from './foundation.ts';
 /** Root v1 contracts. Specialist modules consume these, never create a second runtime. */
 export type KernelId = 'sql' | 'sparklab' | 'python' | 'polars' | 'dbt';
 export type TruthKind = 'real' | 'semantic-emulation' | 'simulated' | 'unsupported';
@@ -13,7 +14,7 @@ export interface Execution {id:string;cell_id:string;notebook_id:string;source_h
 export interface CaseStep {id:string;title:string;module:string;language:KernelId;code:string;solution:string;output_asset:string|null;depends_on:string[];concept:string;task:string;hint:string;truth_pack?:string;check?:{sql:string;expected:Record<string,unknown>[]} | null}
 export interface CaseStudy {schema_version:1;id:string;title:string;subtitle:string;domain:string;difficulty:string;minutes:number;description:string;physical_data:string;scale_note?:string;modules:string[];steps:CaseStep[];status:string;version:string}
 export interface ModuleManifest {id:string;title:string;kind:string;persona:string;status:string;contract_version:1}
-export interface Workspace<T=unknown> {id:string;case_id:string|null;title:string;revision:number;updated_at:string;schema_version:1;notebook:T|null;notebooks?:Record<string,T>;practice_resume?:Record<string,string>;practice_review?:Record<string,PracticeReview>;evidence:Record<string,Execution>;runs:Execution[]}
+export interface Workspace<T=unknown> {workbench?:RootWorkbench;id:string;case_id:string|null;title:string;revision:number;updated_at:string;schema_version:1;notebook:T|null;notebooks?:Record<string,T>;practice_resume?:Record<string,string>;practice_review?:Record<string,PracticeReview>;evidence:Record<string,Execution>;runs:Execution[]}
 export interface Capabilities {sparklab?:SparkSupport;storage:string;storage_truth:string;ducklake_active:boolean;distributed_spark:boolean;session_generation:string;kernels:Array<{id:KernelId;available:boolean;truth:string}>;motherduck:{enabled:boolean;reason:string}}
 export interface Profile {schema_version:number;driver_cores:number;driver_memory_gb:number;executor_count:number;executor_cores:number;executor_memory_gb:number;total_virtual_cores:number;default_partitions:number;shuffle_partitions:number;broadcast_threshold_mb:number;aqe_default:boolean;cold_start_seconds:number;scan_mb_s_per_core:number;shuffle_mb_s_per_core:number;credits_per_core_hour:number;id:string;name:string;min_workers:number;max_workers:number;cores_per_worker:number;max_cores:number;memory_gb_per_worker:number;truth:string}
 export interface ExecuteRequest {notebook_id:string;cell_id:string;step_id?:string;language:KernelId;code:string;output_asset?:string|null;profile:string;aqe:boolean}

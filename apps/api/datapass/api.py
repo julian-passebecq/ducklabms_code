@@ -17,6 +17,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .content import ROOT, CONTENT, get_case, cases
 from .documents import Documents, RevisionConflict
 from . import exercises
+from .foundation import RootWorkbench, validate_workspace_references
 from .exercise_contracts import ExerciseDefinition, ExerciseAttempt, ExerciseResult
 from .kernels import KernelManager, KernelTimeout
 from services.sparklab.runtime import load_cluster_profiles
@@ -53,6 +54,11 @@ class ReviewRequest(StrictModel):
 class SaveNotebook(StrictModel):
     revision: int = Field(ge=0)
     notebook: dict
+
+
+class SaveWorkbench(StrictModel):
+    revision: int = Field(ge=0)
+    workbench: RootWorkbench
 
 
 class ExecuteCell(StrictModel):
@@ -230,6 +236,19 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
     @app.put('/api/workspaces/{id}/notebook')
     def save(id:str,body:SaveNotebook):
         return docs.save_notebook(id,body.revision,body.notebook)
+
+    @app.get('/api/foundation/schema')
+    def foundation_schema():
+        return RootWorkbench.model_json_schema()
+
+    @app.post('/api/workspaces/{id}/workbench/validate')
+    def validate_workbench(id: str, body: RootWorkbench):
+        validate_workspace_references(body, docs.get(id))
+        return {'status': 'valid', 'truth': 'design_only', 'workbench': body.model_dump(mode='json')}
+
+    @app.put('/api/workspaces/{id}/workbench')
+    def save_workbench(id: str, body: SaveWorkbench):
+        return docs.save_workbench(id, body.revision, body.workbench.model_dump(mode='json'))
 
     @app.get('/api/workspaces/{id}/capabilities')
     def capabilities(id:str):

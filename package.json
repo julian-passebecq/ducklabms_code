@@ -16,7 +16,9 @@
     "test:syntax": "node scripts/syntax-check.cjs",
     "test:api": "python -m pytest",
     "verify": "npm run typecheck && npm test && npm run build && python -m pytest",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:foundation": "node --experimental-strip-types --test tests/foundation.test.mts && python -m pytest -q tests/test_foundation.py",
+    "test:foundation:browser": "node scripts/foundation-browser-smoke.mjs"
   },
   "engines": {
     "node": ">=22.12"
