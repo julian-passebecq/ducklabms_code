@@ -28,3 +28,32 @@
 .spark-inspector [role=tablist] { display: flex; flex-wrap: wrap; }
 .spark-pane { padding: 12px 0; max-height: 560px; overflow: auto; }
 .spark-pane pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+
+/* Experimental DataFusion inspector: isolated from notebook/runtime state. */
+.rust-engine-lab{display:flex;flex-direction:column;gap:16px}
+.rust-engine-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
+.rust-engine-intro h1{margin:7px 0 8px}
+.rust-engine-status{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.rust-engine-facts{display:grid;grid-template-columns:repeat(4,minmax(135px,1fr));gap:10px}
+.rust-engine-facts>div{display:flex;flex-direction:column;gap:6px;padding:14px 16px;background:#fff;border:1px solid #e1e8ec;border-radius:7px}
+.rust-engine-facts span,.rust-engine-panel header span,.rust-source-heading span,.rust-run-row span,.rust-result-heading span{font-size:10px;color:#87949c}
+.rust-engine-facts b{font-size:12px;color:#48616e;overflow-wrap:anywhere}
+.rust-engine-panel,.rust-result-table,.rust-plan-stack details{background:#fff;border:1px solid #e1e8ec;border-radius:8px}
+.rust-engine-panel{padding:18px;display:grid;gap:15px}
+.rust-engine-panel>header,.rust-source-heading,.rust-result-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.rust-engine-panel>header>div,.rust-source-heading>div{display:flex;flex-direction:column;gap:3px}
+.rust-engine-panel textarea{min-height:150px;font-family:Consolas,"Cascadia Code",monospace;font-size:12px;line-height:1.55}
+.rust-engine-options{display:grid;grid-template-columns:minmax(150px,220px) minmax(150px,220px);gap:12px}
+.rust-source-list{display:grid;gap:10px}
+.rust-source-row{display:grid;grid-template-columns:minmax(130px,.55fr) minmax(220px,1fr) auto;align-items:end;gap:10px}
+.rust-engine-hint{margin:0;padding:12px;border:1px dashed #d8e1e5;border-radius:6px;color:#7b8b94;font-size:11px}
+.rust-run-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.rust-engine-result{display:grid;gap:14px}
+.rust-result-heading{padding:12px 14px;border-bottom:1px solid #e7ecef}
+.rust-plan-stack{display:grid;gap:10px;background:transparent;border:0}
+.rust-plan-stack details{overflow:hidden}
+.rust-plan-stack summary{cursor:pointer;padding:12px 14px;font-size:11px;font-weight:600;color:#48616e;background:#f9fbfc}
+.rust-plan-stack pre{margin:0;padding:14px;max-height:380px;overflow:auto;white-space:pre;font:10px/1.55 Consolas,"Cascadia Code",monospace;color:#314a58;background:#fff}
+@media(max-width:900px){.rust-engine-intro{flex-direction:column}.rust-engine-status{justify-content:flex-start}.rust-engine-facts{grid-template-columns:repeat(2,minmax(130px,1fr))}.rust-source-row{grid-template-columns:1fr}.rust-source-row>button{justify-self:start}}
+@media(max-width:560px){.rust-engine-facts,.rust-engine-options{grid-template-columns:1fr}}
