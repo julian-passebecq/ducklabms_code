@@ -24,6 +24,11 @@ jobs:
           from pathlib import Path
           import base64, gzip, hashlib
           parts = [Path(f'.foundation-delivery/part-{i}.b64').read_text().strip() for i in range(7)]
+          # Correct the one duplicated transport character established by byte comparison
+          # with the unchanged local candidate. Reject any other input before repair.
+          assert hashlib.sha256(parts[4].encode()).hexdigest() == 'fdad185de9d16a92aa1359e6cc0c3f8a5a7d493698ac13c22416bacd3103c40a'
+          assert parts[4][549:550] == 'Z'
+          parts[4] = parts[4][:549] + parts[4][550:]
           for i, part in enumerate(parts):
               print(i, len(part), hashlib.sha256(part.encode()).hexdigest())
           encoded = ''.join(parts)
