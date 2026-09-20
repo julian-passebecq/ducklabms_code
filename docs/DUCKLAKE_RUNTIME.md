@@ -87,6 +87,32 @@ DuckLake requires for its metadata and Parquet files.
 This remains a trusted local single-user application, not a hostile
 multi-tenant SQL sandbox.
 
+## File layout, pruning and snapshots
+
+DuckLake exposes real file and snapshot metadata. Datapass reads that metadata
+for teaching evidence:
+
+- current Parquet file count and total bytes;
+- average/minimum/maximum file size;
+- delete-file count;
+- current catalog snapshot and snapshot count;
+- a Datapass small-file signal using an **8 MiB teaching threshold**.
+
+The 8 MiB value is not a DuckLake validity rule. DuckLake documentation
+recommends Parquet files be at least a few MiB and provides
+`ducklake_merge_adjacent_files` for explicit compaction. Datapass currently
+reports the maintenance opportunity but does not run compaction automatically.
+
+DuckLake can prune files using file-level column statistics/zone maps when a
+predicate permits it. SparkLab therefore labels a filter immediately above a
+DuckLake scan as a **pruning opportunity**. It does not claim an actual
+files-scanned or files-pruned count because Datapass does not currently collect
+that scan telemetry.
+
+Every DuckLake write belongs to a snapshot. Snapshot identifiers shown in the
+catalog are measured metadata, not SparkLab simulation output. Time travel and
+snapshot-specific exercises are a subsequent bounded teaching pass.
+
 ## SparkLab
 
 SparkLab does not run Apache Spark. Supported PySpark-style operations are
