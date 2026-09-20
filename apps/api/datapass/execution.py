@@ -173,6 +173,7 @@ class Engine:
         statistics = {}
         catalog_assets = {asset['name']: asset for asset in self.catalog.listing()}
         measured_ducklake_inputs = False
+        measured_ducklake_pruning = False
         filters_by_source: dict[str, list[str]] = {}
 
         def collect_filters(frame):
@@ -205,6 +206,8 @@ class Engine:
                         pruning = self.catalog.ducklake_pruning_evidence(name, expression)
                         if pruning is not None:
                             break
+                    if pruning is not None:
+                        measured_ducklake_pruning = True
                     total_files = int(storage.get('file_count') or 0)
                     scan_files = int(pruning['candidate_files']) if pruning is not None else total_files
                     scan_bytes = int(pruning['candidate_bytes']) if pruning is not None else int(storage.get('size_bytes') or 0)
@@ -269,7 +272,12 @@ class Engine:
                 'profile_id':profile_id, 'aqe':aqe, 'metrics':metrics, 'logical_plan':nodes,
                 'action':parsed.action, 'datapass_credits':credits(job, profile), 'comparisons':comparisons,
                 'assumptions':{'input_statistics':statistics,
-                               'kind':'authored virtual scale' if pack else ('catalog rows + measured DuckLake Parquet files/bytes/zone maps' if measured_ducklake_inputs else 'catalog row counts; assumed 128 bytes per row'),
+                               'kind':(
+                                   'authored virtual scale' if pack
+                                   else 'catalog rows + measured DuckLake Parquet files/bytes/zone maps' if measured_ducklake_pruning
+                                   else 'catalog rows + measured DuckLake Parquet files/bytes' if measured_ducklake_inputs
+                                   else 'catalog row counts; assumed 128 bytes per row'
+                               ),
                                'calibration':'No real Spark benchmark calibration',
                                'intermediates':'Cardinality and bytes carried forward without selectivity estimates; serial operator-stage dispatch, not Spark codegen fusion; scan counts are real only outside virtual truth-pack scale',
                                'cache':'Unavailable; cache/reuse not modeled'},
