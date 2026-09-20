@@ -366,6 +366,8 @@ class Engine:
             return self.capabilities()
         if op == 'catalog':
             return self.catalog.listing()
+        if op == 'ducklake_compact':
+            return self.catalog.compact_adjacent_files(request['asset'])
         if op == 'execute':
             return self.execute(request)
         if op == 'exercise':
