@@ -3,8 +3,11 @@ import type {RootWorkbench} from './foundation.ts';
 export type KernelId = 'sql' | 'sparklab' | 'python' | 'polars' | 'dbt';
 export type TruthKind = 'real' | 'semantic-emulation' | 'simulated' | 'unsupported';
 export interface ResultTable {columns:string[]; rows:Record<string,unknown>[]; total_rows:number|null; truncated:boolean}
-export interface AssetStorageEvidence {format:'parquet';file_count:number;size_bytes:number;delete_file_count:number;snapshot_id:number|null;truth:'measured_ducklake_metadata'}
+export interface AssetStorageEvidence {format:'parquet';file_count:number;size_bytes:number;delete_file_count:number;small_file_count?:number;min_file_size_bytes?:number;max_file_size_bytes?:number;snapshot_id:number|null;truth:'measured_ducklake_metadata'}
 export interface Asset {name:string;layer:string;row_count:number;version?:string;inputs?:Record<string,string>;producer?:string;fresh:boolean;storage?:AssetStorageEvidence}
+export interface LakehouseSnapshot {snapshot_id:number;snapshot_time:string;schema_version:number}
+export interface LakehouseTableEvidence {name:string;rows:number;file_count:number;size_bytes:number;average_file_size_bytes:number;small_file_threshold_bytes:number;small_file_count:number;delete_file_count:number;snapshot_id:number|null;compaction_advisory:'consider_merge_adjacent_files'|'none';truth:string}
+export interface LakehouseOverview {active:boolean;truth:string;reason?:string;maintenance_capability?:string;small_file_threshold_truth?:string;snapshots:LakehouseSnapshot[];tables:LakehouseTableEvidence[]}
 export interface Check {status:string;passed:boolean|null;fresh?:boolean;message:string;actual?:Record<string,unknown>[];expected?:Record<string,unknown>[]}
 export interface SparkPlanNode {id:number;operation:string;source?:string;parents:number[];dependency:string;concept:string}
 export interface SparkTask {task_id:number;partition_mb:number;duration_s:number;start_s:number;finish_s:number;worker_slot:number;spill_mb:number;skewed:boolean}
@@ -25,7 +28,7 @@ export interface LakehouseCapability {
 export interface Capabilities {sparklab?:SparkSupport;storage:string;storage_truth:string;ducklake_active:boolean;lakehouse:LakehouseCapability;distributed_spark:boolean;session_generation:string;kernels:Array<{id:KernelId;available:boolean;truth:string}>;motherduck:{enabled:boolean;mode?:'optional_remote';reason:string}}
 export interface Profile {schema_version:number;driver_cores:number;driver_memory_gb:number;executor_count:number;executor_cores:number;executor_memory_gb:number;total_virtual_cores:number;default_partitions:number;shuffle_partitions:number;broadcast_threshold_mb:number;aqe_default:boolean;cold_start_seconds:number;scan_mb_s_per_core:number;shuffle_mb_s_per_core:number;credits_per_core_hour:number;id:string;name:string;min_workers:number;max_workers:number;cores_per_worker:number;max_cores:number;memory_gb_per_worker:number;truth:string}
 export interface ExecuteRequest {notebook_id:string;cell_id:string;step_id?:string;language:KernelId;code:string;output_asset?:string|null;profile:string;aqe:boolean}
-export interface RuntimeClient {execute(workspaceId:string,request:ExecuteRequest):Promise<Execution>;exercise(workspaceId:string,request:ExerciseRequest):Promise<ExerciseResult>;catalog(workspaceId:string):Promise<Asset[]>;restart(workspaceId:string):Promise<unknown>}
+export interface RuntimeClient {execute(workspaceId:string,request:ExecuteRequest):Promise<Execution>;exercise(workspaceId:string,request:ExerciseRequest):Promise<ExerciseResult>;catalog(workspaceId:string):Promise<Asset[]>;lakehouse(workspaceId:string):Promise<LakehouseOverview>;restart(workspaceId:string):Promise<unknown>}
 export interface WorkflowResult {status:'success'|'failed';runs:Execution[];catalog:Asset[];workspace_revision:number;scheduler_truth:string}
 
 /** Public, versionable exercise metadata; hidden answers and solutions are server-owned. */
