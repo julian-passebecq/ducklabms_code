@@ -9,7 +9,7 @@
     "airflow",
     "dbt"
   ],
-  "description": "Run the same dbt model steps through the portable dependency graph. No second database or notebook engine is created.",
+  "description": "dbt defines transformations and lineage; Airflow defines when and in what dependency order work runs. Datapass can render the DAG and optionally execute its educational DAG with real Airflow 3 on GitHub Actions without creating a second data store.",
   "physical_data": "12 physical orders",
   "steps": [
     {
@@ -52,27 +52,27 @@
         "expected": [
           {
             "customer_id": "C001",
-            "revenue": 150.0,
+            "revenue": 150,
             "orders": 2
           },
           {
             "customer_id": "C002",
-            "revenue": 225.0,
+            "revenue": 225,
             "orders": 2
           },
           {
             "customer_id": "C005",
-            "revenue": 100.0,
+            "revenue": 100,
             "orders": 2
           },
           {
             "customer_id": "C006",
-            "revenue": 10.0,
+            "revenue": 10,
             "orders": 1
           },
           {
             "customer_id": "CORPORATE_ACCOUNT_01",
-            "revenue": 4500.0,
+            "revenue": 4500,
             "orders": 3
           }
         ]
@@ -80,6 +80,6 @@
     }
   ],
   "schema_version": 1,
-  "version": "2026-09-17",
+  "version": "2026-09-20",
   "status": "foundation"
 }
