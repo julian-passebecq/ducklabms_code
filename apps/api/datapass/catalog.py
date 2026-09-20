@@ -369,7 +369,7 @@ class Catalog:
         expression = predicate_sql.strip()
         while expression.startswith('(') and expression.endswith(')'):
             expression = expression[1:-1].strip()
-        match = re.fullmatch(r'"([A-Za-z][A-Za-z0-9_]*)"s*(=|>=|<=|>|<)s*(-?d+(?:.d+)?)', expression)
+        match = re.fullmatch(r'"([A-Za-z][A-Za-z0-9_]*)"\s*(=|>=|<=|>|<)\s*(-?\d+(?:\.\d+)?)', expression)
         if not match:
             return None
         column, operator, raw_value = match.groups()
