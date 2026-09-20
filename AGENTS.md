@@ -62,10 +62,12 @@ The preserved architect direction is one application and one shared project mode
 - one generic Mosaic/Jupyter/Deepnote-inspired notebook and layout system;
 - shared execution services and run history;
 - reusable SparkLab simulated-Spark kernel;
-- DuckDB as the normal local analytical execution/storage choice;
-- DuckLake as an explicit optional storage path;
-- Polars where useful;
-- MotherDuck optional/future, not a requirement for local learning;
+- DuckLake as the canonical lakehouse/table layer for full local learning workspaces;
+- DuckDB as the authoritative local analytical engine and official DuckLake reference implementation;
+- new DuckLake workspaces use SQLite metadata + Parquet data with inlining disabled for transparent teaching/interoperability;
+- plain DuckDB remains a robust local compatibility mode when DuckLake extensions are not installed;
+- Polars/Python where useful;
+- MotherDuck optional/future as a remote DuckDB/DuckLake target, never a requirement for local learning;
 - Fabric/Data Factory, SQL warehousing, Airflow/dbt, Power BI and Databricks-inspired ML are modules/tool experiences of the same application, not independent applications with duplicate state.
 
 Keep **case**, **tool experience**, **document**, **layout** and **runtime** separate. A Fabric-inspired notebook is a skin/tool experience over the shared notebook model, not a second notebook engine.
