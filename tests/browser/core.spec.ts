@@ -114,3 +114,41 @@ test('editing, keyboard execution, stale lineage, recovery and distinct run scop
  await page.getByRole('tab',{name:'Notebook',exact:true}).click();
  await page.screenshot({path:'evidence/core-pass-1-react-notebook.png',fullPage:true});
 });
+
+
+test('V1 playground launcher keeps free-canvas geometry and reopens the selected product shell',async({page,request})=>{
+ const headers={Authorization:'Bearer core-pass-browser'};
+ await page.goto('/#token=core-pass-browser');
+ await page.getByRole('button',{name:'Free coding canvas',exact:true}).click();
+ await expect(page.getByRole('tab',{name:'Free canvas',exact:true})).toHaveAttribute('aria-selected','true');
+ await expect(page.locator('.notebook-block')).toHaveCount(5);
+ const workspace=await page.getByLabel('Open workspace').inputValue();
+ const doc=async()=>(await request.get(`/api/workspaces/${workspace}`,{headers})).json();
+ expect((await doc()).title).toBe('Free coding canvas');
+ expect((await doc()).notebook.playground).toBe('free');
+
+ await page.getByLabel('New cell kernel').selectOption('sql');
+ await page.getByRole('button',{name:'Cell',exact:true}).click();
+ await expect(page.getByRole('tab',{name:'Free canvas',exact:true})).toHaveAttribute('aria-selected','true');
+ await page.getByRole('button',{name:'Save',exact:true}).click();
+ await expect(page.getByText(/checkpoint/i)).toBeVisible();
+
+ await page.getByRole('button',{name:'Data',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Tables',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:/source\.orders/}).click();
+ await expect(page.getByRole('tab',{name:'Free canvas',exact:true})).toHaveAttribute('aria-selected','true');
+ await page.getByRole('button',{name:'Save',exact:true}).click();
+
+ await page.reload();
+ await expect(page.getByRole('tab',{name:'Free canvas',exact:true})).toHaveAttribute('aria-selected','true');
+ await expect(page.getByLabel('Open workspace')).toHaveValue(workspace);
+
+ await page.getByLabel('Quick playground').selectOption('fabric');
+ await expect(page.getByLabel('Workspace presentation')).toHaveValue('fabric');
+ await expect(page.getByRole('tab',{name:'Notebook',exact:true})).toHaveAttribute('aria-selected','true');
+ await expect(page.locator('.notebook-tree')).toBeVisible();
+ await expect(page.getByText('SparkLab / PySpark subset').first()).toBeVisible();
+
+ await page.getByLabel('Quick playground').selectOption('leetcode');
+ await expect(page.locator('.interview-browser')).toBeVisible();
+});
