@@ -48,21 +48,28 @@ Or on macOS/Linux:
 source .venv/bin/activate
 ```
 
-Then install and start:
+Then install and build:
 
 ```sh
 python -m pip install -r requirements.txt -r requirements-engines.txt
 npm ci
 npm run build
-python start.py --storage duckdb
 ```
+
+For the full local lakehouse profile, install the official DuckLake/SQLite extensions once and start:
+
+```sh
+python start.py --storage ducklake --install-ducklake
+```
+
+Later offline starts can use `python start.py --storage ducklake`. New DuckLake workspaces use DuckDB compute, SQLite metadata and Parquet data with Datapass data inlining disabled. Plain `--storage duckdb` remains a real local compatibility mode when the DuckLake profile is not required.
 
 Open the token-bearing local URL printed by `start.py`. Do not share that URL. There is no deployed public site in this package.
 
 For the ML/Python/Polars cases, explicitly enable trusted local code:
 
 ```sh
-python start.py --storage duckdb --trusted-local-python
+python start.py --storage ducklake --trusted-local-python
 ```
 
 **Trusted Python has your operating-system user's privileges. A worker process is NOT a security sandbox. Do not expose this API to a network or run untrusted notebooks.**
