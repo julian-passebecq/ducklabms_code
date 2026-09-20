@@ -119,7 +119,7 @@ test('editing, keyboard execution, stale lineage, recovery and distinct run scop
 test('V1 playground launcher keeps free-canvas geometry and reopens the selected product shell',async({page,request})=>{
  const headers={Authorization:'Bearer core-pass-browser'};
  await page.goto('/#token=core-pass-browser');
- await page.getByRole('button',{name:'Free coding canvas',exact:true}).click();
+ await page.getByRole('button',{name:/Free coding canvas/}).click();
  await expect(page.getByRole('tab',{name:'Free canvas',exact:true})).toHaveAttribute('aria-selected','true');
  await expect(page.locator('.notebook-block')).toHaveCount(5);
  const workspace=await page.getByLabel('Open workspace').inputValue();
