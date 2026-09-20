@@ -266,7 +266,7 @@ class Catalog:
         limit = max(1, min(int(limit), 100))
         rows = self.db.execute(
             """
-            SELECT snapshot_id, snapshot_time, schema_version,
+            SELECT snapshot_id, CAST(snapshot_time AS VARCHAR) AS snapshot_time, schema_version,
                    CAST(changes AS VARCHAR) AS changes,
                    author, commit_message
             FROM ducklake_snapshots('lake')
