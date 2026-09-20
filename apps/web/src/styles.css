@@ -28,3 +28,13 @@
 .spark-inspector [role=tablist] { display: flex; flex-wrap: wrap; }
 .spark-pane { padding: 12px 0; max-height: 560px; overflow: auto; }
 .spark-pane pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.asset-card.selected{border-color:#69b7a2;box-shadow:0 0 0 2px #e3f2eb}
+.lakehouse-evidence-panel{margin-top:28px;padding:22px;border:1px solid #dce6ea;border-radius:8px;background:#fff}
+.lakehouse-evidence-panel .surface-title h2{margin:5px 0 0}
+.lakehouse-evidence-panel .surface-title>div:last-child{display:flex;gap:7px;flex-wrap:wrap}
+.lakehouse-metrics{margin:18px 0}
+.snapshot-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:9px}
+.snapshot-list button{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;border:1px solid #e0e7eb;border-radius:7px;background:#fafcfc;padding:13px;color:#526a75}
+.snapshot-list button:hover{border-color:#8bbeb1;background:#f4faf8}
+.snapshot-list b{color:#2f665d}.snapshot-list span{font-size:10px;color:#7c8c95}.snapshot-list small{font-size:9px;color:#95a1a8;line-height:1.5;overflow-wrap:anywhere}
