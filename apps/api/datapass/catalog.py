@@ -206,6 +206,74 @@ class Catalog:
                 return False
         return True
 
+    def lakehouse_overview(self) -> dict:
+        """Return read-only DuckLake maintenance evidence for teaching.
+
+        The small-file threshold is a Datapass heuristic, not a DuckLake rule.
+        No maintenance function is executed here.
+        """
+        if self.kind != 'ducklake':
+            return {
+                'active': False,
+                'truth': 'unavailable',
+                'reason': 'DuckLake is not attached for this workspace.',
+                'snapshots': [],
+                'tables': [],
+            }
+        snapshot_rows = self.db.execute(
+            """
+            SELECT snapshot_id, snapshot_time, schema_version
+            FROM ducklake_snapshots('lake')
+            ORDER BY snapshot_id DESC
+            LIMIT 20
+            """
+        ).fetchall()
+        assets = self.listing()
+        tables = []
+        for asset in assets:
+            storage = asset.get('storage')
+            if not storage:
+                continue
+            file_count = int(storage.get('file_count') or 0)
+            size_bytes = int(storage.get('size_bytes') or 0)
+            average = round(size_bytes / file_count) if file_count else 0
+            # DuckLake docs recommend Parquet files of at least a few MB.
+            # Datapass uses 8 MiB only as an educational warning threshold.
+            small_threshold = 8 * 1024 * 1024
+            small_files = int(storage.get('small_file_count') or 0)
+            tables.append({
+                'name': asset['name'],
+                'rows': asset['row_count'],
+                'file_count': file_count,
+                'size_bytes': size_bytes,
+                'average_file_size_bytes': average,
+                'small_file_threshold_bytes': small_threshold,
+                'small_file_count': small_files,
+                'delete_file_count': int(storage.get('delete_file_count') or 0),
+                'snapshot_id': storage.get('snapshot_id'),
+                'compaction_advisory': (
+                    'consider_merge_adjacent_files'
+                    if file_count >= 4 and small_files / max(file_count, 1) >= 0.5
+                    else 'none'
+                ),
+                'truth': 'measured DuckLake metadata + Datapass advisory heuristic',
+            })
+        return {
+            'active': True,
+            'truth': 'read-only measured DuckLake metadata; no maintenance executed',
+            'maintenance_capability': 'ducklake_merge_adjacent_files',
+            'small_file_threshold_truth': 'Datapass teaching heuristic: 8 MiB; DuckLake documentation recommends files of at least a few megabytes',
+            'snapshots': [
+                {
+                    'snapshot_id': int(row[0]),
+                    'snapshot_time': row[1].isoformat() if hasattr(row[1], 'isoformat') else str(row[1]),
+                    'schema_version': int(row[2]),
+                }
+                for row in snapshot_rows
+            ],
+            'tables': tables,
+        }
+
     def _ducklake_storage_evidence(self, layer: str, table: str) -> dict | None:
         if self.kind != 'ducklake':
             return None
@@ -230,7 +298,10 @@ class Catalog:
                 SELECT
                     (SELECT COUNT(*) FROM data_files) AS file_count,
                     (SELECT COALESCE(SUM(data_file_size_bytes), 0) FROM data_files) AS size_bytes,
-                    (SELECT COUNT(*) FROM delete_files) AS delete_file_count
+                    (SELECT COUNT(*) FROM delete_files) AS delete_file_count,
+                    (SELECT COUNT(*) FROM data_files WHERE data_file_size_bytes < 8388608) AS small_file_count,
+                    (SELECT COALESCE(MIN(data_file_size_bytes), 0) FROM data_files) AS min_file_size_bytes,
+                    (SELECT COALESCE(MAX(data_file_size_bytes), 0) FROM data_files) AS max_file_size_bytes
                 """
             ).fetchone()
         except Exception:
@@ -244,6 +315,9 @@ class Catalog:
             'file_count': int(row[0] or 0),
             'size_bytes': int(row[1] or 0),
             'delete_file_count': int(row[2] or 0),
+            'small_file_count': int(row[3] or 0),
+            'min_file_size_bytes': int(row[4] or 0),
+            'max_file_size_bytes': int(row[5] or 0),
             'snapshot_id': int(snapshot[0]) if snapshot and snapshot[0] is not None else None,
             'truth': 'measured_ducklake_metadata',
         }
