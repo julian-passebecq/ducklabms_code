@@ -6,6 +6,8 @@ on:
       - codex/ducklake-sparklab-fidelity-pass-1
     paths:
       - .github/workflows/refresh-openapi-fidelity.yml
+      - apps/api/datapass/api.py
+      - scripts/export-openapi.py
 
 permissions:
   contents: write
