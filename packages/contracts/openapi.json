@@ -3109,9 +3109,9 @@
         "summary": "Spark Remote Run"
       }
     },
-    "/api/workspaces/{id}/spark/remote/{run_id}": {
+    "/api/workspaces/{id}/spark/remote/{job_id}": {
       "get": {
-        "operationId": "spark_remote_status_api_workspaces__id__spark_remote__run_id__get",
+        "operationId": "spark_remote_status_api_workspaces__id__spark_remote__job_id__get",
         "parameters": [
           {
             "in": "path",
@@ -3155,9 +3155,9 @@
         "summary": "Spark Remote Status"
       }
     },
-    "/api/workspaces/{id}/spark/remote/{run_id}/result/{request_id}": {
+    "/api/workspaces/{id}/spark/remote/{job_id}/result/{request_id}": {
       "get": {
-        "operationId": "spark_remote_result_api_workspaces__id__spark_remote__run_id__result__request_id__get",
+        "operationId": "spark_remote_result_api_workspaces__id__spark_remote__job_id__result__request_id__get",
         "parameters": [
           {
             "in": "path",
