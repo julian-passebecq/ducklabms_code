@@ -145,36 +145,21 @@ class AirflowRemote:
             "truth": "dispatch accepted by GitHub Actions; Airflow has not completed yet",
         }
 
-    def _find_run(self, request_id: str) -> dict[str, Any] | None:
-        if not REQUEST_ID.fullmatch(request_id):
-            raise ValueError("Invalid Airflow request id.")
-        url = self._url(f"/actions/workflows/{self.config.workflow}/runs")
-        params = {"event": "workflow_dispatch", "branch": self.config.ref, "per_page": 50}
+    def _run(self, run_id: int) -> dict[str, Any]:
+        if run_id <= 0:
+            raise ValueError("Invalid GitHub Actions run id.")
+        url = self._url(f"/actions/runs/{run_id}")
         with httpx.Client(timeout=self.timeout, follow_redirects=True) as client:
-            response = client.get(url, headers=self._headers(), params=params)
+            response = client.get(url, headers=self._headers())
+        if response.status_code == 404:
+            raise ValueError("Remote Airflow run not found.")
         if response.status_code != 200:
             raise RuntimeError(f"GitHub workflow status lookup failed ({response.status_code}).")
-        expected = f"Datapass Airflow {request_id}"
-        for run in response.json().get("workflow_runs", []):
-            if run.get("display_title") == expected:
-                return run
-        return None
+        return response.json()
 
-    def status(self, request_id: str) -> dict[str, Any]:
-        run = self._find_run(request_id)
-        if run is None:
-            return {
-                "request_id": request_id,
-                "status": "locating",
-                "conclusion": None,
-                "run_id": None,
-                "run_url": None,
-                "artifact_available": False,
-                "truth": "GitHub accepted the dispatch but the workflow run is not visible yet.",
-            }
-        completed = run.get("status") == "completed"
+    def status(self, run_id: int) -> dict[str, Any]:
+        run = self._run(run_id)
         return {
-            "request_id": request_id,
             "status": run.get("status"),
             "conclusion": run.get("conclusion"),
             "run_id": run.get("id"),
@@ -182,15 +167,16 @@ class AirflowRemote:
             "created_at": run.get("created_at"),
             "run_started_at": run.get("run_started_at"),
             "updated_at": run.get("updated_at"),
-            "artifact_available": completed,
+            "artifact_available": run.get("status") == "completed",
             "truth": "real GitHub Actions workflow state",
         }
 
-    def result(self, request_id: str) -> dict[str, Any]:
-        run = self._find_run(request_id)
-        if run is None or run.get("status") != "completed":
+    def result(self, run_id: int, request_id: str) -> dict[str, Any]:
+        if not REQUEST_ID.fullmatch(request_id):
+            raise ValueError("Invalid Airflow request id.")
+        run = self._run(run_id)
+        if run.get("status") != "completed":
             raise RuntimeError("The remote Airflow run has not completed yet.")
-        run_id = int(run["id"])
         artifact_url = self._url(f"/actions/runs/{run_id}/artifacts")
         with httpx.Client(timeout=self.timeout, follow_redirects=True) as client:
             response = client.get(artifact_url, headers=self._headers())
