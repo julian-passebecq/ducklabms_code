@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from .content import ROOT, CONTENT, get_case, cases
+from .catalog import asset_name
 from .documents import Documents, RevisionConflict
 from . import exercises
 from .foundation import RootWorkbench, validate_workspace_references
@@ -257,6 +258,38 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
     @app.get('/api/workspaces/{id}/catalog')
     def catalog(id:str):
         return command(id,{'op':'catalog'})
+
+    def lakehouse_asset(layer: str, table: str) -> str:
+        return asset_name(f'{layer}.{table}')
+
+    @app.get('/api/workspaces/{id}/lakehouse/snapshots')
+    def lakehouse_snapshots(id: str, limit: int = 30):
+        docs.get(id)
+        if not 1 <= limit <= 100:
+            raise ValueError('Snapshot history limit must be between 1 and 100.')
+        return command(id, {'op':'lakehouse_snapshots','limit':limit})
+
+    @app.get('/api/workspaces/{id}/lakehouse/tables/{layer}/{table}')
+    def lakehouse_table(id: str, layer: str, table: str):
+        docs.get(id)
+        return command(id, {'op':'lakehouse_table','asset':lakehouse_asset(layer, table)})
+
+    @app.get('/api/workspaces/{id}/lakehouse/tables/{layer}/{table}/snapshots/{snapshot_id}')
+    def lakehouse_snapshot_preview(id: str, layer: str, table: str, snapshot_id: int, limit: int = 50):
+        docs.get(id)
+        if snapshot_id < 0 or not 1 <= limit <= 200:
+            raise ValueError('Use a non-negative snapshot id and preview limit from 1 to 200.')
+        return command(id, {
+            'op':'lakehouse_snapshot_preview',
+            'asset':lakehouse_asset(layer, table),
+            'snapshot_id':snapshot_id,
+            'limit':limit,
+        })
+
+    @app.post('/api/workspaces/{id}/lakehouse/tables/{layer}/{table}/compact')
+    def lakehouse_compact(id: str, layer: str, table: str):
+        docs.get(id)
+        return command(id, {'op':'lakehouse_compact','asset':lakehouse_asset(layer, table)})
 
     @app.post('/api/workspaces/{id}/execute')
     def execute(id:str,body:ExecuteCell):
