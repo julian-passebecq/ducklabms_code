@@ -374,19 +374,34 @@ class Catalog:
             return None
         column, operator, raw_value = match.groups()
         value = float(raw_value)
-        metadata_catalog = '__ducklake_metadata_lake'
+        metadata_location = self.db.execute(
+            """
+            SELECT table_catalog, table_schema
+            FROM information_schema.tables
+            WHERE table_name='ducklake_file_column_stats'
+              AND table_catalog LIKE '__ducklake_metadata_%'
+            ORDER BY table_catalog, table_schema
+            LIMIT 1
+            """
+        ).fetchone()
+        if metadata_location is None:
+            return None
+        metadata_catalog, metadata_schema = map(str, metadata_location)
+        quoted_catalog = '"' + metadata_catalog.replace('"', '""') + '"'
+        quoted_schema = '"' + metadata_schema.replace('"', '""') + '"'
+        prefix = f'{quoted_catalog}.{quoted_schema}'
         rows = self.db.execute(
             f"""
             SELECT c.column_type, df.data_file_id, df.file_size_bytes,
                    stats.min_value, stats.max_value
-            FROM {metadata_catalog}.main.ducklake_table AS t
-            JOIN {metadata_catalog}.main.ducklake_schema AS s
+            FROM {prefix}.ducklake_table AS t
+            JOIN {prefix}.ducklake_schema AS s
               ON s.schema_id=t.schema_id
-            JOIN {metadata_catalog}.main.ducklake_column AS c
+            JOIN {prefix}.ducklake_column AS c
               ON c.table_id=t.table_id
-            JOIN {metadata_catalog}.main.ducklake_data_file AS df
+            JOIN {prefix}.ducklake_data_file AS df
               ON df.table_id=t.table_id
-            LEFT JOIN {metadata_catalog}.main.ducklake_file_column_stats AS stats
+            LEFT JOIN {prefix}.ducklake_file_column_stats AS stats
               ON stats.table_id=t.table_id
              AND stats.data_file_id=df.data_file_id
              AND stats.column_id=c.column_id
