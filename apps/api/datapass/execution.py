@@ -69,11 +69,17 @@ class Engine:
         self.directory = directory
 
     def capabilities(self):
+        lakehouse = self.catalog.runtime_contract()
         return {
             'storage': self.catalog.kind,
-            'storage_truth': 'real local data; SQLite compatibility mode' if self.catalog.kind == 'sqlite' else 'real local data',
-            'ducklake_active': self.catalog.kind == 'ducklake',
-            'motherduck': {'enabled': False, 'reason': 'Optional future remote catalog adapter; no credentials required.'},
+            'storage_truth': lakehouse['truth'],
+            'ducklake_active': bool(lakehouse['active']),
+            'lakehouse': lakehouse,
+            'motherduck': {
+                'enabled': False,
+                'mode': 'optional_remote',
+                'reason': 'Optional future remote DuckDB/DuckLake adapter; no hidden network fallback and no credentials required for local use.',
+            },
             'kernels': [
                 {'id':'sql','available':True,'truth':'real SQL execution'},
                 {'id':'sparklab','available':True,'truth':'supported AST compiled to local SQL; distributed compute simulated'},
