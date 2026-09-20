@@ -293,6 +293,42 @@ class Catalog:
                 items.append(item)
         return items
 
+    def compact_adjacent_files(self, name: str) -> dict:
+        name = asset_name(name)
+        if self.kind != 'ducklake':
+            raise RuntimeError('DuckLake adjacent-file compaction is available only in DuckLake storage mode.')
+        layer, table = name.split('.')
+        if layer == 'source':
+            raise ValueError('Source fixtures are logically immutable; compact a derived Bronze/Silver/Gold asset instead.')
+        if not self.exists(name):
+            raise FileNotFoundError(name)
+        before_rows = int(self.db.execute(f'SELECT COUNT(*) FROM {name}').fetchone()[0])
+        before = self._ducklake_storage_evidence(layer, table)
+        if before is None:
+            raise ValueError('Selected relation has no DuckLake physical-file evidence.')
+        result = self.db.execute(
+            f"CALL ducklake_merge_adjacent_files('lake', '{table}', schema => '{layer}')"
+        )
+        columns = [col[0] for col in result.description] if result.description else []
+        rows = [dict(zip(columns, map(json_value, row))) for row in result.fetchall()]
+        after_rows = int(self.db.execute(f'SELECT COUNT(*) FROM {name}').fetchone()[0])
+        after = self._ducklake_storage_evidence(layer, table)
+        if after_rows != before_rows:
+            raise RuntimeError('DuckLake maintenance changed the logical row count; inspect the workspace before continuing.')
+        return {
+            'schema_version': 1,
+            'action': 'merge_adjacent_files',
+            'asset': name,
+            'truth': 'real local DuckLake maintenance',
+            'logical_rows_before': before_rows,
+            'logical_rows_after': after_rows,
+            'logical_version_changed': False,
+            'before': before,
+            'after': after,
+            'operations': rows,
+            'claim': 'Measured file-layout change only; no query-speed improvement is claimed.',
+        }
+
     def runtime_contract(self) -> dict:
         if self.kind == 'ducklake' and self.lakehouse is not None:
             return self.lakehouse.contract()
