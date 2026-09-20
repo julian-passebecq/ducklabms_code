@@ -222,7 +222,7 @@ class Catalog:
             }
         snapshot_rows = self.db.execute(
             """
-            SELECT snapshot_id, snapshot_time, schema_version
+            SELECT snapshot_id, CAST(snapshot_time AS VARCHAR), schema_version
             FROM ducklake_snapshots('lake')
             ORDER BY snapshot_id DESC
             LIMIT 20
@@ -266,7 +266,7 @@ class Catalog:
             'snapshots': [
                 {
                     'snapshot_id': int(row[0]),
-                    'snapshot_time': row[1].isoformat() if hasattr(row[1], 'isoformat') else str(row[1]),
+                    'snapshot_time': str(row[1]),
                     'schema_version': int(row[2]),
                 }
                 for row in snapshot_rows
