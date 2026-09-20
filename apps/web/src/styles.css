@@ -28,3 +28,12 @@
 .spark-inspector [role=tablist] { display: flex; flex-wrap: wrap; }
 .spark-pane { padding: 12px 0; max-height: 560px; overflow: auto; }
 .spark-pane pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+
+/* Airflow stays a Datapass Fluent surface while execution is delegated to
+   ephemeral real Airflow on GitHub Actions. */
+.airflow-surface{min-width:0}
+.airflow-run-strip{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;margin:18px 0;border:1px solid #dfe6ea;border-radius:7px;background:#fff;color:#667982;font-size:11px}
+.airflow-source{width:100%;min-height:320px;box-sizing:border-box;resize:vertical;border:1px solid #dbe3e7;border-radius:7px;background:#fff;padding:14px 16px;font:12px/1.65 Consolas,monospace;color:#294353;outline:none;tab-size:4}
+.airflow-source:focus{border-color:#68a99d;box-shadow:0 0 0 2px #e4f2ee}
+.airflow-log{max-height:440px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:#172126;color:#d8e4e7;border-radius:7px;padding:16px;font:11px/1.6 Consolas,monospace}
