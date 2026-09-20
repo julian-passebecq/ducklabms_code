@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import sqlite3
 from pathlib import Path
 
 import pytest
@@ -122,7 +123,29 @@ def test_real_ducklake_profile_round_trip(tmp_path: Path, monkeypatch):
         assert pruning_before["storage"]["compaction_candidate"] is True
 
         zone_map = engine.catalog.ducklake_pruning_evidence("silver.pruning_probe", '("id" < 50)')
-        assert zone_map is not None
+        if zone_map is None:
+            metadata = sqlite3.connect(tmp_path / "lake-metadata.sqlite")
+            try:
+                diagnostic = {
+                    "schemas": metadata.execute(
+                        "SELECT schema_id, schema_name, begin_snapshot, end_snapshot FROM ducklake_schema ORDER BY schema_id"
+                    ).fetchall(),
+                    "tables": metadata.execute(
+                        "SELECT table_id, schema_id, table_name, begin_snapshot, end_snapshot FROM ducklake_table ORDER BY table_id"
+                    ).fetchall(),
+                    "columns": metadata.execute(
+                        "SELECT table_id, column_id, column_name, column_type, begin_snapshot, end_snapshot FROM ducklake_column ORDER BY table_id, column_id"
+                    ).fetchall(),
+                    "files": metadata.execute(
+                        "SELECT table_id, data_file_id, file_size_bytes, begin_snapshot, end_snapshot FROM ducklake_data_file ORDER BY table_id, data_file_id"
+                    ).fetchall(),
+                    "file_stats": metadata.execute(
+                        "SELECT table_id, data_file_id, column_id, min_value, max_value FROM ducklake_file_column_stats ORDER BY table_id, data_file_id, column_id"
+                    ).fetchall(),
+                }
+            finally:
+                metadata.close()
+            pytest.fail("DuckLake pruning metadata lookup returned no evidence: " + repr(diagnostic))
         assert zone_map["truth"] == "measured_ducklake_zone_map_metadata"
         assert zone_map["candidate_files"] < zone_map["total_files"]
         assert zone_map["candidate_bytes"] < zone_map["total_bytes"]
