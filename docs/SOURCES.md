@@ -1,6 +1,6 @@
 # Official implementation references
 
-Checked September 17, 2026. These are primary references for architecture and terminology, not evidence that our local implementation passes compatibility tests.
+Checked September 20, 2026. These are primary references for architecture and terminology, not evidence that our local implementation passes compatibility tests.
 
 - Fluent UI 2 React setup, FluentProvider and v9 components: https://fluent2.microsoft.design/get-started/develop
 - Public React component catalog: https://fluent2.microsoft.design/components/web/react/
@@ -8,6 +8,10 @@ Checked September 17, 2026. These are primary references for architecture and te
   The public sample is a React workload and includes a Fluent UI ribbon. It is not the complete proprietary Fabric/ADF/Power BI frontend.
 - DuckLake connection/metadata/data paths: https://ducklake.select/docs/stable/duckdb/usage/connecting
 - DuckLake extension: https://duckdb.org/docs/current/core_extensions/ducklake
+- DuckLake 1.0 / DuckDB 1.5.2 reference implementation: https://duckdb.org/2026/04/22/duckdb-152.html
+- DuckLake catalog database choices: https://ducklake.select/docs/stable/duckdb/usage/choosing_a_catalog_database
+- DuckLake data inlining option: https://ducklake.select/docs/stable/duckdb/advanced_features/data_inlining
+- DuckDB external-access / allowed-directories configuration: https://duckdb.org/docs/stable/configuration/overview
 - Fabric Lakehouse default Delta Lake format: https://learn.microsoft.com/en-us/fabric/data-engineering/lakehouse-and-delta-tables
 - ADF Stored Procedure activity invokes database procedures: https://learn.microsoft.com/en-us/azure/data-factory/transform-data-using-stored-procedure
 - Fabric Stored Procedure activity: https://learn.microsoft.com/en-us/fabric/data-factory/stored-procedure-activity
