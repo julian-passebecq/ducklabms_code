@@ -7,7 +7,8 @@ import { parseProjectSnapshot } from '../../../packages/notebook-core/src/v2/pro
 import {projectRemovalIds,resetViewLayoutGeometry} from '../../../packages/notebook-core/src/v2/model.ts';
 
 export interface RootBlock extends WorkbenchPanel {kernel?:KernelId;stepId?:string;outputAsset?:string|null;role?:'code'|'help'|'result'|'note'|'problem'|'exercise-help'|'exercise-browser';readOnly?:boolean;starterSource?:string;exerciseId?:string}
-export interface RootNotebook {schemaVersion:1;id:string;title:string;blocks:RootBlock[];views:NotebookView[];blockState:Record<string,unknown>;info:ImportedNotebookInfo|null;executions:Record<string,Execution>;executedSource:Record<string,string>;practiceLayouts?:Record<string,NotebookView['layout']>;exercise?:{id:string;version:string};revealedHints?:number;solutionRevealed?:boolean;skin?:'neutral'|'fabric'|'databricks';outputCheckpoints?:Record<string,string>;clearedOutputs?:string[]}
+export type WorkspacePresentation='studio'|'fabric'|'leetcode';
+export interface RootNotebook {schemaVersion:1;id:string;title:string;blocks:RootBlock[];views:NotebookView[];blockState:Record<string,unknown>;info:ImportedNotebookInfo|null;executions:Record<string,Execution>;executedSource:Record<string,string>;practiceLayouts?:Record<string,NotebookView['layout']>;exercise?:{id:string;version:string};revealedHints?:number;solutionRevealed?:boolean;skin?:'neutral'|'fabric'|'databricks';presentation?:WorkspacePresentation;outputCheckpoints?:Record<string,string>;clearedOutputs?:string[]}
 const codeTypes=new Set(['sql','python','polars']);
 export const isRunnable=(b:RootBlock)=>codeTypes.has(b.type)&&!b.readOnly;
 export const sourceKey=(b:RootBlock)=>`mosaic:v2:${b.type==='markdown'?'markdown':'code'}:${b.id}`;
@@ -27,7 +28,9 @@ export function createCaseNotebook(c:CaseStudy):RootNotebook {
  }
  const sourceById=new Map(blocks.map(b=>[b.id,String(state[sourceKey(b)]??'')]));
  const views=createImportedViews(blocks,sourceById);
- return {schemaVersion:1,id:'case-notebook',title:c.title,blocks,views,blockState:state,info:null,executions:{},executedSource:{}};
+ const fabric=c.modules.includes('fabric-notebook');
+ const databricks=c.modules.includes('databricks-notebook');
+ return {schemaVersion:1,id:'case-notebook',title:c.title,blocks,views,blockState:state,info:null,executions:{},executedSource:{},presentation:fabric?'fabric':'studio',skin:fabric?'fabric':databricks?'databricks':'neutral'};
 }
 
 export function practiceView(n:RootNotebook,stepId:string):NotebookView {
@@ -86,7 +89,7 @@ export function restoreNotebook(value:unknown):RootNotebook {
  const normalized=parseProjectSnapshot(JSON.stringify({format:'mosaic-v2-notebook-project',version:'2.1.7',currentViewId:'notebook',blocks:doc.blocks,views:[...doc.views,...practiceViews],datasets:[],notebookInfo:doc.info,result:{columns:[],rows:[]},blockState:doc.blockState}));
  const byId=new Map(doc.blocks.map(b=>[b.id,b]));
  const blocks:RootBlock[]=normalized.blocks.map(b=>{const old=byId.get(b.id);return {...b,kernel:old?.kernel&&['sql','sparklab','python','polars','dbt'].includes(old.kernel)?old.kernel:undefined,stepId:typeof old?.stepId==='string'?old.stepId:undefined,outputAsset:typeof old?.outputAsset==='string'?old.outputAsset:null,role:old?.role,readOnly:!!old?.readOnly,starterSource:typeof old?.starterSource==='string'?old.starterSource:undefined,exerciseId:typeof old?.exerciseId==='string'?old.exerciseId:undefined}});
- return {schemaVersion:1,id:typeof doc.id==='string'&&/^[A-Za-z0-9_-]{1,100}$/.test(doc.id)?doc.id:'case-notebook',title:String(doc.title??'Notebook'),blocks,views:normalized.views.filter(v=>!v.id.startsWith('saved-practice-')),practiceLayouts:Object.fromEntries(normalized.views.filter(v=>v.id.startsWith('saved-practice-')).map(v=>[v.id.slice(15),v.layout])),blockState:normalized.blockState,info:normalized.notebookInfo,executions:{},executedSource:{},exercise:doc.exercise&&typeof doc.exercise.id==='string'&&typeof doc.exercise.version==='string'?doc.exercise:undefined,solutionRevealed:doc.solutionRevealed===true,revealedHints:Number.isInteger(doc.revealedHints)?Math.max(0,Math.min(100,doc.revealedHints!)):0,skin:['neutral','fabric','databricks'].includes(doc.skin??'')?doc.skin:'neutral',outputCheckpoints:Object.fromEntries(Object.entries(doc.outputCheckpoints??{}).filter(([id,run])=>byId.has(id)&&typeof run==='string')),clearedOutputs:Array.isArray(doc.clearedOutputs)?doc.clearedOutputs.filter(id=>typeof id==='string'):[]};
+ return {schemaVersion:1,id:typeof doc.id==='string'&&/^[A-Za-z0-9_-]{1,100}$/.test(doc.id)?doc.id:'case-notebook',title:String(doc.title??'Notebook'),blocks,views:normalized.views.filter(v=>!v.id.startsWith('saved-practice-')),practiceLayouts:Object.fromEntries(normalized.views.filter(v=>v.id.startsWith('saved-practice-')).map(v=>[v.id.slice(15),v.layout])),blockState:normalized.blockState,info:normalized.notebookInfo,executions:{},executedSource:{},exercise:doc.exercise&&typeof doc.exercise.id==='string'&&typeof doc.exercise.version==='string'?doc.exercise:undefined,solutionRevealed:doc.solutionRevealed===true,revealedHints:Number.isInteger(doc.revealedHints)?Math.max(0,Math.min(100,doc.revealedHints!)):0,skin:['neutral','fabric','databricks'].includes(doc.skin??'')?doc.skin:'neutral',presentation:['studio','fabric','leetcode'].includes(doc.presentation??'')?doc.presentation:'studio',outputCheckpoints:Object.fromEntries(Object.entries(doc.outputCheckpoints??{}).filter(([id,run])=>byId.has(id)&&typeof run==='string')),clearedOutputs:Array.isArray(doc.clearedOutputs)?doc.clearedOutputs.filter(id=>typeof id==='string'):[]};
 }
 
 export function addCell(n:RootNotebook,kernel:KernelId|'markdown'):RootNotebook {
@@ -135,7 +138,7 @@ export function createExerciseNotebook(exercise:ExerciseDefinition):RootNotebook
  const blockState={[sourceKey(code)]:exercise.starter_source,[sourceKey(problem)]:exercise.prompt,[sourceKey(help)]:exercise.explanation};
  const genericViews=createImportedViews(blocks,new Map(blocks.map(b=>[b.id,String(blockState[sourceKey(b)]??'')]))).map(v=>({...v,blockIds:v.blockIds.filter(id=>id!==browser.id),layout:v.layout.filter(i=>i.i!==browser.id)}));
  const interview:NotebookView={id:'interview',label:'Interview',description:'Problem, source, output and guidance; geometry does not change execution order.',blockIds:[browser.id,problem.id,code.id,output.id,help.id],layout:interviewLayout()};
- return {schemaVersion:1,id:`exercise-${exercise.id}-${exercise.version}`,title:exercise.title,exercise:{id:exercise.id,version:exercise.version},blocks,views:[...genericViews,interview].map(v=>({...v,defaultLayout:v.layout})),blockState,info:null,executions:{},executedSource:{}};
+ return {schemaVersion:1,id:`exercise-${exercise.id}-${exercise.version}`,title:exercise.title,exercise:{id:exercise.id,version:exercise.version},blocks,views:[...genericViews,interview].map(v=>({...v,defaultLayout:v.layout})),blockState,info:null,executions:{},executedSource:{},presentation:'leetcode',skin:'neutral'};
 }
 
 /** Upgrade Pass 1/2 documents without replacing source, notes or saved geometry. */
