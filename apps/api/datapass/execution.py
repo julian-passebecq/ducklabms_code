@@ -195,6 +195,12 @@ class Engine:
                         'bytes': int(storage.get('size_bytes') or 0),
                         'partitions': max(1, int(storage.get('file_count') or 0)),
                         'source_files': int(storage.get('file_count') or 0),
+                        'small_file_count': int(storage.get('small_file_count') or 0),
+                        'min_file_size_bytes': int(storage.get('min_file_size_bytes') or 0),
+                        'max_file_size_bytes': int(storage.get('max_file_size_bytes') or 0),
+                        'average_file_size_bytes': round(
+                            int(storage.get('size_bytes') or 0) / max(int(storage.get('file_count') or 0), 1)
+                        ),
                         'snapshot_id': storage.get('snapshot_id'),
                         'input_truth': 'rows measured from table; bytes/files measured from DuckLake metadata',
                     }
@@ -247,7 +253,8 @@ class Engine:
                                'kind':'authored virtual scale' if pack else ('catalog rows + measured DuckLake Parquet files/bytes' if measured_ducklake_inputs else 'catalog row counts; assumed 128 bytes per row'),
                                'calibration':'No real Spark benchmark calibration',
                                'intermediates':'Cardinality and bytes carried forward without selectivity estimates; serial operator-stage dispatch, not Spark codegen fusion; scan counts are real only outside virtual truth-pack scale',
-                               'cache':'Unavailable; cache/reuse not modeled'},
+                               'cache':'Unavailable; cache/reuse not modeled',
+                               'storage_note':'DuckLake source file counts/sizes are measured when available. Small-file warnings use a Datapass 8 MiB teaching heuristic; pruning selectivity is not claimed without query-profile evidence.'},
                 'semantic_match':(not result['truncated'] and compare_rows(result['rows'],pack['fixture_truth']['rows'])) if pack else None}
 
     def execute(self, request: dict):
