@@ -10,6 +10,7 @@ import importlib.util
 import io
 import json
 import math
+import re
 from pathlib import Path
 import time
 from typing import Any
@@ -162,6 +163,39 @@ class Engine:
             result = {'columns':shown_columns, 'rows':json_value(rows[:200]),'truncated':len(rows)>200,'total_rows':len(rows)}
         return result, output.getvalue(), sorted(dependencies)
 
+    def _partition_pruning_hints(self, frame) -> dict[str, tuple[str, str]]:
+        """Find only directly provable source equality filters.
+
+        A hint is emitted only when the first relational operation on a source
+        is a simple column = scalar filter. More complex predicates are left
+        unmodeled rather than guessed.
+        """
+        hints: dict[str, tuple[str, str]] = {}
+
+        def visit(current):
+            for op in current.ops:
+                if op.kind == 'join':
+                    visit(op.detail['other'])
+            if not current.ops or current.ops[0].kind != 'filter':
+                return
+            sql = str(current.ops[0].detail['expr'].sql)
+            match = re.fullmatch(
+                r'\("([A-Za-z_][A-Za-z0-9_]*)" = (\'(?:\'\'|[^\'])*\'|-?\d+(?:\.\d+)?|TRUE|FALSE)\)',
+                sql,
+                re.I,
+            )
+            if not match:
+                return
+            raw = match.group(2)
+            if raw.startswith("'") and raw.endswith("'"):
+                value = raw[1:-1].replace("''", "'")
+            else:
+                value = raw.lower() if raw.upper() in {'TRUE', 'FALSE'} else raw
+            hints[current.source] = (match.group(1), value)
+
+        visit(frame)
+        return hints
+
     def simulate(self, request: dict, parsed, result: dict):
         from services.sparklab.physical import simulate_plan, credits, logical_plan
         profiles = load_cluster_profiles(str(SPARK_HOME / 'cluster_profiles.json'))
@@ -172,7 +206,9 @@ class Engine:
         aqe = request.get('aqe', profile.aqe_default)
         statistics = {}
         catalog_assets = {asset['name']: asset for asset in self.catalog.listing()}
+        pruning_hints = self._partition_pruning_hints(parsed.dataframe)
         measured_ducklake_inputs = False
+        measured_partition_pruning = False
         for node in logical_plan(parsed.dataframe):
             if node['operation'] == 'scan':
                 name = node['source']
@@ -190,20 +226,39 @@ class Engine:
                 has_physical_files = bool(storage and int(storage.get('file_count') or 0) > 0)
                 if storage and storage.get('truth') == 'measured_ducklake_metadata' and (has_physical_files or count == 0):
                     measured_ducklake_inputs = True
-                    statistics[name] = {
+                    full_bytes = int(storage.get('size_bytes') or 0)
+                    full_files = int(storage.get('file_count') or 0)
+                    stat = {
                         'rows': count,
-                        'bytes': int(storage.get('size_bytes') or 0),
-                        'partitions': max(1, int(storage.get('file_count') or 0)),
-                        'source_files': int(storage.get('file_count') or 0),
+                        'table_rows': count,
+                        'bytes': full_bytes,
+                        'full_bytes': full_bytes,
+                        'partitions': max(1, full_files),
+                        'source_files': full_files,
+                        'full_source_files': full_files,
                         'small_file_count': int(storage.get('small_file_count') or 0),
                         'min_file_size_bytes': int(storage.get('min_file_size_bytes') or 0),
                         'max_file_size_bytes': int(storage.get('max_file_size_bytes') or 0),
-                        'average_file_size_bytes': round(
-                            int(storage.get('size_bytes') or 0) / max(int(storage.get('file_count') or 0), 1)
-                        ),
+                        'average_file_size_bytes': round(full_bytes / max(full_files, 1)),
                         'snapshot_id': storage.get('snapshot_id'),
                         'input_truth': 'rows measured from table; bytes/files measured from DuckLake metadata',
                     }
+                    hint = pruning_hints.get(name)
+                    if hint:
+                        pruning = self.catalog.partition_pruning_evidence(name, hint[0], hint[1])
+                        if pruning.get('eligible'):
+                            measured_partition_pruning = True
+                            stat.update(
+                                rows=int(pruning.get('candidate_records') or 0),
+                                bytes=int(pruning.get('candidate_bytes') or 0),
+                                partitions=max(1, int(pruning.get('candidate_files') or 0)),
+                                candidate_files=int(pruning.get('candidate_files') or 0),
+                                pruned_files=int(pruning.get('pruned_files') or 0),
+                                pruned_bytes=int(pruning.get('pruned_bytes') or 0),
+                                partition_pruning=pruning,
+                                input_truth='DuckLake rows/files/bytes measured; equality partition candidate set derived exactly from catalog metadata, not runtime scan telemetry',
+                            )
+                    statistics[name] = stat
                 else:
                     statistics[name] = {
                         'rows': count,
@@ -250,11 +305,11 @@ class Engine:
                 'profile_id':profile_id, 'aqe':aqe, 'metrics':metrics, 'logical_plan':nodes,
                 'action':parsed.action, 'datapass_credits':credits(job, profile), 'comparisons':comparisons,
                 'assumptions':{'input_statistics':statistics,
-                               'kind':'authored virtual scale' if pack else ('catalog rows + measured DuckLake Parquet files/bytes' if measured_ducklake_inputs else 'catalog row counts; assumed 128 bytes per row'),
+                               'kind':'authored virtual scale' if pack else ('catalog rows + exact DuckLake identity-partition candidate files/bytes' if measured_partition_pruning else ('catalog rows + measured DuckLake Parquet files/bytes' if measured_ducklake_inputs else 'catalog row counts; assumed 128 bytes per row')),
                                'calibration':'No real Spark benchmark calibration',
                                'intermediates':'Cardinality and bytes carried forward without selectivity estimates; serial operator-stage dispatch, not Spark codegen fusion; scan counts are real only outside virtual truth-pack scale',
                                'cache':'Unavailable; cache/reuse not modeled',
-                               'storage_note':'DuckLake source file counts/sizes are measured when available. Small-file warnings use a Datapass 8 MiB teaching heuristic; pruning selectivity is not claimed without query-profile evidence.'},
+                               'storage_note':'DuckLake source file counts/sizes are measured when available. Identity-partition equality candidate files are exact catalog evidence; this is planning evidence, not runtime scan telemetry. Other pruning/selectivity is not claimed.'},
                 'semantic_match':(not result['truncated'] and compare_rows(result['rows'],pack['fixture_truth']['rows'])) if pack else None}
 
     def execute(self, request: dict):
