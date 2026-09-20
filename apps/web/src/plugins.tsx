@@ -1,13 +1,14 @@
 import {SparkInspector} from './SparkInspector';
 import {isExecutionFresh,requireModuleCompatibility} from '../../../packages/contracts/src/index.ts';
+import {useEffect,useState} from 'react';
 import type {ReactNode} from 'react';
-import type {Asset,CaseStudy,Execution,ModuleManifest,RuntimeClient} from '../../../packages/contracts/src/index.ts';
-import {Badge,Button} from '@fluentui/react-components';
+import type {Asset,CaseStudy,Execution,ModuleManifest,RuntimeClient,LakehouseTableEvidence,LakehouseSnapshotPreview,LakehouseCompactionResult} from '../../../packages/contracts/src/index.ts';
+import {Badge,Button,Spinner} from '@fluentui/react-components';
 import {DataTable} from './ResultView';
 
 /** A specialist receives root state and commands. It may not create a second
  * provider, catalog, execution API, notebook document or localStorage schema. */
-export interface ToolContext {workspaceId:string;notebookId:string;services:{runtime:RuntimeClient;inspectAsset:(name:string)=>void};caseStudy:CaseStudy;assets:Asset[];runs:Execution[];selectedStep:string;onSelectStep:(id:string)=>void;onRunWorkflow:()=>void;busy:boolean}
+export interface ToolContext {workspaceId:string;notebookId:string;services:{runtime:RuntimeClient;inspectAsset:(name:string)=>void;refreshCatalog:()=>Promise<void>};caseStudy:CaseStudy;assets:Asset[];runs:Execution[];selectedStep:string;onSelectStep:(id:string)=>void;onRunWorkflow:()=>void;busy:boolean}
 export type ToolPanelId='graph'|'catalog'|'brief'|'report';
 export interface ToolPanel {id:ToolPanelId;render:(context:ToolContext)=>ReactNode}
 export interface ToolPlugin {manifest:ModuleManifest;description:string;panels:ToolPanel[]}
@@ -45,7 +46,56 @@ function formatStorageBytes(value:number):string {
  return (value/(1024*1024*1024)).toFixed(2)+' GiB';
 }
 export function CatalogSurface({context,onInspect}:{context:ToolContext;onInspect:(name:string)=>void}){
- return <div className="surface-page"><div className="section-eyebrow">SHARED WORKSPACE CATALOG</div><h1>The same data in every tool</h1><p className="lead">Publish a table in one notebook and query it from another module. A new upstream version makes dependent assets stale. DuckLake tables also expose measured Parquet file evidence.</p><div className="asset-grid">{context.assets.map(a=><button className="asset-card" key={a.name} onClick={()=>onInspect(a.name)}><div><Badge appearance="tint" color={a.fresh?'success':'warning'}>{a.fresh?'fresh':'stale'}</Badge><span>{a.layer}</span></div><h3>{a.name}</h3><b>{a.row_count.toLocaleString()} rows</b>{a.storage&&<small>{a.storage.file_count} Parquet file{a.storage.file_count===1?'':'s'} · {formatStorageBytes(a.storage.size_bytes)}{a.storage.snapshot_id!==null?' · snapshot '+a.storage.snapshot_id:''}</small>}<p>{a.producer??'No producer recorded'}</p><small>{Object.keys(a.inputs??{}).join(' + ')||'Independent source'}</small></button>)}</div></div>;
+ const signature=context.assets.map(a=>a.name+':'+(a.storage?.snapshot_id??'none')).join('|');
+ const [selected,setSelected]=useState(context.assets[0]?.name??'');
+ const [evidence,setEvidence]=useState<LakehouseTableEvidence|null>(null);
+ const [preview,setPreview]=useState<LakehouseSnapshotPreview|null>(null);
+ const [maintenance,setMaintenance]=useState<LakehouseCompactionResult|null>(null);
+ const [loading,setLoading]=useState(false);
+ const [error,setError]=useState('');
+
+ useEffect(()=>{
+  if(!context.assets.some(a=>a.name===selected))setSelected(context.assets[0]?.name??'');
+ },[signature,selected,context.assets]);
+
+ useEffect(()=>{
+  let live=true;
+  if(!selected){setEvidence(null);return()=>{live=false}}
+  setLoading(true);setError('');setPreview(null);setMaintenance(null);
+  context.services.runtime.lakehouseTable(context.workspaceId,selected)
+   .then(value=>{if(live)setEvidence(value)})
+   .catch(reason=>{if(live){setEvidence(null);setError(String(reason))}})
+   .finally(()=>{if(live)setLoading(false)});
+  return()=>{live=false};
+ },[context.workspaceId,selected,signature,context.services.runtime]);
+
+ async function showSnapshot(snapshotId:number){
+  setLoading(true);setError('');
+  try{setPreview(await context.services.runtime.lakehouseSnapshot(context.workspaceId,selected,snapshotId,50))}
+  catch(reason){setError(String(reason))}
+  finally{setLoading(false)}
+ }
+ async function compact(){
+  setLoading(true);setError('');
+  try{
+   const result=await context.services.runtime.compactLakehouseTable(context.workspaceId,selected);
+   setMaintenance(result);
+   await context.services.refreshCatalog();
+   setEvidence(await context.services.runtime.lakehouseTable(context.workspaceId,selected));
+  }catch(reason){setError(String(reason))}
+  finally{setLoading(false)}
+ }
+
+ return <div className="surface-page"><div className="section-eyebrow">SHARED WORKSPACE CATALOG</div><h1>Lakehouse evidence</h1><p className="lead">The catalog is shared by every module. In DuckLake mode, file counts, bytes, snapshots and maintenance are real local metadata; Spark stages and cost remain separate simulations.</p>
+ <div className="asset-grid">{context.assets.map(a=><button className={`asset-card ${selected===a.name?'selected':''}`} key={a.name} onClick={()=>setSelected(a.name)}><div><Badge appearance="tint" color={a.fresh?'success':'warning'}>{a.fresh?'fresh':'stale'}</Badge><span>{a.layer}</span></div><h3>{a.name}</h3><b>{a.row_count.toLocaleString()} rows</b>{a.storage&&<><small>{a.storage.file_count} Parquet file{a.storage.file_count===1?'':'s'} · {formatStorageBytes(a.storage.size_bytes)} · snapshot {a.storage.snapshot_id??'—'}</small>{a.storage.compaction_candidate&&<Badge appearance="tint" color="warning">small-file candidate</Badge>}</>}<p>{a.producer??'No producer recorded'}</p><small>{Object.keys(a.inputs??{}).join(' + ')||'Independent source'}</small></button>)}</div>
+ {selected&&<section className="lakehouse-evidence-panel"><div className="surface-title"><div><div className="section-eyebrow">SELECTED ASSET</div><h2>{selected}</h2></div><div><Button size="small" onClick={()=>onInspect(selected)}>Open rows</Button>{evidence?.storage&&<Button size="small" appearance="primary" disabled={loading||!evidence.storage.compaction_candidate} onClick={()=>void compact()}>Compact small files</Button>}</div></div>
+ {loading&&<Spinner size="tiny" label="Reading lakehouse evidence"/>}{error&&<p className="notice">{error}</p>}
+ {evidence&&!evidence.available&&<p className="notice">{evidence.truth}</p>}
+ {evidence?.storage&&<><div className="metric-row lakehouse-metrics"><div><span>Parquet files</span><b>{evidence.storage.file_count}</b></div><div><span>Physical bytes</span><b>{formatStorageBytes(evidence.storage.size_bytes)}</b></div><div><span>Average file</span><b>{formatStorageBytes(evidence.storage.average_file_size_bytes)}</b></div><div><span>Small files &lt; 1 MiB</span><b>{evidence.storage.small_file_count}</b></div></div><p className="notice">{evidence.storage.maintenance_truth}</p></>}
+ {maintenance&&<p className="notice">Real DuckLake compaction: {maintenance.before.file_count} → {maintenance.after.file_count} current data files; {maintenance.logical_rows_preserved.toLocaleString()} logical rows preserved. Old files are retained while snapshots still reference them.</p>}
+ {evidence?.snapshots.length?<><h2>Snapshot history</h2><p className="lead">Time travel runs a real DuckLake versioned query. A snapshot can predate this table; those requests fail explicitly rather than returning invented data.</p><div className="snapshot-list">{evidence.snapshots.slice(0,10).map(snapshot=><button key={snapshot.snapshot_id} onClick={()=>void showSnapshot(snapshot.snapshot_id)} disabled={loading}><b>#{snapshot.snapshot_id}</b><span>{snapshot.snapshot_time}</span><small>{snapshot.changes||'catalog change'}</small></button>)}</div></>:null}
+ {preview&&<><h2>Snapshot #{preview.snapshot_id}</h2><DataTable result={preview.result}/><p className="notice">{preview.truth}. Preview is bounded to 50 rows.</p></>}
+ </section>}</div>;
 }
 export function ReportSurface({context}:{context:ToolContext}){
  const report=[...context.runs].reverse().find(r=>r.cell_id==='report'&&r.status==='success');
