@@ -258,6 +258,10 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
     def catalog(id:str):
         return command(id,{'op':'catalog'})
 
+    @app.get('/api/workspaces/{id}/lakehouse')
+    def lakehouse(id:str):
+        return command(id,{'op':'lakehouse'})
+
     @app.post('/api/workspaces/{id}/execute')
     def execute(id:str,body:ExecuteCell):
         workspace = docs.get(id)
