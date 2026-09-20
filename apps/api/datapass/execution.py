@@ -173,6 +173,16 @@ class Engine:
         statistics = {}
         catalog_assets = {asset['name']: asset for asset in self.catalog.listing()}
         measured_ducklake_inputs = False
+        filters_by_source: dict[str, list[str]] = {}
+
+        def collect_filters(frame):
+            for operation in frame.ops:
+                if operation.kind == 'filter':
+                    filters_by_source.setdefault(frame.source, []).append(operation.detail['expr'].sql)
+                elif operation.kind == 'join':
+                    collect_filters(operation.detail['other'])
+
+        collect_filters(parsed.dataframe)
         for node in logical_plan(parsed.dataframe):
             if node['operation'] == 'scan':
                 name = node['source']
@@ -190,13 +200,28 @@ class Engine:
                 has_physical_files = bool(storage and int(storage.get('file_count') or 0) > 0)
                 if storage and storage.get('truth') == 'measured_ducklake_metadata' and (has_physical_files or count == 0):
                     measured_ducklake_inputs = True
+                    pruning = None
+                    for expression in filters_by_source.get(name, []):
+                        pruning = self.catalog.ducklake_pruning_evidence(name, expression)
+                        if pruning is not None:
+                            break
+                    total_files = int(storage.get('file_count') or 0)
+                    scan_files = int(pruning['candidate_files']) if pruning is not None else total_files
+                    scan_bytes = int(pruning['candidate_bytes']) if pruning is not None else int(storage.get('size_bytes') or 0)
                     statistics[name] = {
                         'rows': count,
-                        'bytes': int(storage.get('size_bytes') or 0),
-                        'partitions': max(1, int(storage.get('file_count') or 0)),
-                        'source_files': int(storage.get('file_count') or 0),
+                        'bytes': scan_bytes,
+                        'partitions': max(1, scan_files),
+                        'source_files': total_files,
+                        'scan_files': scan_files,
                         'snapshot_id': storage.get('snapshot_id'),
-                        'input_truth': 'rows measured from table; bytes/files measured from DuckLake metadata',
+                        'small_file_count': int(storage.get('small_file_count') or 0),
+                        'pruning': pruning,
+                        'input_truth': (
+                            'rows measured from table; scan files/bytes measured from DuckLake zone-map metadata'
+                            if pruning is not None
+                            else 'rows measured from table; bytes/files measured from DuckLake metadata'
+                        ),
                     }
                 else:
                     statistics[name] = {
@@ -244,7 +269,7 @@ class Engine:
                 'profile_id':profile_id, 'aqe':aqe, 'metrics':metrics, 'logical_plan':nodes,
                 'action':parsed.action, 'datapass_credits':credits(job, profile), 'comparisons':comparisons,
                 'assumptions':{'input_statistics':statistics,
-                               'kind':'authored virtual scale' if pack else ('catalog rows + measured DuckLake Parquet files/bytes' if measured_ducklake_inputs else 'catalog row counts; assumed 128 bytes per row'),
+                               'kind':'authored virtual scale' if pack else ('catalog rows + measured DuckLake Parquet files/bytes/zone maps' if measured_ducklake_inputs else 'catalog row counts; assumed 128 bytes per row'),
                                'calibration':'No real Spark benchmark calibration',
                                'intermediates':'Cardinality and bytes carried forward without selectivity estimates; serial operator-stage dispatch, not Spark codegen fusion; scan counts are real only outside virtual truth-pack scale',
                                'cache':'Unavailable; cache/reuse not modeled'},
@@ -355,6 +380,14 @@ class Engine:
             return self.capabilities()
         if op == 'catalog':
             return self.catalog.listing()
+        if op == 'lakehouse_snapshots':
+            return self.catalog.ducklake_snapshots(request.get('limit', 30))
+        if op == 'lakehouse_table':
+            return self.catalog.ducklake_table_evidence(request['asset'])
+        if op == 'lakehouse_snapshot_preview':
+            return self.catalog.ducklake_snapshot_preview(request['asset'], request['snapshot_id'], request.get('limit', 50))
+        if op == 'lakehouse_compact':
+            return self.catalog.ducklake_compact(request['asset'])
         if op == 'execute':
             return self.execute(request)
         if op == 'exercise':
