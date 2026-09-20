@@ -36,8 +36,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
-      AIRFLOW_HOME: ${{ runner.temp }}/datapass-airflow
-      AIRFLOW__CORE__DAGS_FOLDER: ${{ runner.temp }}/datapass-airflow/dags
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
       AIRFLOW_VERSION: "3.3.2"
@@ -50,6 +48,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Configure ephemeral Airflow paths
+        shell: bash
+        run: |
+          echo "AIRFLOW_HOME=${RUNNER_TEMP}/datapass-airflow" >> "${GITHUB_ENV}"
+          echo "AIRFLOW__CORE__DAGS_FOLDER=${RUNNER_TEMP}/datapass-airflow/dags" >> "${GITHUB_ENV}"
 
       - name: Install pinned Airflow
         shell: bash
