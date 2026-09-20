@@ -88,6 +88,19 @@
               }
             ],
             "title": "Case Id"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
           }
         },
         "title": "CreateWorkspace",
