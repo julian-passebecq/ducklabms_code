@@ -278,15 +278,15 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
         result['sources'] = fixture['sources']
         return result
 
-    @app.get('/api/workspaces/{id}/spark/remote/{run_id}')
-    def spark_remote_status(id: str, run_id: int):
+    @app.get('/api/workspaces/{id}/spark/remote/{job_id}')
+    def spark_remote_status(id: str, job_id: str):
         docs.get(id)
-        return spark_remote.status(run_id)
+        return spark_remote.status(job_id)
 
-    @app.get('/api/workspaces/{id}/spark/remote/{run_id}/result/{request_id}')
-    def spark_remote_result(id: str, run_id: int, request_id: str):
+    @app.get('/api/workspaces/{id}/spark/remote/{job_id}/result/{request_id}')
+    def spark_remote_result(id: str, job_id: str, request_id: str):
         docs.get(id)
-        return spark_remote.result(run_id, request_id)
+        return spark_remote.result(job_id, request_id)
 
     @app.get('/api/workspaces')
     def workspaces():
