@@ -60,6 +60,28 @@ DATAPASS_SPARK_PUBLIC_REPO=1
 
 Neither GitHub token nor runner key belongs in React.
 
+### Stable runner API
+
+Datapass now tracks Spark verification with an opaque `job_id`, for example
+`github:123456789`, instead of requiring the UI to know a GitHub workflow run
+id. GitHub `run_id` is retained only as provider-specific evidence.
+
+This is deliberate preparation for the persistent Oracle A1 host:
+
+```text
+Datapass UI
+   |
+Datapass API
+   |
+fastapispark stable job API
+   +--> github:<id>   GitHub Actions, ephemeral
+   +--> oracle:<id>   Oracle A1, persistent   (next backend)
+```
+
+The Oracle backend should therefore be added behind the existing FastAPI runner
+contract rather than wired directly into React. Normal SparkLab simulation
+remains independent of either provider.
+
 ## Airflow repository
 
 Target repository: `julian-passebecq/datapass-airflow-runner`.
