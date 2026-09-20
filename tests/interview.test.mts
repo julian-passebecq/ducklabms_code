@@ -6,9 +6,10 @@ const exercise={id:'demo-sum',version:'1',title:'Internal demo',language:'sql',s
 const answer=(n:any)=>n.blocks.find((b:any)=>b.id==='answer');
 test('interview shares source and semantic order; geometry survives restore and view reset',()=>{
  let n=createExerciseNotebook(exercise);const order=n.views.find(v=>v.id==='notebook')!.blockIds;
+ assert.equal(n.presentation,'leetcode');
  n=withSource(n,'answer','SELECT SUM(value) FROM input');
  n={...n,views:n.views.map(v=>v.id==='interview'?{...v,layout:v.layout.map(i=>({...i,h:i.h+4}))}:v)};
- const restored=restoreNotebook(n);assert.equal(sourceOf(restored,answer(restored)),'SELECT SUM(value) FROM input');
+ const restored=restoreNotebook(n);assert.equal(sourceOf(restored,answer(restored)),'SELECT SUM(value) FROM input');assert.equal(restored.presentation,'leetcode');
  assert.deepEqual(restored.views.find(v=>v.id==='interview')!.layout,n.views.find(v=>v.id==='interview')!.layout);
  assert.deepEqual(restored.views.find(v=>v.id==='notebook')!.blockIds,order);
  assert.notDeepEqual(resetLayout(restored,'interview').views.at(-1)!.layout,restored.views.at(-1)!.layout);
@@ -50,4 +51,20 @@ test('failed import leaves current notebook intact; unknown metadata and attachm
  const raw={nbformat:4,nbformat_minor:5,metadata:{custom:42},cells:[{cell_type:'markdown',id:'note',source:'note',metadata:{custom:1},attachments:{'x.txt':{'text/plain':'hello'}}},{cell_type:'code',id:'code',source:'SELECT 1',metadata:{datapass:{kernel:'sql',future:'keep'}},outputs:[],execution_count:null}]};
  const out=exportNotebook(importNotebook(JSON.stringify(raw),'x.ipynb')) as any;
  assert.equal(out.metadata.custom,42);assert.equal(out.cells[1].metadata.datapass.future,'keep');assert.equal(out.cells[0].attachments['x.txt']['text/plain'],'hello');
+});
+
+
+test('case notebooks choose product chrome without changing notebook semantics',()=>{
+ const fabricCase={id:'fabric-demo',title:'Fabric demo',modules:['fabric-notebook'],steps:[]} as any;
+ const fabric=createCaseNotebook(fabricCase);
+ assert.equal(fabric.presentation,'fabric');
+ assert.equal(fabric.skin,'fabric');
+
+ const neutral=createCaseNotebook({...fabricCase,id:'sql-demo',modules:['warehouse']});
+ assert.equal(neutral.presentation,'studio');
+ assert.equal(neutral.skin,'neutral');
+
+ const restored=restoreNotebook({...neutral,presentation:'fabric'});
+ assert.equal(restored.presentation,'fabric');
+ assert.deepEqual(restored.views.map(v=>v.blockIds),neutral.views.map(v=>v.blockIds));
 });
