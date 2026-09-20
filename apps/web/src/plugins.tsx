@@ -84,7 +84,7 @@ function AirflowSurface({context}:{context:ToolContext}){
  useEffect(()=>{setSource(defaultAirflowDag(context.caseStudy));setDispatch(undefined);setStatus(undefined);setResult(undefined);setRemoteError('')},[context.caseStudy.id]);
  useEffect(()=>{let live=true;context.services.runtime.airflowCapabilities().then(value=>{if(live)setCapabilities(value)}).catch(error=>{if(live)setRemoteError(String(error))});return()=>{live=false}},[context.services.runtime]);
  useEffect(()=>{
-  const jobId=dispatch?.job_id;if(!jobId)return;
+  const runId=dispatch?.run_id;if(!runId)return;
   let live=true,timer:number|undefined;
   const poll=async()=>{
    try{
@@ -155,7 +155,7 @@ function SparkRunSurface({context}:{context:ToolContext}) {
  const [error,setError]=useState('');
  useEffect(()=>{let live=true;context.services.runtime.sparkRemoteCapabilities().then(value=>{if(live)setCapabilities(value)}).catch(err=>{if(live)setError(String(err))});return()=>{live=false}},[context.services.runtime]);
  useEffect(()=>{
-  const runId=dispatch?.run_id;if(!runId)return;
+  const jobId=dispatch?.job_id;if(!jobId)return;
   let live=true,timer:number|undefined;
   const poll=async()=>{
    try{
