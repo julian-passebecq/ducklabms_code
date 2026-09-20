@@ -31,7 +31,7 @@ export const workspacePresentationPresets:readonly WorkspacePresentationPreset[]
   label:'Interview coding',
   description:'Focused problem, editor, result and guidance layout for coding practice.',
   explorer:'focus',
-  preferredView:'interview',
+  preferredView:'leetcode',
   requiresExercise:true,
  },
 ] as const;
@@ -43,7 +43,7 @@ export function workspacePresentationPreset(id:WorkspacePresentation):WorkspaceP
 export function preferredPresentationView(id:WorkspacePresentation,currentView:string,hasExercise:boolean):string {
  const preset=workspacePresentationPreset(id);
  if(preset.requiresExercise&&!hasExercise)return currentView;
- if(id==='leetcode'&&hasExercise)return 'interview';
+ if(id==='leetcode'&&hasExercise)return 'leetcode';
  if(id==='fabric'&&currentView==='practice')return 'notebook';
  return currentView;
 }
