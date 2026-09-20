@@ -1,7 +1,7 @@
 import {SparkInspector} from './SparkInspector';
 import {isExecutionFresh,requireModuleCompatibility} from '../../../packages/contracts/src/index.ts';
 import {useEffect,useState,type ReactNode} from 'react';
-import type {Asset,CaseStudy,Execution,LakehouseOverview,ModuleManifest,RuntimeClient} from '../../../packages/contracts/src/index.ts';
+import type {AirflowDispatch,AirflowRemoteCapabilities,AirflowRunResult,AirflowRunStatus,Asset,CaseStudy,Execution,LakehouseOverview,ModuleManifest,RuntimeClient} from '../../../packages/contracts/src/index.ts';
 import {Badge,Button} from '@fluentui/react-components';
 import {DataTable} from './ResultView';
 
@@ -18,13 +18,21 @@ const panels:Record<ToolPanelId,ToolPanel>={
  report:{id:'report',render:context=><ReportSurface context={context}/>},
 };
 const modulePanels:Record<string,ToolPanelId[]>={
- 'data-factory':['brief','graph','catalog'], 'fabric-notebook':['brief','catalog'],
+ 'fabric-notebook':['brief','catalog'],
  warehouse:['brief','catalog'],dbt:['brief','graph','catalog'],airflow:['brief','graph'],
  'power-bi':['brief','report','catalog'],'databricks-notebook':['brief','catalog'],
  'polars-notebook':['brief','catalog'],sparklab:['brief','graph','catalog'],
 };
 export function buildRegistry(manifests:ModuleManifest[]):Map<string,ToolPlugin>{
- return new Map(manifests.map(manifest=>{requireModuleCompatibility(manifest);return [manifest.id,{manifest,description:manifest.status==='foundation'?'Shared foundation; specialist migration is bounded by the module contract.':'',panels:(modulePanels[manifest.id]??['brief']).map(id=>manifest.id==='sparklab'&&id==='graph'?{id,render:(context:ToolContext)=><SparkRunSurface context={context}/>} : panels[id])}]}));
+ return new Map(manifests.map(manifest=>{
+  requireModuleCompatibility(manifest);
+  const mapped=(modulePanels[manifest.id]??['brief']).map(id=>{
+   if(manifest.id==='sparklab'&&id==='graph')return {id,render:(context:ToolContext)=><SparkRunSurface context={context}/>} as ToolPanel;
+   if(manifest.id==='airflow'&&id==='graph')return {id,render:(context:ToolContext)=><AirflowSurface context={context}/>} as ToolPanel;
+   return panels[id];
+  });
+  return [manifest.id,{manifest,description:manifest.status==='foundation'?'Shared foundation; specialist migration is bounded by the module contract.':'',panels:mapped}];
+ }));
 }
 export function renderToolPanel(registry:Map<string,ToolPlugin>,id:ToolPanelId,context:ToolContext):ReactNode {
  const registered=context.caseStudy.modules.flatMap(module=>registry.get(module)?.panels??[]).find(panel=>panel.id===id);
@@ -38,6 +46,82 @@ export function PipelineSurface({context}:{context:ToolContext}){
  const latest=new Map(context.runs.filter(r=>r.cell_id).map(r=>[r.cell_id,r]));
  return <div className="surface-page"><div className="surface-title"><div><div className="section-eyebrow">PORTABLE TASK GRAPH</div><h1>One project, connected artifacts</h1></div><Button appearance="primary" onClick={context.onRunWorkflow} disabled={context.busy}>Run workflow</Button></div><p className="lead">Dependencies determine execution order. Each task uses the root kernel and publishes to the same catalog.</p><div className="pipeline-flow">{context.caseStudy.steps.map((s,i)=>{const run=latest.get(s.id);return <div className="pipeline-group" key={s.id}><button className={`pipeline-node ${context.selectedStep===s.id?'active':''}`} onClick={()=>context.onSelectStep(s.id)}><div className="node-top"><span>{String(i+1).padStart(2,'0')}</span><Badge appearance="tint" color={run?.status==='success'?'success':run?.status==='error'?'danger':'subtle'}>{run?.status??'not run'}</Badge></div><h3>{s.title}</h3><p>{s.module}</p><small>Needs: {s.depends_on.join(', ')||'source'}</small><code>{s.output_asset??'Result preview'}</code></button></div>})}</div><h2>Dependency contract</h2><div className="contract-list">{context.caseStudy.steps.map(s=><div key={s.id}><b>{s.id}</b><span>Needs: {s.depends_on.join(', ')||'source fixture'}</span><span>Publishes: {s.output_asset??'bounded result'}</span></div>)}</div><p className="notice">This executes the registered task graph, not arbitrary Airflow Python or an Azure pipeline JSON definition. Advanced authoring surfaces remain migration work.</p></div>;
 }
+function airflowIdentifier(value:string):string {
+ const normalized=value.replace(/[^A-Za-z0-9_]/g,'_');
+ return /^[A-Za-z_]/.test(normalized)?normalized:'dag_'+normalized;
+}
+function defaultAirflowDag(caseStudy:CaseStudy):string {
+ const dagId='datapass_'+airflowIdentifier(caseStudy.id);
+ const tasks=caseStudy.steps.map(step=>{
+  const fn=airflowIdentifier(step.id);
+  return `    @task
+    def ${fn}():
+        return "${step.id}"
+
+    ${fn}_task = ${fn}()
+`;
+ }).join('\n');
+ const dependencies=caseStudy.steps.flatMap(step=>step.depends_on.map(parent=>`    ${airflowIdentifier(parent)}_task >> ${airflowIdentifier(step.id)}_task`)).join('\n');
+ return `from airflow.sdk import dag, task
+
+@dag(dag_id="${dagId}", schedule=None, catchup=False)
+def ${dagId}():
+${tasks}
+${dependencies||'    pass'}
+
+${dagId}()
+`;
+}
+function AirflowSurface({context}:{context:ToolContext}){
+ const dagId='datapass_'+airflowIdentifier(context.caseStudy.id);
+ const [capabilities,setCapabilities]=useState<AirflowRemoteCapabilities>();
+ const [source,setSource]=useState(()=>defaultAirflowDag(context.caseStudy));
+ const [dispatch,setDispatch]=useState<AirflowDispatch>();
+ const [status,setStatus]=useState<AirflowRunStatus>();
+ const [result,setResult]=useState<AirflowRunResult>();
+ const [remoteBusy,setRemoteBusy]=useState(false);
+ const [remoteError,setRemoteError]=useState('');
+ useEffect(()=>{setSource(defaultAirflowDag(context.caseStudy));setDispatch(undefined);setStatus(undefined);setResult(undefined);setRemoteError('')},[context.caseStudy.id]);
+ useEffect(()=>{let live=true;context.services.runtime.airflowCapabilities().then(value=>{if(live)setCapabilities(value)}).catch(error=>{if(live)setRemoteError(String(error))});return()=>{live=false}},[context.services.runtime]);
+ useEffect(()=>{
+  const runId=dispatch?.run_id;if(!runId)return;
+  let live=true,timer:number|undefined;
+  const poll=async()=>{
+   try{
+    const current=await context.services.runtime.airflowStatus(runId);if(!live)return;setStatus(current);
+    if(current.status==='completed'){
+     const finished=await context.services.runtime.airflowResult(runId,dispatch.request_id);if(live){setResult(finished);setRemoteBusy(false)}
+    }else timer=window.setTimeout(poll,2000);
+   }catch(error){if(live){setRemoteError(String(error));setRemoteBusy(false)}}
+  };
+  void poll();
+  return()=>{live=false;if(timer)window.clearTimeout(timer)};
+ },[context.services.runtime,dispatch?.run_id,dispatch?.request_id]);
+ const runRemote=async()=>{
+  if(!capabilities?.enabled)return;
+  setRemoteBusy(true);setRemoteError('');setResult(undefined);setStatus(undefined);
+  try{
+   const accepted=await context.services.runtime.airflowDispatch({dag_id:dagId,logical_date:'2026-01-01T00:00:00+00:00',source});
+   setDispatch(accepted);
+   if(!accepted.run_id)throw new Error('GitHub accepted the dispatch but did not return a run id. Retry after the workflow is on the default branch.');
+  }catch(error){setRemoteBusy(false);setRemoteError(String(error))}
+ };
+ return <div className="surface-page airflow-surface">
+  <div className="surface-title"><div><div className="section-eyebrow">REAL AIRFLOW 3 / GITHUB ACTIONS</div><h1>{context.caseStudy.title}</h1></div><Button appearance="primary" onClick={()=>void runRemote()} disabled={!capabilities?.enabled||remoteBusy}>{remoteBusy?'Running…':'Run on GitHub'}</Button></div>
+  <p className="lead">Datapass renders the DAG in Fluent UI. When launched, the Dag is executed by real Airflow {capabilities?.airflow_version??'3'} on an ephemeral GitHub-hosted runner; this is not a persistent scheduler.</p>
+  {capabilities&&!capabilities.enabled&&<p className="notice">{capabilities.truth}. Configure the FastAPI server with a fine-grained GitHub token that has Actions write permission.</p>}
+  {capabilities?.public_repo&&<p className="notice">{capabilities.privacy}</p>}
+  {remoteError&&<p className="error-output">{remoteError}</p>}
+  <div className="airflow-run-strip"><Badge appearance="tint" color={result?.status==='success'?'success':result?.status==='failed'?'danger':'informative'}>{result?result.status.toUpperCase():status?.status?.toUpperCase()??'NOT RUN'}</Badge><span>{dagId}</span>{dispatch?.run_id&&<span>GitHub run {dispatch.run_id}</span>}{result&&<span>Airflow {result.airflow_version}</span>}</div>
+  <h2>DAG graph</h2>
+  <div className="pipeline-flow">{context.caseStudy.steps.map((step,i)=><div className="pipeline-group" key={step.id}><button className="pipeline-node" onClick={()=>context.onSelectStep(step.id)}><div className="node-top"><span>{String(i+1).padStart(2,'0')}</span><Badge appearance="tint">{step.id}</Badge></div><h3>{step.title}</h3><small>Upstream: {step.depends_on.join(', ')||'none'}</small></button></div>)}</div>
+  <h2>Dag source</h2>
+  <p>Editable educational source sent to the isolated runner. Never put passwords, tokens, customer data or private code here when the execution repository is public.</p>
+  <textarea className="airflow-source" value={source} onChange={event=>setSource(event.target.value)} spellCheck={false}/>
+  {result&&<><h2>Real run evidence</h2><div className="brief-stats"><div><span>Execution</span><b>{result.execution_mode}</b></div><div><span>Runner</span><b>{result.runner}</b></div><div><span>Persistent scheduler</span><b>{String(result.persistent_scheduler)}</b></div></div><div className="tag-row">{result.tasks.map(task=><Badge key={task} appearance="tint">{task}</Badge>)}</div><h2>Airflow log</h2><pre className="airflow-log">{result.log||'No log was returned.'}</pre>{result.run_url&&<p><a href={result.run_url} target="_blank" rel="noreferrer">Open GitHub Actions run</a></p>}<p className="notice">{result.truth}</p></>}
+ </div>;
+}
+
 function formatStorageBytes(value:number):string {
  if(value<1024)return value+' B';
  if(value<1024*1024)return (value/1024).toFixed(1)+' KiB';
