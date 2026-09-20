@@ -73,7 +73,15 @@ class ExecuteCell(StrictModel):
 
 
 class DuckLakeMaintenance(StrictModel):
-    asset: str = Field(min_length=3, max_length=100, pattern=r'^(?:bronze|silver|gold|warehouse|features|metrics)\.[A-Za-z][A-Za-z0-9_]*    notebook_id: str = Field(default='case-notebook',min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
+    asset: str = Field(
+        min_length=3,
+        max_length=100,
+        pattern=r'^(?:bronze|silver|gold|warehouse|features|metrics)\.[A-Za-z][A-Za-z0-9_]*$',
+    )
+
+
+class RunWorkflow(StrictModel):
+    notebook_id: str = Field(default='case-notebook',min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
     overrides: dict[str,str] = Field(default_factory=dict)
     profile: str = Field(default='generic_8x8',max_length=80)
     aqe: bool = True
