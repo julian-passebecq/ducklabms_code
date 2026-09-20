@@ -100,6 +100,24 @@ def test_real_ducklake_profile_round_trip(tmp_path: Path, monkeypatch):
         assert probe["storage"]["file_count"] >= 1
         assert probe["storage"]["size_bytes"] > 0
         assert probe["storage"]["snapshot_id"] is not None
+
+        spark_run = engine.execute({
+            "op": "execute",
+            "case_id": "retail-medallion",
+            "notebook_id": "ducklake-evidence",
+            "cell_id": "scan",
+            "language": "sparklab",
+            "code": 'result = spark.table("bronze.integration_probe").select("id")',
+            "profile": "generic_8x8",
+            "aqe": True,
+        })
+        assert spark_run["status"] == "success", spark_run
+        assert spark_run["simulation"]["status"] == "modeled"
+        assert spark_run["simulation"]["assumptions"]["kind"] == "catalog rows + measured DuckLake Parquet files/bytes"
+        stats = spark_run["simulation"]["assumptions"]["input_statistics"]["bronze.integration_probe"]
+        assert stats["input_truth"] == "rows measured from table; bytes/files measured from DuckLake metadata"
+        assert stats["bytes"] == probe["storage"]["size_bytes"]
+        assert stats["source_files"] == probe["storage"]["file_count"]
     finally:
         engine.catalog.close()
 
