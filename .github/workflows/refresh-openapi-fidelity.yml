@@ -32,4 +32,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add packages/contracts/openapi.json
           git commit -m "Refresh FastAPI OpenAPI snapshot for lakehouse evidence"
+          git fetch origin codex/ducklake-sparklab-fidelity-1
+          git rebase origin/codex/ducklake-sparklab-fidelity-1
           git push origin HEAD:codex/ducklake-sparklab-fidelity-1
