@@ -2635,6 +2635,43 @@
         "summary": "Exercise Action"
       }
     },
+    "/api/workspaces/{id}/lakehouse": {
+      "get": {
+        "operationId": "lakehouse_api_workspaces__id__lakehouse_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lakehouse"
+      }
+    },
     "/api/workspaces/{id}/notebook": {
       "put": {
         "operationId": "save_api_workspaces__id__notebook_put",
