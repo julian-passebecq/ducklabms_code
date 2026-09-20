@@ -11,6 +11,11 @@ Checked September 20, 2026. These are primary references for architecture and te
 - DuckLake 1.0 / DuckDB 1.5.2 reference implementation: https://duckdb.org/2026/04/22/duckdb-152.html
 - DuckLake catalog database choices: https://ducklake.select/docs/stable/duckdb/usage/choosing_a_catalog_database
 - DuckLake data inlining option: https://ducklake.select/docs/stable/duckdb/advanced_features/data_inlining
+- DuckLake list files metadata: https://ducklake.select/docs/stable/duckdb/metadata/list_files
+- DuckLake snapshots/time travel: https://ducklake.select/docs/stable/duckdb/usage/snapshots
+- DuckLake file pruning and partitioning: https://ducklake.select/docs/stable/duckdb/advanced_features/partitioning
+- DuckLake merge-adjacent-files compaction: https://ducklake.select/docs/stable/duckdb/maintenance/merge_adjacent_files
+- DuckLake recommended maintenance: https://ducklake.select/docs/stable/duckdb/maintenance/recommended_maintenance
 - DuckDB external-access / allowed-directories configuration: https://duckdb.org/docs/stable/configuration/overview
 - Fabric Lakehouse default Delta Lake format: https://learn.microsoft.com/en-us/fabric/data-engineering/lakehouse-and-delta-tables
 - ADF Stored Procedure activity invokes database procedures: https://learn.microsoft.com/en-us/azure/data-factory/transform-data-using-stored-procedure
