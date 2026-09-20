@@ -209,7 +209,9 @@ class Catalog:
     def _ducklake_storage_evidence(self, layer: str, table: str) -> dict | None:
         if self.kind != 'ducklake':
             return None
-        # layer/table passed here already came through IDENT/registered LAYERS.
+        # 8 MiB is a Datapass teaching threshold, not a DuckLake correctness rule.
+        # DuckLake documentation recommends Parquet files be at least a few MiB.
+        small_file_threshold = 8 * 1024 * 1024
         try:
             row = self.db.execute(
                 f"""
@@ -230,21 +232,45 @@ class Catalog:
                 SELECT
                     (SELECT COUNT(*) FROM data_files) AS file_count,
                     (SELECT COALESCE(SUM(data_file_size_bytes), 0) FROM data_files) AS size_bytes,
-                    (SELECT COUNT(*) FROM delete_files) AS delete_file_count
+                    (SELECT COUNT(*) FROM delete_files) AS delete_file_count,
+                    (SELECT COUNT(*) FROM data_files WHERE data_file_size_bytes < {small_file_threshold}) AS small_file_count,
+                    (SELECT COALESCE(MIN(data_file_size_bytes), 0) FROM data_files) AS min_file_size_bytes,
+                    (SELECT COALESCE(MAX(data_file_size_bytes), 0) FROM data_files) AS max_file_size_bytes
                 """
             ).fetchone()
         except Exception:
-            # Views and other non-physical relations do not own DuckLake files.
             return None
         snapshot = self.db.execute(
-            "SELECT MAX(snapshot_id) FROM ducklake_snapshots('lake')"
+            "SELECT COUNT(*), MIN(snapshot_id), MAX(snapshot_id) FROM ducklake_snapshots('lake')"
         ).fetchone()
+        file_count = int(row[0] or 0)
+        size_bytes = int(row[1] or 0)
+        small_file_count = int(row[3] or 0)
+        average = round(size_bytes / file_count) if file_count else 0
+        small_ratio = round(small_file_count / file_count, 4) if file_count else 0.0
+        health = 'small_files' if file_count >= 4 and small_ratio >= 0.5 else 'healthy'
+        recommendation = (
+            'Consider DuckLake merge_adjacent_files in a maintenance lesson; measured file layout is dominated by small files.'
+            if health == 'small_files'
+            else 'No small-file maintenance signal from the Datapass 8 MiB teaching threshold.'
+        )
         return {
             'format': 'parquet',
-            'file_count': int(row[0] or 0),
-            'size_bytes': int(row[1] or 0),
+            'file_count': file_count,
+            'size_bytes': size_bytes,
             'delete_file_count': int(row[2] or 0),
-            'snapshot_id': int(snapshot[0]) if snapshot and snapshot[0] is not None else None,
+            'snapshot_id': int(snapshot[2]) if snapshot and snapshot[2] is not None else None,
+            'snapshot_count': int(snapshot[0] or 0) if snapshot else 0,
+            'first_snapshot_id': int(snapshot[1]) if snapshot and snapshot[1] is not None else None,
+            'avg_file_size_bytes': average,
+            'min_file_size_bytes': int(row[4] or 0),
+            'max_file_size_bytes': int(row[5] or 0),
+            'small_file_threshold_bytes': small_file_threshold,
+            'small_file_count': small_file_count,
+            'small_file_ratio': small_ratio,
+            'health': health,
+            'maintenance_recommendation': recommendation,
+            'pruning_support': 'DuckLake file-level zone maps can prune files for compatible predicates; actual files scanned are not measured here.',
             'truth': 'measured_ducklake_metadata',
         }
 
