@@ -1,5 +1,5 @@
 import type {RootWorkbench} from '../../../packages/contracts/src/foundation.ts';
-import type {Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace,ExerciseDefinition,ExerciseRequest,ExerciseResult,ExerciseAttempt,PracticeReview,PracticeProgress} from '../../../packages/contracts/src/index.ts';
+import type {Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace,ExerciseDefinition,ExerciseRequest,ExerciseResult,ExerciseAttempt,PracticeReview,PracticeProgress,DuckLakeSnapshot,LakehouseTableEvidence,LakehouseSnapshotPreview,LakehouseCompactionResult} from '../../../packages/contracts/src/index.ts';
 import type {RootNotebook} from './notebook';
 
 const STORAGE='datapass-local-token';
@@ -34,6 +34,15 @@ export class ApiClient implements RuntimeClient {
  saveWorkbench=(id:string,revision:number,workbench:RootWorkbench)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}/workbench`,{method:'PUT',body:JSON.stringify({revision,workbench})});
  foundationSchema=()=>this.request<Record<string,unknown>>('/foundation/schema');
  catalog=(id:string)=>this.request<Asset[]>(`/workspaces/${id}/catalog`);
+ private lakehousePath(asset:string){
+  const [layer,table,...extra]=asset.split('.');
+  if(!layer||!table||extra.length)throw new Error('Expected a layer.table asset name.');
+  return `${encodeURIComponent(layer)}/${encodeURIComponent(table)}`;
+ }
+ lakehouseSnapshots=(id:string,limit=30)=>this.request<DuckLakeSnapshot[]>(`/workspaces/${id}/lakehouse/snapshots?limit=${limit}`);
+ lakehouseTable=(id:string,asset:string)=>this.request<LakehouseTableEvidence>(`/workspaces/${id}/lakehouse/tables/${this.lakehousePath(asset)}`);
+ lakehouseSnapshot=(id:string,asset:string,snapshotId:number,limit=50)=>this.request<LakehouseSnapshotPreview>(`/workspaces/${id}/lakehouse/tables/${this.lakehousePath(asset)}/snapshots/${snapshotId}?limit=${limit}`);
+ compactLakehouseTable=(id:string,asset:string)=>this.request<LakehouseCompactionResult>(`/workspaces/${id}/lakehouse/tables/${this.lakehousePath(asset)}/compact`,{method:'POST'});
  capabilities=(id:string)=>this.request<Capabilities>(`/workspaces/${id}/capabilities`);
  execute=(id:string,request:ExecuteRequest)=>this.request<Execution>(`/workspaces/${id}/execute`,{method:'POST',body:JSON.stringify(request)});
  workflow=(id:string,notebook_id:string,overrides:Record<string,string>,profile:string,aqe:boolean)=>this.request<WorkflowResult>(`/workspaces/${id}/workflow`,{method:'POST',body:JSON.stringify({notebook_id,overrides,profile,aqe})});
