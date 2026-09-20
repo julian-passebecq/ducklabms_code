@@ -68,7 +68,9 @@ The preserved architect direction is one application and one shared project mode
 - plain DuckDB remains a robust local compatibility mode when DuckLake extensions are not installed;
 - Polars/Python where useful;
 - MotherDuck optional/future as a remote DuckDB/DuckLake target, never a requirement for local learning;
-- Fabric/Data Factory, SQL warehousing, Airflow/dbt, Power BI and Databricks-inspired ML are modules/tool experiences of the same application, not independent applications with duplicate state.
+- the active product scope is Fabric-style notebook/lakehouse learning, dbt modeling/lineage and Airflow DAG learning; Airflow may execute remotely through bounded GitHub Actions jobs;
+- Data Factory/Fabric pipeline authoring is reference curriculum only and must not be rebuilt as an active Datapass pipeline engine; use Microsoft Fabric itself for pipeline practice;
+- SQL, Polars, SparkLab, BI/modeling and ML cases may remain as focused learning content without expanding into competing product clones.
 
 Keep **case**, **tool experience**, **document**, **layout** and **runtime** separate. A Fabric-inspired notebook is a skin/tool experience over the shared notebook model, not a second notebook engine.
 
@@ -88,7 +90,7 @@ Use these as migration sources, not as competing roots:
 
 - `migration-sources/mosaic` — notebook/layout foundation.
 - `migration-sources/sparklab` — SparkLab runtime/simulation/truth packs.
-- `migration-sources/fabric` — Fabric/Data Factory inspired surfaces and lessons.
+- `migration-sources/fabric` — Fabric notebook/lakehouse reference material; Data Factory/pipeline material is reference-only.
 - `migration-sources/powerbi` — Power BI learning surfaces and model/report work.
 - `migration-sources/airflow-dbt` — Airflow/dbt learning work.
 - `migration-sources/guide` — Microsoft data guide/curriculum material.
