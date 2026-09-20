@@ -1,6 +1,37 @@
 {
   "components": {
     "schemas": {
+      "AirflowRemoteRun": {
+        "additionalProperties": false,
+        "properties": {
+          "dag_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z_][A-Za-z0-9_.-]{0,99}$",
+            "title": "Dag Id",
+            "type": "string"
+          },
+          "logical_date": {
+            "default": "2026-01-01T00:00:00+00:00",
+            "maxLength": 80,
+            "minLength": 10,
+            "title": "Logical Date",
+            "type": "string"
+          },
+          "source": {
+            "maxLength": 30000,
+            "minLength": 1,
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dag_id",
+          "source"
+        ],
+        "title": "AirflowRemoteRun",
+        "type": "object"
+      },
       "CatalogResource": {
         "additionalProperties": false,
         "properties": {
@@ -2141,6 +2172,141 @@
           }
         },
         "summary": "Unbuilt"
+      }
+    },
+    "/api/airflow/capabilities": {
+      "get": {
+        "operationId": "airflow_capabilities_api_airflow_capabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Airflow Capabilities"
+      }
+    },
+    "/api/airflow/runs": {
+      "post": {
+        "operationId": "airflow_run_api_airflow_runs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AirflowRemoteRun"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Airflow Run"
+      }
+    },
+    "/api/airflow/runs/{run_id}": {
+      "get": {
+        "operationId": "airflow_status_api_airflow_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Airflow Status"
+      }
+    },
+    "/api/airflow/runs/{run_id}/result/{request_id}": {
+      "get": {
+        "operationId": "airflow_result_api_airflow_runs__run_id__result__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Airflow Result"
       }
     },
     "/api/cases": {
