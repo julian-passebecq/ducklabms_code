@@ -6,24 +6,23 @@
   "difficulty": "Foundation",
   "minutes": 25,
   "modules": [
-    "data-factory",
     "fabric-notebook",
     "power-bi"
   ],
-  "description": "Twelve physical rows make the business rules visible. Copy raw orders, clean in SparkLab, aggregate Gold and inspect a SQL-backed KPI. This path intentionally does not use dbt or Airflow.",
+  "description": "Twelve physical rows make the business rules visible. Load Bronze in the Fabric-style notebook, clean with SparkLab, aggregate Gold and inspect the resulting data.",
   "physical_data": "12 orders + 4 customer segments",
   "scale_note": "No large-scale metrics are inferred from these 12 rows.",
   "steps": [
     {
       "id": "ingest",
-      "title": "Copy source orders into Bronze",
-      "module": "data-factory",
+      "title": "Load source orders into Bronze",
+      "module": "fabric-notebook",
       "language": "sql",
       "code": "SELECT * FROM source.orders",
       "solution": "SELECT * FROM source.orders",
       "output_asset": "bronze.orders",
       "depends_on": [],
-      "concept": "Copy moves records; it does not clean them. A stored procedure belongs to the source database, not to Data Factory.",
+      "concept": "Use the Fabric-style notebook workspace to establish an unchanged Bronze table. Datapass does not reproduce Fabric/Data Factory pipelines; practice those in Microsoft Fabric itself.",
       "task": "Retain all 12 source orders, including the negative and zero amounts.",
       "hint": "Keep Bronze unchanged. Cleaning belongs in Silver.",
       "check": {
@@ -33,84 +32,84 @@
             "order_id": "O-001",
             "customer_id": "C001",
             "segment_id": 1,
-            "net_amount": 100.0,
+            "net_amount": 100,
             "loaded_at": "2026-09-17T01:00:00"
           },
           {
             "order_id": "O-002",
             "customer_id": "C001",
             "segment_id": 1,
-            "net_amount": 50.0,
+            "net_amount": 50,
             "loaded_at": "2026-09-17T01:01:00"
           },
           {
             "order_id": "O-003",
             "customer_id": "C002",
             "segment_id": 2,
-            "net_amount": 200.0,
+            "net_amount": 200,
             "loaded_at": "2026-09-17T01:02:00"
           },
           {
             "order_id": "O-004",
             "customer_id": "C003",
             "segment_id": 2,
-            "net_amount": -10.0,
+            "net_amount": -10,
             "loaded_at": "2026-09-17T01:03:00"
           },
           {
             "order_id": "O-005",
             "customer_id": "CORPORATE_ACCOUNT_01",
             "segment_id": 3,
-            "net_amount": 1000.0,
+            "net_amount": 1000,
             "loaded_at": "2026-09-17T01:04:00"
           },
           {
             "order_id": "O-006",
             "customer_id": "CORPORATE_ACCOUNT_01",
             "segment_id": 3,
-            "net_amount": 1500.0,
+            "net_amount": 1500,
             "loaded_at": "2026-09-17T01:05:00"
           },
           {
             "order_id": "O-007",
             "customer_id": "CORPORATE_ACCOUNT_01",
             "segment_id": 3,
-            "net_amount": 2000.0,
+            "net_amount": 2000,
             "loaded_at": "2026-09-17T01:06:00"
           },
           {
             "order_id": "O-008",
             "customer_id": "C002",
             "segment_id": 2,
-            "net_amount": 25.0,
+            "net_amount": 25,
             "loaded_at": "2026-09-17T01:07:00"
           },
           {
             "order_id": "O-009",
             "customer_id": "C004",
             "segment_id": 1,
-            "net_amount": 0.0,
+            "net_amount": 0,
             "loaded_at": "2026-09-17T01:08:00"
           },
           {
             "order_id": "O-010",
             "customer_id": "C005",
             "segment_id": 2,
-            "net_amount": 75.0,
+            "net_amount": 75,
             "loaded_at": "2026-09-17T01:09:00"
           },
           {
             "order_id": "O-011",
             "customer_id": "C005",
             "segment_id": 2,
-            "net_amount": 25.0,
+            "net_amount": 25,
             "loaded_at": "2026-09-17T01:10:00"
           },
           {
             "order_id": "O-012",
             "customer_id": "C006",
             "segment_id": 4,
-            "net_amount": 10.0,
+            "net_amount": 10,
             "loaded_at": "2026-09-17T01:11:00"
           }
         ]
@@ -137,70 +136,70 @@
             "order_id": "O-001",
             "customer_id": "C001",
             "segment_id": 1,
-            "net_amount": 100.0,
+            "net_amount": 100,
             "loaded_at": "2026-09-17T01:00:00"
           },
           {
             "order_id": "O-002",
             "customer_id": "C001",
             "segment_id": 1,
-            "net_amount": 50.0,
+            "net_amount": 50,
             "loaded_at": "2026-09-17T01:01:00"
           },
           {
             "order_id": "O-003",
             "customer_id": "C002",
             "segment_id": 2,
-            "net_amount": 200.0,
+            "net_amount": 200,
             "loaded_at": "2026-09-17T01:02:00"
           },
           {
             "order_id": "O-005",
             "customer_id": "CORPORATE_ACCOUNT_01",
             "segment_id": 3,
-            "net_amount": 1000.0,
+            "net_amount": 1000,
             "loaded_at": "2026-09-17T01:04:00"
           },
           {
             "order_id": "O-006",
             "customer_id": "CORPORATE_ACCOUNT_01",
             "segment_id": 3,
-            "net_amount": 1500.0,
+            "net_amount": 1500,
             "loaded_at": "2026-09-17T01:05:00"
           },
           {
             "order_id": "O-007",
             "customer_id": "CORPORATE_ACCOUNT_01",
             "segment_id": 3,
-            "net_amount": 2000.0,
+            "net_amount": 2000,
             "loaded_at": "2026-09-17T01:06:00"
           },
           {
             "order_id": "O-008",
             "customer_id": "C002",
             "segment_id": 2,
-            "net_amount": 25.0,
+            "net_amount": 25,
             "loaded_at": "2026-09-17T01:07:00"
           },
           {
             "order_id": "O-010",
             "customer_id": "C005",
             "segment_id": 2,
-            "net_amount": 75.0,
+            "net_amount": 75,
             "loaded_at": "2026-09-17T01:09:00"
           },
           {
             "order_id": "O-011",
             "customer_id": "C005",
             "segment_id": 2,
-            "net_amount": 25.0,
+            "net_amount": 25,
             "loaded_at": "2026-09-17T01:10:00"
           },
           {
             "order_id": "O-012",
             "customer_id": "C006",
             "segment_id": 4,
-            "net_amount": 10.0,
+            "net_amount": 10,
             "loaded_at": "2026-09-17T01:11:00"
           }
         ]
@@ -225,27 +224,27 @@
         "expected": [
           {
             "customer_id": "C001",
-            "revenue": 150.0,
+            "revenue": 150,
             "orders": 2
           },
           {
             "customer_id": "C002",
-            "revenue": 225.0,
+            "revenue": 225,
             "orders": 2
           },
           {
             "customer_id": "C005",
-            "revenue": 100.0,
+            "revenue": 100,
             "orders": 2
           },
           {
             "customer_id": "C006",
-            "revenue": 10.0,
+            "revenue": 10,
             "orders": 1
           },
           {
             "customer_id": "CORPORATE_ACCOUNT_01",
-            "revenue": 4500.0,
+            "revenue": 4500,
             "orders": 3
           }
         ]
@@ -269,7 +268,7 @@
         "sql": "SELECT SUM(revenue) AS total_revenue, SUM(orders) AS valid_orders, COUNT(*) AS customers FROM gold.customer_revenue",
         "expected": [
           {
-            "total_revenue": 4985.0,
+            "total_revenue": 4985,
             "valid_orders": 10,
             "customers": 5
           }
