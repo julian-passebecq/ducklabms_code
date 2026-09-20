@@ -195,6 +195,41 @@ class Catalog:
                 return False
         return True
 
+    def _ducklake_storage_evidence(self, layer: str, table: str) -> dict | None:
+        if self.kind != 'ducklake':
+            return None
+        # layer/table passed here already came through IDENT/registered LAYERS.
+        try:
+            row = self.db.execute(
+                f"""
+                SELECT
+                    COUNT(*) AS file_count,
+                    COALESCE(SUM(data_file_size_bytes), 0) AS size_bytes,
+                    COUNT(*) FILTER (WHERE delete_file IS NOT NULL) AS delete_file_count
+                FROM (
+                    SELECT DISTINCT
+                        data_file,
+                        data_file_size_bytes,
+                        delete_file
+                    FROM ducklake_list_files('lake', '{table}', schema => '{layer}')
+                )
+                """
+            ).fetchone()
+        except Exception:
+            # Views and other non-physical relations do not own DuckLake files.
+            return None
+        snapshot = self.db.execute(
+            "SELECT MAX(snapshot_id) FROM ducklake_snapshots('lake')"
+        ).fetchone()
+        return {
+            'format': 'parquet',
+            'file_count': int(row[0] or 0),
+            'size_bytes': int(row[1] or 0),
+            'delete_file_count': int(row[2] or 0),
+            'snapshot_id': int(snapshot[0]) if snapshot and snapshot[0] is not None else None,
+            'truth': 'measured_ducklake_metadata',
+        }
+
     def listing(self):
         items = []
         for layer in LAYERS:
@@ -207,7 +242,11 @@ class Catalog:
                     continue
                 full = f'{layer}.{name}'
                 count = self.db.execute(f'SELECT COUNT(*) FROM {full}').fetchone()[0]
-                items.append({'name': full, 'layer': layer, 'row_count': count, 'fresh': self.fresh(full), **self.versions.get(full, {})})
+                item = {'name': full, 'layer': layer, 'row_count': count, 'fresh': self.fresh(full), **self.versions.get(full, {})}
+                storage = self._ducklake_storage_evidence(layer, name)
+                if storage is not None:
+                    item['storage'] = storage
+                items.append(item)
         return items
 
     def runtime_contract(self) -> dict:
