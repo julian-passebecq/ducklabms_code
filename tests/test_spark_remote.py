@@ -53,6 +53,7 @@ def test_spark_proxy_keeps_runner_key_server_side(monkeypatch):
                 {
                     "request_id": "0123456789abcdef",
                     "status": "accepted",
+                    "job_id": "github:42",
                     "run_id": 42,
                     "run_url": "https://github.test/actions/runs/42",
                     "truth": "accepted",
@@ -73,6 +74,7 @@ def test_spark_proxy_keeps_runner_key_server_side(monkeypatch):
     )
 
     assert result["run_id"] == 42
+    assert result["job_id"] == "github:42"
     method, url, kwargs = calls[0]
     assert method == "POST"
     assert url == "https://spark.example/v1/spark/verify"
@@ -126,3 +128,28 @@ def test_fixture_fails_closed_when_catalog_preview_would_truncate(tmp_path):
             )
     finally:
         engine.catalog.close()
+
+
+def test_spark_proxy_uses_provider_neutral_job_routes(monkeypatch):
+    calls = []
+
+    def handler(method, url, kwargs):
+        calls.append((method, url, kwargs))
+        if url.endswith("/v1/spark/jobs/github:42"):
+            return Response(200, {"job_id":"github:42","status":"completed","conclusion":"success"})
+        if url.endswith("/v1/spark/jobs/github:42/result/0123456789abcdef"):
+            return Response(200, {"job_id":"github:42","request_id":"0123456789abcdef","status":"success"})
+        raise AssertionError(url)
+
+    monkeypatch.setattr(
+        "apps.api.datapass.spark_remote.httpx.Client",
+        lambda **_: Client(handler),
+    )
+
+    remote = SparkRemote(SparkRemoteConfig("https://spark.example", "server-secret"))
+    status = remote.status("github:42")
+    result = remote.result("github:42", "0123456789abcdef")
+    assert status["job_id"] == "github:42"
+    assert result["job_id"] == "github:42"
+    assert calls[0][1].endswith("/v1/spark/jobs/github:42")
+    assert calls[1][1].endswith("/v1/spark/jobs/github:42/result/0123456789abcdef")
