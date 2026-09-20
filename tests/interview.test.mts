@@ -120,6 +120,8 @@ test('playground layout changes do not duplicate source or change canonical note
  notebook=withSource(notebook,sql.id,'SELECT COUNT(*) AS rows FROM source.orders');
  const moved={...notebook,views:notebook.views.map(v=>v.id==='free'?{...v,layout:v.layout.map((item,index)=>({...item,x:index%2?0:6,y:index*3}))}:v)};
  const restored=restoreNotebook(moved);
+ assert.equal(restored.playground,'free');
+ assert.equal(playgroundPreset(restored.playground!).initialView,'free');
  assert.equal(sourceOf(restored,restored.blocks.find(b=>b.id==='sql-orders')!),'SELECT COUNT(*) AS rows FROM source.orders');
  assert.deepEqual(restored.views.find(v=>v.id==='notebook')!.blockIds,order);
 });
