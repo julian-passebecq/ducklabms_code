@@ -27,7 +27,7 @@ export class ApiClient implements RuntimeClient {
  modules=()=>this.request<ModuleManifest[]>('/modules');
  profiles=()=>this.request<Profile[]>('/profiles');
  workspaces=()=>this.request<Array<Pick<Workspace,'id'|'case_id'|'title'|'revision'|'updated_at'>>>('/workspaces');
- create=(case_id:string|null)=>this.request<Workspace<RootNotebook>>('/workspaces',{method:'POST',body:JSON.stringify({case_id})});
+ create=(case_id:string|null,title?:string)=>this.request<Workspace<RootNotebook>>('/workspaces',{method:'POST',body:JSON.stringify({case_id,title})});
  workspace=(id:string)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}`);
  save=(id:string,revision:number,notebook:RootNotebook)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}/notebook`,{method:'PUT',body:JSON.stringify({revision,notebook})});
  validateWorkbench=(id:string,workbench:unknown)=>this.request<{status:'valid';truth:'design_only';workbench:RootWorkbench}>(`/workspaces/${id}/workbench/validate`,{method:'POST',body:JSON.stringify(workbench)});
