@@ -94,6 +94,12 @@ def test_real_ducklake_profile_round_trip(tmp_path: Path, monkeypatch):
             "SELECT 1 AS id, 'ducklake' AS layer",
             "integration-test",
         )
+        probe = next(asset for asset in engine.catalog.listing() if asset["name"] == "bronze.integration_probe")
+        assert probe["storage"]["truth"] == "measured_ducklake_metadata"
+        assert probe["storage"]["format"] == "parquet"
+        assert probe["storage"]["file_count"] >= 1
+        assert probe["storage"]["size_bytes"] > 0
+        assert probe["storage"]["snapshot_id"] is not None
     finally:
         engine.catalog.close()
 
