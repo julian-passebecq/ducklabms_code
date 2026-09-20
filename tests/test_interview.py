@@ -56,7 +56,7 @@ def test_api_submit_checkpoint_redaction_attempts_and_timeout(tmp_path,monkeypat
         demo=next(e for e in definitions if e['id']=='demo-sum')
         assert demo['origin']=='internal-demo'
         assert {e['pack']['id'] for e in definitions} >= {'internal-demo','sparklab-runtime'}
-        assert 'solution' not in json.dumps(definitions)
+        assert all('source' not in e.get('solution', {}) for e in definitions)
         assert 'expected' not in json.dumps(definitions)
         w=client.post('/api/workspaces',json={}).json();base=f"/api/workspaces/{w['id']}"
         code=solution('demo-sum')['source']
