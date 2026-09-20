@@ -25,6 +25,7 @@ LAYERS = ('source', 'bronze', 'silver', 'gold', 'warehouse', 'features', 'metric
 IDENT = re.compile(r'^[A-Za-z][A-Za-z0-9_]{0,62}$')
 ASSET = re.compile(r'^(source|bronze|silver|gold|warehouse|features|metrics)\.([A-Za-z][A-Za-z0-9_]{0,62})$')
 MAX_ROWS = 200
+DUCKLAKE_SMALL_FILE_BYTES = 1024 * 1024  # teaching heuristic from DuckLake tier-0 guidance
 
 
 def asset_name(name: str) -> str:
@@ -230,7 +231,9 @@ class Catalog:
                 SELECT
                     (SELECT COUNT(*) FROM data_files) AS file_count,
                     (SELECT COALESCE(SUM(data_file_size_bytes), 0) FROM data_files) AS size_bytes,
-                    (SELECT COUNT(*) FROM delete_files) AS delete_file_count
+                    (SELECT COUNT(*) FROM delete_files) AS delete_file_count,
+                    (SELECT COUNT(*) FROM data_files WHERE data_file_size_bytes < {DUCKLAKE_SMALL_FILE_BYTES}) AS small_file_count,
+                    (SELECT COALESCE(MAX(data_file_size_bytes), 0) FROM data_files) AS largest_file_bytes
                 """
             ).fetchone()
         except Exception:
@@ -239,13 +242,197 @@ class Catalog:
         snapshot = self.db.execute(
             "SELECT MAX(snapshot_id) FROM ducklake_snapshots('lake')"
         ).fetchone()
+        file_count = int(row[0] or 0)
+        size_bytes = int(row[1] or 0)
+        small_file_count = int(row[3] or 0)
         return {
             'format': 'parquet',
-            'file_count': int(row[0] or 0),
-            'size_bytes': int(row[1] or 0),
+            'file_count': file_count,
+            'size_bytes': size_bytes,
+            'average_file_size_bytes': int(size_bytes / file_count) if file_count else 0,
+            'largest_file_bytes': int(row[4] or 0),
+            'small_file_count': small_file_count,
+            'small_file_threshold_bytes': DUCKLAKE_SMALL_FILE_BYTES,
+            'compaction_candidate': file_count >= 2 and small_file_count >= 2,
+            'maintenance_truth': 'small-file flag is a Datapass teaching heuristic; file counts and bytes are measured DuckLake metadata',
             'delete_file_count': int(row[2] or 0),
             'snapshot_id': int(snapshot[0]) if snapshot and snapshot[0] is not None else None,
             'truth': 'measured_ducklake_metadata',
+        }
+
+    def ducklake_snapshots(self, limit: int = 30) -> list[dict]:
+        if self.kind != 'ducklake':
+            return []
+        limit = max(1, min(int(limit), 100))
+        rows = self.db.execute(
+            """
+            SELECT snapshot_id, snapshot_time, schema_version,
+                   CAST(changes AS VARCHAR) AS changes,
+                   author, commit_message
+            FROM ducklake_snapshots('lake')
+            ORDER BY snapshot_id DESC
+            LIMIT ?
+            """,
+            [limit],
+        ).fetchall()
+        return [
+            {
+                'snapshot_id': int(row[0]),
+                'snapshot_time': json_value(row[1]),
+                'schema_version': int(row[2]),
+                'changes': str(row[3]) if row[3] is not None else '',
+                'author': row[4],
+                'commit_message': row[5],
+            }
+            for row in rows
+        ]
+
+    def ducklake_table_evidence(self, name: str) -> dict:
+        name = asset_name(name)
+        if self.kind != 'ducklake':
+            return {
+                'available': False,
+                'asset': name,
+                'truth': 'DuckLake evidence is unavailable because this workspace is not attached to DuckLake.',
+                'storage': None,
+                'snapshots': [],
+            }
+        layer, table = name.split('.')
+        if not self.exists(name):
+            raise ValueError('Unknown catalog asset.')
+        storage = self._ducklake_storage_evidence(layer, table)
+        return {
+            'available': storage is not None,
+            'asset': name,
+            'truth': 'real DuckLake metadata and snapshot history' if storage is not None else 'relation has no physical DuckLake file evidence',
+            'storage': storage,
+            'snapshots': self.ducklake_snapshots(20),
+        }
+
+    def ducklake_snapshot_preview(self, name: str, snapshot_id: int, limit: int = 50) -> dict:
+        name = asset_name(name)
+        if self.kind != 'ducklake':
+            raise ValueError('Time travel requires an active DuckLake workspace.')
+        snapshot_id = int(snapshot_id)
+        limit = max(1, min(int(limit), MAX_ROWS))
+        if snapshot_id < 0:
+            raise ValueError('Snapshot id must be non-negative.')
+        result = self._result(self.db.execute(
+            f'SELECT * FROM {name} AT (VERSION => {snapshot_id}) LIMIT {limit}'
+        ))
+        return {
+            'asset': name,
+            'snapshot_id': snapshot_id,
+            'truth': 'real DuckLake time-travel query',
+            'result': result,
+        }
+
+    def ducklake_compact(self, name: str) -> dict:
+        name = asset_name(name)
+        if self.kind != 'ducklake':
+            raise ValueError('Compaction requires an active DuckLake workspace.')
+        layer, table = name.split('.')
+        if not self.exists(name):
+            raise ValueError('Unknown catalog asset.')
+        before = self._ducklake_storage_evidence(layer, table)
+        if before is None:
+            raise ValueError('This relation has no DuckLake data files to compact.')
+        row_count_before = int(self.db.execute(f'SELECT COUNT(*) FROM {name}').fetchone()[0])
+        outputs = self._result(self.db.execute(
+            f"SELECT * FROM ducklake_merge_adjacent_files('lake', '{table}', schema => '{layer}')"
+        ))
+        row_count_after = int(self.db.execute(f'SELECT COUNT(*) FROM {name}').fetchone()[0])
+        if row_count_before != row_count_after:
+            raise RuntimeError('DuckLake compaction changed the logical row count; stop and inspect the workspace.')
+        after = self._ducklake_storage_evidence(layer, table)
+        return {
+            'asset': name,
+            'status': 'compacted' if outputs['rows'] else 'no_change',
+            'truth': 'real DuckLake merge_adjacent_files maintenance',
+            'logical_rows_preserved': row_count_before,
+            'before': before,
+            'after': after,
+            'outputs': outputs['rows'],
+        }
+
+    def ducklake_pruning_evidence(self, name: str, predicate_sql: str) -> dict | None:
+        """Return measured candidate-file evidence for one simple numeric predicate.
+
+        DuckLake persists per-file min/max statistics. Datapass consumes those
+        official metadata facts for teaching scan pruning, but does not claim
+        row selectivity or Spark runtime measurements.
+        """
+        name = asset_name(name)
+        if self.kind != 'ducklake':
+            return None
+        layer, table = name.split('.')
+        expression = predicate_sql.strip()
+        while expression.startswith('(') and expression.endswith(')'):
+            expression = expression[1:-1].strip()
+        match = re.fullmatch(r'"([A-Za-z][A-Za-z0-9_]*)"s*(=|>=|<=|>|<)s*(-?d+(?:.d+)?)', expression)
+        if not match:
+            return None
+        column, operator, raw_value = match.groups()
+        value = float(raw_value)
+        metadata_catalog = '__ducklake_metadata_lake'
+        rows = self.db.execute(
+            f"""
+            SELECT c.column_type, df.data_file_id, df.file_size_bytes,
+                   stats.min_value, stats.max_value
+            FROM {metadata_catalog}.main.ducklake_table AS t
+            JOIN {metadata_catalog}.main.ducklake_schema AS s
+              ON s.schema_id=t.schema_id
+            JOIN {metadata_catalog}.main.ducklake_column AS c
+              ON c.table_id=t.table_id
+            JOIN {metadata_catalog}.main.ducklake_data_file AS df
+              ON df.table_id=t.table_id
+            LEFT JOIN {metadata_catalog}.main.ducklake_file_column_stats AS stats
+              ON stats.table_id=t.table_id
+             AND stats.data_file_id=df.data_file_id
+             AND stats.column_id=c.column_id
+            WHERE t.table_name=? AND s.schema_name=? AND c.column_name=?
+              AND t.end_snapshot IS NULL AND s.end_snapshot IS NULL
+              AND c.end_snapshot IS NULL AND df.end_snapshot IS NULL
+            ORDER BY df.data_file_id
+            """,
+            [table, layer, column],
+        ).fetchall()
+        if not rows:
+            return None
+        numeric_tokens = ('INT', 'FLOAT', 'DOUBLE', 'DECIMAL', 'REAL', 'HUGEINT', 'UBIGINT', 'USMALLINT', 'UTINYINT')
+        if not any(token in str(rows[0][0]).upper() for token in numeric_tokens):
+            return None
+
+        def can_match(min_value, max_value) -> bool:
+            if min_value is None or max_value is None:
+                return True
+            low, high = float(min_value), float(max_value)
+            if operator == '=':
+                return low <= value <= high
+            if operator == '>':
+                return high > value
+            if operator == '>=':
+                return high >= value
+            if operator == '<':
+                return low < value
+            return low <= value
+
+        total_files = len(rows)
+        total_bytes = sum(int(row[2] or 0) for row in rows)
+        candidates = [row for row in rows if can_match(row[3], row[4])]
+        candidate_bytes = sum(int(row[2] or 0) for row in candidates)
+        return {
+            'asset': name,
+            'column': column,
+            'operator': operator,
+            'value': value,
+            'total_files': total_files,
+            'candidate_files': len(candidates),
+            'pruned_files': total_files - len(candidates),
+            'total_bytes': total_bytes,
+            'candidate_bytes': candidate_bytes,
+            'truth': 'measured_ducklake_zone_map_metadata',
+            'row_selectivity_truth': 'unknown; file pruning does not measure rows returned',
         }
 
     def listing(self):
