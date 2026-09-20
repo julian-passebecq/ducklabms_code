@@ -125,6 +125,32 @@ The integration gate verifies that explicit DuckLake file compaction reduces
 the number of physical files while preserving both the current table result
 and historical `AT (VERSION => ...)` reads.
 
+### Partitioning and pruning
+
+DuckLake stores partition definitions in catalog metadata and associates data
+files with partition values. Datapass exposes that information in the Catalog
+surface so learners can see the difference between a logical table and its
+physical file layout.
+
+The first pruning model is intentionally narrow:
+
+- the filter must be the first operation on the source DataFrame;
+- it must be a simple equality predicate;
+- the filtered column must be a current `identity` DuckLake partition key;
+- files written under older/different partition specs are retained as
+  candidates rather than incorrectly pruned;
+- the candidate file/byte counts are labeled catalog planning evidence, not
+  runtime scan telemetry.
+
+For example, a partitioned `bronze.events` table queried with
+`F.col("event_date") == "2026-01-02"` can use exact DuckLake partition values
+to reduce SparkLab's modeled source files and input bytes. Filters on
+`year/month/day/hour`, bucket partitions, arbitrary range predicates and
+zone-map statistics remain future fidelity work unless separately proven.
+
+This mirrors the real DuckLake concept without claiming that SparkLab ran
+Apache Spark or measured DuckDB's actual I/O counters.
+
 ## MotherDuck
 
 MotherDuck remains an optional remote runtime/deployment target. There is no
