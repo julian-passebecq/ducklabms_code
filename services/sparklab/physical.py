@@ -64,6 +64,13 @@ def simulate_plan(df, statistics, profile: ClusterProfile, aqe: bool, result_row
                 parts = [mb * hot] + [mb * (1-hot)/(count-1)] * (count-1)
             operator, shuffle = 'scan', 0.0
             input_rows = rows
+            pruning = stat.get('partition_pruning')
+            if pruning:
+                notes.append(
+                    f"DuckLake identity-partition metadata reduced candidate files "
+                    f"from {pruning['total_files']} to {pruning['candidate_files']} "
+                    f"({pruning['pruned_files']} pruned before modeled scan)."
+                )
         else:
             left = states[parents[0]]
             rows, mb, parts = left['rows'], left['mb'], list(left['parts'])
@@ -123,7 +130,8 @@ def simulate_plan(df, statistics, profile: ClusterProfile, aqe: bool, result_row
                     scheduler_overhead_s=profile.scheduler_overhead_s,
                     straggler=stage.max_task_s > max(stage.p50_task_s, 0.001)*3,
                     broadcast_mb=states[parents[1]]['mb'] if operator=='broadcast_join' else 0,
-                    sort=kind in {'window','orderBy'} or operator=='shuffle_join')
+                    sort=kind in {'window','orderBy'} or operator=='shuffle_join',
+                    storage_pruning=stat.get('partition_pruning') if kind=='scan' else None)
         evidence.append(data)
     job = _finalize_job(profile, aqe, stages, {'model':'plan-driven-v1','fusion':'not modeled'})
     metrics = job.as_dict()
