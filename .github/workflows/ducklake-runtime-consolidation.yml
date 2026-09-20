@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - codex/ducklake-runtime-consolidation-1
+      - codex/ducklake-sparklab-fidelity-1
   workflow_dispatch:
 
 jobs:
