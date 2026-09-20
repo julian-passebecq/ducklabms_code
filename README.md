@@ -85,6 +85,24 @@ When `apps/web/dist` does not exist, port 8000 serves a clearly labeled **offlin
 
 For frontend development, run `npm run dev` in a second terminal and use the port-5173 token URL printed by the backend. Vite proxies `/api` to the local backend. Always run one API worker.
 
+## V1 playgrounds
+
+The React shell now has a **New playground** launcher so the product can be tried before any Oracle deployment:
+
+- **DuckLake / DuckDB lab** — real local analytical SQL over the seeded workspace catalog.
+- **Fabric-style Python + SparkLab** — Fabric-inspired notebook chrome with real trusted-local Python when enabled and the bounded SparkLab PySpark subset.
+- **Free coding canvas** — SQL, Python, Polars, SparkLab and notes on the same draggable/resizable notebook.
+- **LeetCode arena** — problem browser plus focused problem/editor/results/guidance layout using the installed exercise packs.
+- **MotherDuck-ready SQL** — deliberately runs locally in V1; the runtime strip says `MotherDuck off` until a real remote adapter is configured. There is no hidden upload or network fallback.
+
+For the fullest local playground, use DuckLake plus trusted Python:
+
+```sh
+python start.py --storage ducklake --install-ducklake --trusted-local-python
+```
+
+After the DuckLake extension is installed once, later starts can omit `--install-ducklake`. The same notebook documents and layouts are used whether the product is shown as Studio, Fabric notebook or interview coding chrome.
+
 ## First connected case
 
 Choose **Retail revenue lakehouse**. Run its workflow and then check the case:
