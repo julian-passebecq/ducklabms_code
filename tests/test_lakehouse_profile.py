@@ -131,3 +131,63 @@ def test_real_ducklake_profile_round_trip(tmp_path: Path, monkeypatch):
         )["rows"] == [{"id": 1, "layer": "ducklake"}]
     finally:
         reopened.catalog.close()
+
+
+@pytest.mark.skipif(
+    os.environ.get("DATAPASS_DUCKLAKE_INTEGRATION") != "1",
+    reason="real DuckLake maintenance integration is an explicit CI/smoke gate",
+)
+def test_ducklake_small_files_compact_without_breaking_time_travel(tmp_path: Path, monkeypatch):
+    pytest.importorskip("duckdb")
+    monkeypatch.setenv("DATAPASS_INSTALL_DUCKLAKE", "1")
+
+    from apps.api.datapass.execution import Engine
+
+    engine = Engine(tmp_path, "ducklake")
+    try:
+        engine.catalog.materialize(
+            "bronze.compaction_probe",
+            "SELECT 1 AS id, 'first' AS payload",
+            "compaction-test",
+        )
+        before_snapshot = engine.catalog.lakehouse_overview()["snapshots"][0]["snapshot_id"]
+
+        for value in range(2, 7):
+            engine.catalog.execute(
+                f"INSERT INTO bronze.compaction_probe VALUES ({value}, 'v{value}')",
+                "compaction-test",
+            )
+
+        before = next(
+            row for row in engine.catalog.lakehouse_overview()["tables"]
+            if row["name"] == "bronze.compaction_probe"
+        )
+        assert before["file_count"] >= 4
+        assert before["small_file_count"] >= 4
+        assert before["compaction_advisory"] == "consider_merge_adjacent_files"
+
+        current_rows = engine.catalog.query(
+            "SELECT COUNT(*) AS n FROM bronze.compaction_probe"
+        )["rows"]
+        historical_rows = engine.catalog.db.execute(
+            f"SELECT COUNT(*) FROM bronze.compaction_probe AT (VERSION => {before_snapshot})"
+        ).fetchone()[0]
+        assert current_rows == [{"n": 6}]
+        assert historical_rows == 1
+
+        engine.catalog.db.execute(
+            "CALL ducklake_merge_adjacent_files('lake', 'compaction_probe', schema => 'bronze')"
+        )
+        after = next(
+            row for row in engine.catalog.lakehouse_overview()["tables"]
+            if row["name"] == "bronze.compaction_probe"
+        )
+        assert after["file_count"] < before["file_count"]
+        assert engine.catalog.db.execute(
+            f"SELECT COUNT(*) FROM bronze.compaction_probe AT (VERSION => {before_snapshot})"
+        ).fetchone()[0] == 1
+        assert engine.catalog.query(
+            "SELECT COUNT(*) AS n FROM bronze.compaction_probe"
+        )["rows"] == [{"n": 6}]
+    finally:
+        engine.catalog.close()
