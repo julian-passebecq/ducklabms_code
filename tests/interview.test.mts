@@ -8,6 +8,10 @@ const answer=(n:any)=>n.blocks.find((b:any)=>b.id==='answer');
 test('interview shares source and semantic order; geometry survives restore and view reset',()=>{
  let n=createExerciseNotebook(exercise);const order=n.views.find(v=>v.id==='notebook')!.blockIds;
  assert.equal(n.presentation,'leetcode');
+ const leetcode=n.views.find(v=>v.id==='leetcode')!;
+ assert.ok(leetcode.blockIds.includes('problem')&&leetcode.blockIds.includes('answer')&&leetcode.blockIds.includes('answer-output'));
+ assert.equal(leetcode.layout.find(i=>i.i==='answer')!.x,6);
+ assert.equal(leetcode.layout.find(i=>i.i==='problem')!.x,2);
  n=withSource(n,'answer','SELECT SUM(value) FROM input');
  n={...n,views:n.views.map(v=>v.id==='interview'?{...v,layout:v.layout.map(i=>({...i,h:i.h+4}))}:v)};
  const restored=restoreNotebook(n);assert.equal(sourceOf(restored,answer(restored)),'SELECT SUM(value) FROM input');assert.equal(restored.presentation,'leetcode');
@@ -75,6 +79,6 @@ test('workspace presentation registry keeps product chrome separate from noteboo
  assert.deepEqual(workspacePresentationPresets.map(p=>p.id),['studio','fabric','leetcode']);
  assert.equal(workspacePresentationPreset('fabric').explorer,'notebook');
  assert.equal(preferredPresentationView('fabric','practice',false),'notebook');
- assert.equal(preferredPresentationView('leetcode','notebook',true),'interview');
+ assert.equal(preferredPresentationView('leetcode','notebook',true),'leetcode');
  assert.equal(preferredPresentationView('leetcode','notebook',false),'notebook');
 });
