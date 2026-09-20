@@ -94,12 +94,24 @@ def test_real_ducklake_profile_round_trip(tmp_path: Path, monkeypatch):
             "SELECT 1 AS id, 'ducklake' AS layer",
             "integration-test",
         )
+        for value in range(2, 6):
+            engine.catalog.execute(
+                f"INSERT INTO bronze.integration_probe VALUES ({value}, 'ducklake')",
+                "integration-small-file-write",
+            )
         probe = next(asset for asset in engine.catalog.listing() if asset["name"] == "bronze.integration_probe")
         assert probe["storage"]["truth"] == "measured_ducklake_metadata"
         assert probe["storage"]["format"] == "parquet"
         assert probe["storage"]["file_count"] >= 1
         assert probe["storage"]["size_bytes"] > 0
         assert probe["storage"]["snapshot_id"] is not None
+        assert probe["storage"]["snapshot_count"] >= 1
+        assert probe["storage"]["avg_file_size_bytes"] > 0
+        assert probe["storage"]["small_file_threshold_bytes"] == 8 * 1024 * 1024
+        assert probe["storage"]["small_file_count"] >= 1
+        assert probe["storage"]["small_file_ratio"] > 0
+        assert probe["storage"]["health"] in {"healthy", "small_files"}
+        assert "zone maps" in probe["storage"]["pruning_support"]
 
         spark_run = engine.execute({
             "op": "execute",
@@ -107,7 +119,7 @@ def test_real_ducklake_profile_round_trip(tmp_path: Path, monkeypatch):
             "notebook_id": "ducklake-evidence",
             "cell_id": "scan",
             "language": "sparklab",
-            "code": 'result = spark.table("bronze.integration_probe").select("id")',
+            "code": 'result = spark.table("bronze.integration_probe").filter(F.col("id") > 2).select("id")',
             "profile": "generic_8x8",
             "aqe": True,
         })
@@ -115,9 +127,16 @@ def test_real_ducklake_profile_round_trip(tmp_path: Path, monkeypatch):
         assert spark_run["simulation"]["status"] == "modeled"
         assert spark_run["simulation"]["assumptions"]["kind"] == "catalog rows + measured DuckLake Parquet files/bytes"
         stats = spark_run["simulation"]["assumptions"]["input_statistics"]["bronze.integration_probe"]
-        assert stats["input_truth"] == "rows measured from table; bytes/files measured from DuckLake metadata"
+        assert stats["input_truth"] == "rows measured from table; bytes/files/snapshot health measured from DuckLake metadata"
         assert stats["bytes"] == probe["storage"]["size_bytes"]
         assert stats["source_files"] == probe["storage"]["file_count"]
+        assert stats["snapshot_id"] == probe["storage"]["snapshot_id"]
+        assert stats["small_file_count"] == probe["storage"]["small_file_count"]
+        scan = spark_run["simulation"]["metrics"]["stages"][0]
+        assert scan["source_evidence"]["source_files"] == probe["storage"]["file_count"]
+        assert scan["source_evidence"]["snapshot_id"] == probe["storage"]["snapshot_id"]
+        assert any("zone maps" in note for note in scan["notes"])
+        assert any("actual files scanned/pruned are unavailable" in note for note in scan["notes"])
     finally:
         engine.catalog.close()
 
@@ -128,6 +147,12 @@ def test_real_ducklake_profile_round_trip(tmp_path: Path, monkeypatch):
     try:
         assert reopened.catalog.query(
             "SELECT * FROM bronze.integration_probe"
-        )["rows"] == [{"id": 1, "layer": "ducklake"}]
+        )["rows"] == [
+            {"id": 1, "layer": "ducklake"},
+            {"id": 2, "layer": "ducklake"},
+            {"id": 3, "layer": "ducklake"},
+            {"id": 4, "layer": "ducklake"},
+            {"id": 5, "layer": "ducklake"},
+        ]
     finally:
         reopened.catalog.close()
