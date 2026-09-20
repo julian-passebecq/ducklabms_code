@@ -77,22 +77,26 @@ class SparkRemote:
             raise RuntimeError(f"Spark runner dispatch failed ({response.status_code}): {detail}")
         return response.json()
 
-    def status(self, run_id: int) -> dict[str, Any]:
+    def status(self, job_id: str | int) -> dict[str, Any]:
+        path = (
+            f"/v1/spark/jobs/{job_id}"
+            if isinstance(job_id, str)
+            else f"/v1/spark/verify/{job_id}"
+        )
         with httpx.Client(timeout=self.timeout, follow_redirects=True) as client:
-            response = client.get(
-                self._url(f"/v1/spark/verify/{run_id}"),
-                headers=self._headers(),
-            )
+            response = client.get(self._url(path), headers=self._headers())
         if response.status_code != 200:
             raise RuntimeError(f"Spark runner status failed ({response.status_code}): {response.text[:1000]}")
         return response.json()
 
-    def result(self, run_id: int, request_id: str) -> dict[str, Any]:
+    def result(self, job_id: str | int, request_id: str) -> dict[str, Any]:
+        path = (
+            f"/v1/spark/jobs/{job_id}/result/{request_id}"
+            if isinstance(job_id, str)
+            else f"/v1/spark/verify/{job_id}/result/{request_id}"
+        )
         with httpx.Client(timeout=self.timeout, follow_redirects=True) as client:
-            response = client.get(
-                self._url(f"/v1/spark/verify/{run_id}/result/{request_id}"),
-                headers=self._headers(),
-            )
+            response = client.get(self._url(path), headers=self._headers())
         if response.status_code != 200:
             raise RuntimeError(f"Spark runner result failed ({response.status_code}): {response.text[:1000]}")
         return response.json()
