@@ -5,7 +5,7 @@ export interface WorkspacePresentationPreset {
  label:string;
  description:string;
  explorer:'workspace'|'notebook'|'focus';
- preferredView:'practice'|'notebook'|'interview';
+ preferredView:'practice'|'notebook'|'interview'|'leetcode';
  requiresExercise:boolean;
 }
 
