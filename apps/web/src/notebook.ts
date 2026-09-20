@@ -149,13 +149,13 @@ export function ensureExerciseBrowser(n:RootNotebook):RootNotebook {
  const existing=n.blocks.find(b=>b.role==='exercise-browser');
  const block:RootBlock=existing??{id:'exercise-browser',type:'markdown',title:'Problems and progress',role:'exercise-browser',exerciseId:n.exercise.id};
  const blocks=existing?n.blocks:[block,...n.blocks];
- let views=n.views.map(v=>{
+ let views:NotebookView[]=n.views.map((v):NotebookView=>{
   const withoutBrowser={...v,blockIds:v.blockIds.filter(id=>id!==block.id),layout:v.layout.filter(i=>i.i!==block.id),collapsedIds:v.collapsedIds?.filter(id=>id!==block.id),defaultLayout:v.defaultLayout?.filter(i=>i.i!==block.id)};
   if(v.id!=='interview'&&v.id!=='leetcode')return withoutBrowser;
   const hasBrowser=v.blockIds.includes(block.id);
   const y=Math.max(0,...v.layout.map(i=>i.y+i.h));
   const template=v.id==='leetcode'?leetcodeLayout():interviewLayout();
-  const item={i:block.id,x:0,y,w:v.id==='leetcode'?2:3,h:22,minW:2,minH:5};
+  const item:NotebookView['layout'][number]={i:block.id,x:0,y,w:v.id==='leetcode'?2:3,h:22,minW:2,minH:5};
   return {...v,blockIds:hasBrowser?v.blockIds:[block.id,...v.blockIds],layout:hasBrowser?v.layout:[...v.layout,item],collapsedIds:v.collapsedIds,defaultLayout:[...template,...(v.defaultLayout??v.layout).filter(i=>!['exercise-browser','problem','answer','answer-output','guidance'].includes(i.i))]};
  });
  if(!views.some(v=>v.id==='leetcode')){
