@@ -6,6 +6,8 @@ on:
       - codex/airflow-github-actions-1
     paths:
       - .github/workflows/refresh-airflow-openapi.yml
+      - apps/api/datapass/api.py
+      - apps/api/datapass/airflow_remote.py
 
 permissions:
   contents: write
