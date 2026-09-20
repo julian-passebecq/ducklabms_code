@@ -114,6 +114,7 @@ class Catalog:
             self.versions = {}
         self.guard = False
         self.lakehouse = None
+        self._duckdb_capability = None
         if self.kind == 'sqlite':
             self.db = sqlite3.connect(directory / 'workspace.sqlite3')
             self.db.enable_load_extension(False)
@@ -127,6 +128,16 @@ class Catalog:
             self.db.execute("SET memory_limit='512MB'")
             if self.kind == 'ducklake':
                 self.lakehouse = attach_ducklake(self.db, directory)
+            else:
+                version = str(self.db.execute('SELECT version()').fetchone()[0])
+                extension = self.db.execute(
+                    "SELECT installed, extension_version FROM duckdb_extensions() WHERE extension_name='ducklake'"
+                ).fetchone()
+                self._duckdb_capability = {
+                    'version': version,
+                    'ducklake_extension_installed': bool(extension and extension[0]),
+                    'ducklake_extension_version': str(extension[1]) if extension and extension[1] is not None else None,
+                }
             for layer in LAYERS:
                 self.db.execute(f'CREATE SCHEMA IF NOT EXISTS {layer}')
             # After controlled initialization, notebook SQL cannot read arbitrary files.
@@ -260,10 +271,7 @@ class Catalog:
         if self.kind == 'ducklake' and self.lakehouse is not None:
             return self.lakehouse.contract()
         if self.kind == 'duckdb':
-            version = str(self.db.execute('SELECT version()').fetchone()[0])
-            extension = self.db.execute(
-                "SELECT installed, extension_version FROM duckdb_extensions() WHERE extension_name='ducklake'"
-            ).fetchone()
+            capability = self._duckdb_capability or {}
             return {
                 'schema_version': 1,
                 'active': False,
@@ -275,9 +283,9 @@ class Catalog:
                 'data_directory': None,
                 'data_inlining_row_limit': 0,
                 'truth': 'real local DuckDB compatibility mode; DuckLake is not attached',
-                'duckdb_version': version,
-                'ducklake_extension_installed': bool(extension and extension[0]),
-                'ducklake_extension_version': str(extension[1]) if extension and extension[1] is not None else None,
+                'duckdb_version': capability.get('version'),
+                'ducklake_extension_installed': bool(capability.get('ducklake_extension_installed')),
+                'ducklake_extension_version': capability.get('ducklake_extension_version'),
                 'legacy_metadata': False,
             }
         return {
