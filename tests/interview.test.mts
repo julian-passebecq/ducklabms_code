@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createExerciseNotebook,createCaseNotebook,withSource,sourceOf,resetToStarter,resetExercise,clearOutputs,removeBlock,resetLayout,restoreNotebook,recordExecution,hydrateServerEvidence,exportNotebook,importNotebook} from '../apps/web/src/notebook.ts';
+import {preferredPresentationView,workspacePresentationPreset,workspacePresentationPresets} from '../apps/web/src/workspacePresentation.ts';
 const exercise={id:'demo-sum',version:'1',title:'Internal demo',language:'sql',starter_source:'SELECT 0 AS total',prompt:'Return sum',explanation:'Use actual input'} as any;
 const answer=(n:any)=>n.blocks.find((b:any)=>b.id==='answer');
 test('interview shares source and semantic order; geometry survives restore and view reset',()=>{
@@ -67,4 +68,13 @@ test('case notebooks choose product chrome without changing notebook semantics',
  const restored=restoreNotebook({...neutral,presentation:'fabric'});
  assert.equal(restored.presentation,'fabric');
  assert.deepEqual(restored.views.map(v=>v.blockIds),neutral.views.map(v=>v.blockIds));
+});
+
+
+test('workspace presentation registry keeps product chrome separate from notebook geometry',()=>{
+ assert.deepEqual(workspacePresentationPresets.map(p=>p.id),['studio','fabric','leetcode']);
+ assert.equal(workspacePresentationPreset('fabric').explorer,'notebook');
+ assert.equal(preferredPresentationView('fabric','practice',false),'notebook');
+ assert.equal(preferredPresentationView('leetcode','notebook',true),'interview');
+ assert.equal(preferredPresentationView('leetcode','notebook',false),'notebook');
 });
