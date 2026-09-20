@@ -1,7 +1,7 @@
 import type {KernelId} from '../../../packages/contracts/src/index.ts';
 import {createImportedViews} from '../../../packages/notebook-core/src/v2/ipynb.ts';
-import type {RootBlock,RootNotebook} from './notebook';
-import {sourceKey} from './notebook';
+import type {RootBlock,RootNotebook} from './notebook.ts';
+import {sourceKey} from './notebook.ts';
 import type {WorkspacePresentation} from './workspacePresentation';
 
 export type PlaygroundId='ducklake'|'fabric'|'free'|'motherduck';
