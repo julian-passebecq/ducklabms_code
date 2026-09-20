@@ -339,7 +339,7 @@ class Catalog:
             raise ValueError('This relation has no DuckLake data files to compact.')
         row_count_before = int(self.db.execute(f'SELECT COUNT(*) FROM {name}').fetchone()[0])
         outputs = self._result(self.db.execute(
-            f"SELECT * FROM ducklake_merge_adjacent_files('lake', '{table}', schema => '{layer}')"
+            f"CALL ducklake_merge_adjacent_files('lake', '{table}', schema => '{layer}', max_file_size => {DUCKLAKE_SMALL_FILE_BYTES})"
         ))
         row_count_after = int(self.db.execute(f'SELECT COUNT(*) FROM {name}').fetchone()[0])
         if row_count_before != row_count_after:
