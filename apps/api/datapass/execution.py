@@ -355,6 +355,8 @@ class Engine:
             return self.capabilities()
         if op == 'catalog':
             return self.catalog.listing()
+        if op == 'lakehouse':
+            return self.catalog.lakehouse_overview()
         if op == 'execute':
             return self.execute(request)
         if op == 'exercise':
