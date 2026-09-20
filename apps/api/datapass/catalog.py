@@ -374,44 +374,78 @@ class Catalog:
             return None
         column, operator, raw_value = match.groups()
         value = float(raw_value)
-        metadata_location = self.db.execute(
-            """
-            SELECT table_catalog, table_schema
-            FROM information_schema.tables
-            WHERE table_name='ducklake_file_column_stats'
-              AND table_catalog LIKE '__ducklake_metadata_%'
-            ORDER BY table_catalog, table_schema
-            LIMIT 1
-            """
-        ).fetchone()
-        if metadata_location is None:
-            return None
-        metadata_catalog, metadata_schema = map(str, metadata_location)
-        quoted_catalog = '"' + metadata_catalog.replace('"', '""') + '"'
-        quoted_schema = '"' + metadata_schema.replace('"', '""') + '"'
-        prefix = f'{quoted_catalog}.{quoted_schema}'
-        rows = self.db.execute(
-            f"""
-            SELECT c.column_type, df.data_file_id, df.file_size_bytes,
-                   stats.min_value, stats.max_value
-            FROM {prefix}.ducklake_table AS t
-            JOIN {prefix}.ducklake_schema AS s
-              ON s.schema_id=t.schema_id
-            JOIN {prefix}.ducklake_column AS c
-              ON c.table_id=t.table_id
-            JOIN {prefix}.ducklake_data_file AS df
-              ON df.table_id=t.table_id
-            LEFT JOIN {prefix}.ducklake_file_column_stats AS stats
-              ON stats.table_id=t.table_id
-             AND stats.data_file_id=df.data_file_id
-             AND stats.column_id=c.column_id
-            WHERE t.table_name=? AND s.schema_name=? AND c.column_name=?
-              AND t.end_snapshot IS NULL AND s.end_snapshot IS NULL
-              AND c.end_snapshot IS NULL AND df.end_snapshot IS NULL
-            ORDER BY df.data_file_id
-            """,
-            [table, layer, column],
-        ).fetchall()
+        rows = []
+        metadata_file = self.directory / 'lake-metadata.sqlite'
+        if metadata_file.exists():
+            # The canonical Datapass profile uses SQLite DuckLake metadata. Read
+            # that spec-defined catalog directly in read-only mode instead of
+            # depending on DuckDB's private attached-catalog name.
+            metadata = sqlite3.connect(f'file:{metadata_file.resolve()}?mode=ro', uri=True)
+            try:
+                rows = metadata.execute(
+                    """
+                    SELECT c.column_type, df.data_file_id, df.file_size_bytes,
+                           stats.min_value, stats.max_value
+                    FROM ducklake_table AS t
+                    JOIN ducklake_schema AS s
+                      ON s.schema_id=t.schema_id
+                    JOIN ducklake_column AS c
+                      ON c.table_id=t.table_id
+                    JOIN ducklake_data_file AS df
+                      ON df.table_id=t.table_id
+                    LEFT JOIN ducklake_file_column_stats AS stats
+                      ON stats.table_id=t.table_id
+                     AND stats.data_file_id=df.data_file_id
+                     AND stats.column_id=c.column_id
+                    WHERE t.table_name=? AND s.schema_name=? AND c.column_name=?
+                      AND t.end_snapshot IS NULL AND s.end_snapshot IS NULL
+                      AND c.end_snapshot IS NULL AND df.end_snapshot IS NULL
+                    ORDER BY df.data_file_id
+                    """,
+                    (table, layer, column),
+                ).fetchall()
+            finally:
+                metadata.close()
+        else:
+            # Legacy DuckDB-metadata workspaces remain readable. Discovery is
+            # best-effort because this is not the canonical new-workspace path.
+            metadata_location = self.db.execute(
+                """
+                SELECT table_catalog, table_schema
+                FROM information_schema.tables
+                WHERE table_name='ducklake_file_column_stats'
+                  AND table_catalog LIKE '__ducklake_metadata_%'
+                ORDER BY table_catalog, table_schema
+                LIMIT 1
+                """
+            ).fetchone()
+            if metadata_location is not None:
+                metadata_catalog, metadata_schema = map(str, metadata_location)
+                quoted_catalog = '"' + metadata_catalog.replace('"', '""') + '"'
+                quoted_schema = '"' + metadata_schema.replace('"', '""') + '"'
+                prefix = f'{quoted_catalog}.{quoted_schema}'
+                rows = self.db.execute(
+                    f"""
+                    SELECT c.column_type, df.data_file_id, df.file_size_bytes,
+                           stats.min_value, stats.max_value
+                    FROM {prefix}.ducklake_table AS t
+                    JOIN {prefix}.ducklake_schema AS s
+                      ON s.schema_id=t.schema_id
+                    JOIN {prefix}.ducklake_column AS c
+                      ON c.table_id=t.table_id
+                    JOIN {prefix}.ducklake_data_file AS df
+                      ON df.table_id=t.table_id
+                    LEFT JOIN {prefix}.ducklake_file_column_stats AS stats
+                      ON stats.table_id=t.table_id
+                     AND stats.data_file_id=df.data_file_id
+                     AND stats.column_id=c.column_id
+                    WHERE t.table_name=? AND s.schema_name=? AND c.column_name=?
+                      AND t.end_snapshot IS NULL AND s.end_snapshot IS NULL
+                      AND c.end_snapshot IS NULL AND df.end_snapshot IS NULL
+                    ORDER BY df.data_file_id
+                    """,
+                    [table, layer, column],
+                ).fetchall()
         if not rows:
             return None
         numeric_tokens = ('INT', 'FLOAT', 'DOUBLE', 'DECIMAL', 'REAL', 'HUGEINT', 'UBIGINT', 'USMALLINT', 'UTINYINT')
