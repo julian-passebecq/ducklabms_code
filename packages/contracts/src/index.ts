@@ -3,7 +3,8 @@ import type {RootWorkbench} from './foundation.ts';
 export type KernelId = 'sql' | 'sparklab' | 'python' | 'polars' | 'dbt';
 export type TruthKind = 'real' | 'semantic-emulation' | 'simulated' | 'unsupported';
 export interface ResultTable {columns:string[]; rows:Record<string,unknown>[]; total_rows:number|null; truncated:boolean}
-export interface Asset {name:string;layer:string;row_count:number;version?:string;inputs?:Record<string,string>;producer?:string;fresh:boolean}
+export interface AssetStorageEvidence {format:'parquet';file_count:number;size_bytes:number;delete_file_count:number;snapshot_id:number|null;truth:'measured_ducklake_metadata'}
+export interface Asset {name:string;layer:string;row_count:number;version?:string;inputs?:Record<string,string>;producer?:string;fresh:boolean;storage?:AssetStorageEvidence}
 export interface Check {status:string;passed:boolean|null;fresh?:boolean;message:string;actual?:Record<string,unknown>[];expected?:Record<string,unknown>[]}
 export interface SparkPlanNode {id:number;operation:string;source?:string;parents:number[];dependency:string;concept:string}
 export interface SparkTask {task_id:number;partition_mb:number;duration_s:number;start_s:number;finish_s:number;worker_slot:number;spill_mb:number;skewed:boolean}
