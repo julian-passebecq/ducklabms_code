@@ -191,3 +191,84 @@ def test_ducklake_small_files_compact_without_breaking_time_travel(tmp_path: Pat
         )["rows"] == [{"n": 6}]
     finally:
         engine.catalog.close()
+
+
+@pytest.mark.skipif(
+    os.environ.get("DATAPASS_DUCKLAKE_INTEGRATION") != "1",
+    reason="real DuckLake partition integration is an explicit CI/smoke gate",
+)
+def test_ducklake_identity_partition_pruning_is_exact_and_used_by_sparklab(tmp_path: Path, monkeypatch):
+    pytest.importorskip("duckdb")
+    monkeypatch.setenv("DATAPASS_INSTALL_DUCKLAKE", "1")
+
+    from apps.api.datapass.execution import Engine
+
+    engine = Engine(tmp_path, "ducklake")
+    try:
+        engine.catalog.db.execute(
+            "CREATE TABLE bronze.partition_probe (id INTEGER, event_date DATE, payload VARCHAR)"
+        )
+        engine.catalog.db.execute(
+            "ALTER TABLE bronze.partition_probe SET PARTITIONED BY (event_date)"
+        )
+        engine.catalog.db.execute(
+            """
+            INSERT INTO bronze.partition_probe VALUES
+                (1, DATE '2026-01-01', 'a'),
+                (2, DATE '2026-01-02', 'b'),
+                (3, DATE '2026-01-02', 'c'),
+                (4, DATE '2026-01-03', 'd')
+            """
+        )
+        engine.catalog._touch("bronze.partition_probe", [], "partition-test")
+
+        asset = next(
+            item for item in engine.catalog.listing()
+            if item["name"] == "bronze.partition_probe"
+        )
+        partitioning = asset["storage"]["partitioning"]
+        assert partitioning["partitioned"] is True
+        assert partitioning["columns"][0]["column"] == "event_date"
+        assert partitioning["columns"][0]["transform"] == "identity"
+        assert {value["value"] for value in partitioning["columns"][0]["values"]} >= {
+            "2026-01-01", "2026-01-02", "2026-01-03"
+        }
+
+        pruning = engine.catalog.partition_pruning_evidence(
+            "bronze.partition_probe", "event_date", "2026-01-02"
+        )
+        assert pruning["eligible"] is True
+        assert pruning["candidate_files"] < pruning["total_files"]
+        assert pruning["pruned_files"] >= 2
+        assert pruning["candidate_records"] == 2
+        assert pruning["candidate_bytes"] < pruning["total_bytes"]
+
+        spark_run = engine.execute({
+            "op": "execute",
+            "case_id": "retail-medallion",
+            "notebook_id": "partition-pruning",
+            "cell_id": "scan",
+            "language": "sparklab",
+            "code": (
+                'result = spark.table("bronze.partition_probe")'
+                '.filter(F.col("event_date") == "2026-01-02")'
+                '.select("id", "event_date")'
+            ),
+            "profile": "generic_8x8",
+            "aqe": True,
+        })
+        assert spark_run["status"] == "success", spark_run
+        assert spark_run["result"]["total_rows"] == 2
+        assert spark_run["simulation"]["assumptions"]["kind"] == (
+            "catalog rows + exact DuckLake identity-partition candidate files/bytes"
+        )
+        stats = spark_run["simulation"]["assumptions"]["input_statistics"]["bronze.partition_probe"]
+        assert stats["table_rows"] == 4
+        assert stats["rows"] == 2
+        assert stats["candidate_files"] == pruning["candidate_files"]
+        assert stats["pruned_files"] == pruning["pruned_files"]
+        scan = spark_run["simulation"]["metrics"]["stages"][0]
+        assert scan["storage_pruning"]["eligible"] is True
+        assert scan["storage_pruning"]["candidate_files"] == pruning["candidate_files"]
+    finally:
+        engine.catalog.close()
