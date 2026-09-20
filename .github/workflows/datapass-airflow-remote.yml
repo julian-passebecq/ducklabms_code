@@ -1,7 +1,5 @@
 name: Datapass Airflow remote
 
-run-name: Datapass Airflow ${{ inputs.request_id || github.run_id }}
-
 on:
   workflow_dispatch:
     inputs:
