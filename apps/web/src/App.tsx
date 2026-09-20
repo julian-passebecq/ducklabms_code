@@ -76,14 +76,15 @@ export default function App(){
  }
  async function launchPlayground(id:PlaygroundId){
   await saveCurrent();
-  const created=await api.create(null);
+  const preset=playgroundPreset(id);
+  const created=await api.create(null,preset.label);
   const next=createPlaygroundNotebook(id);
   const saved=await api.save(created.id,created.revision,next);
   const [catalog,caps,history,summary,list]=await Promise.all([api.catalog(saved.id),api.capabilities(saved.id),api.attempts(saved.id),api.progress(saved.id),api.workspaces()]);
   replaceWorkspace(saved);replaceNotebook(next,false);setDirty(false);setAssets(catalog);setCapabilities(caps);setAttempts(history);setProgress(summary);setSavedWorkspaces(list);setChecks({});
-  setExerciseResult(undefined);setReferenceSource(undefined);setSolution(false);setStepId(next.blocks.find(isRunnable)?.id??next.blocks[0]?.id??'');setViewId(playgroundPreset(id).initialView);setSurface('notebook');
+  setExerciseResult(undefined);setReferenceSource(undefined);setSolution(false);setStepId(next.blocks.find(isRunnable)?.id??next.blocks[0]?.id??'');setViewId(preset.initialView);setSurface('notebook');
   try{localStorage.setItem('datapass:last-workspace',saved.id)}catch{}
-  setNotice(`${playgroundPreset(id).label} is ready. The runtime strip below reports which local engines are actually active.`);
+  setNotice(`${preset.label} is ready. The runtime strip below reports which local engines are actually active.`);
  }
  function quickStart(value:string){
   if(value==='leetcode'){setSurface('interview');return}
