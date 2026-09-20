@@ -41,8 +41,8 @@ export class ApiClient implements RuntimeClient {
  airflowResult=(runId:number,requestId:string)=>this.request<AirflowRunResult>(`/airflow/runs/${runId}/result/${encodeURIComponent(requestId)}`);
  sparkRemoteCapabilities=()=>this.request<SparkRemoteCapabilities>('/spark/remote/capabilities');
  sparkRemoteDispatch=(id:string,request:SparkRemoteDispatchRequest)=>this.request<SparkRemoteDispatch>(`/workspaces/${id}/spark/remote`,{method:'POST',body:JSON.stringify(request)});
- sparkRemoteStatus=(id:string,runId:number)=>this.request<SparkRemoteRunStatus>(`/workspaces/${id}/spark/remote/${runId}`);
- sparkRemoteResult=(id:string,runId:number,requestId:string)=>this.request<SparkRemoteResult>(`/workspaces/${id}/spark/remote/${runId}/result/${encodeURIComponent(requestId)}`);
+ sparkRemoteStatus=(id:string,jobId:string)=>this.request<SparkRemoteRunStatus>(`/workspaces/${id}/spark/remote/${encodeURIComponent(jobId)}`);
+ sparkRemoteResult=(id:string,jobId:string,requestId:string)=>this.request<SparkRemoteResult>(`/workspaces/${id}/spark/remote/${encodeURIComponent(jobId)}/result/${encodeURIComponent(requestId)}`);
  capabilities=(id:string)=>this.request<Capabilities>(`/workspaces/${id}/capabilities`);
  execute=(id:string,request:ExecuteRequest)=>this.request<Execution>(`/workspaces/${id}/execute`,{method:'POST',body:JSON.stringify(request)});
  workflow=(id:string,notebook_id:string,overrides:Record<string,string>,profile:string,aqe:boolean)=>this.request<WorkflowResult>(`/workspaces/${id}/workflow`,{method:'POST',body:JSON.stringify({notebook_id,overrides,profile,aqe})});
