@@ -1857,6 +1857,37 @@
         "title": "SolutionMetadata",
         "type": "object"
       },
+      "SparkRemoteRun": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "collect_limit": {
+            "default": 100,
+            "maximum": 200.0,
+            "minimum": 1.0,
+            "title": "Collect Limit",
+            "type": "integer"
+          },
+          "notebook_id": {
+            "default": "case-notebook",
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Notebook Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "SparkRemoteRun",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -2464,6 +2495,22 @@
         "summary": "Profiles"
       }
     },
+    "/api/spark/remote/capabilities": {
+      "get": {
+        "operationId": "spark_remote_capabilities_api_spark_remote_capabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Spark Remote Capabilities"
+      }
+    },
     "/api/workspaces": {
       "get": {
         "operationId": "workspaces_api_workspaces_get",
@@ -3013,6 +3060,154 @@
           }
         },
         "summary": "Restart"
+      }
+    },
+    "/api/workspaces/{id}/spark/remote": {
+      "post": {
+        "operationId": "spark_remote_run_api_workspaces__id__spark_remote_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SparkRemoteRun"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Spark Remote Run"
+      }
+    },
+    "/api/workspaces/{id}/spark/remote/{run_id}": {
+      "get": {
+        "operationId": "spark_remote_status_api_workspaces__id__spark_remote__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Spark Remote Status"
+      }
+    },
+    "/api/workspaces/{id}/spark/remote/{run_id}/result/{request_id}": {
+      "get": {
+        "operationId": "spark_remote_result_api_workspaces__id__spark_remote__run_id__result__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Spark Remote Result"
       }
     },
     "/api/workspaces/{id}/workbench": {
