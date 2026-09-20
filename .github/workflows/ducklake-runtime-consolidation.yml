@@ -5,6 +5,7 @@ on:
     branches:
       - codex/ducklake-runtime-consolidation-1
       - codex/ducklake-sparklab-fidelity-1
+      - codex/ducklake-partition-pruning-1
   workflow_dispatch:
 
 jobs:
