@@ -1,8 +1,11 @@
 """One catalog per workspace, owned by its kernel worker.
 
-DuckDB is preferred; SQLite compatibility mode is explicit. DuckLake is an
-opt-in real extension, never a renamed DuckDB file. This is a LOCAL learning
-service, not an untrusted multi-tenant SQL service.
+DuckDB is the local analytical engine. DuckLake is the canonical lakehouse
+profile when explicitly selected: the official DuckDB extension owns the
+format, SQLite owns new-workspace metadata and Parquet owns table data.
+SQLite compatibility mode remains an explicit dependency fallback.
+
+This is a LOCAL learning service, not an untrusted multi-tenant SQL service.
 """
 from __future__ import annotations
 
@@ -10,13 +13,13 @@ import hashlib
 import importlib.util
 import json
 import math
-import os
 from pathlib import Path
 import re
 import sqlite3
 from typing import Any
 import uuid
 from .atomic import replace_file
+from .lakehouse import attach_ducklake
 
 LAYERS = ('source', 'bronze', 'silver', 'gold', 'warehouse', 'features', 'metrics')
 IDENT = re.compile(r'^[A-Za-z][A-Za-z0-9_]{0,62}$')
@@ -110,6 +113,7 @@ class Catalog:
         except FileNotFoundError:
             self.versions = {}
         self.guard = False
+        self.lakehouse = None
         if self.kind == 'sqlite':
             self.db = sqlite3.connect(directory / 'workspace.sqlite3')
             self.db.enable_load_extension(False)
@@ -122,18 +126,7 @@ class Catalog:
             self.db.execute("SET threads=2")
             self.db.execute("SET memory_limit='512MB'")
             if self.kind == 'ducklake':
-                if os.environ.get('DATAPASS_INSTALL_DUCKLAKE') == '1':
-                    self.db.execute('INSTALL ducklake')
-                self.db.execute('LOAD ducklake')
-                meta = str(directory / 'lake-catalog.ducklake').replace("'", "''")
-                files = str(directory / 'lake-files').replace("'", "''")
-                self.db.execute(f"ATTACH 'ducklake:{meta}' AS lake (DATA_PATH '{files}')")
-                self.db.execute('USE lake')
-                for layer in LAYERS:
-                    (directory / 'lake-files' / layer).mkdir(parents=True, exist_ok=True)
-                # DuckLake needs file access only inside this workspace's data path.
-                allowed = str((directory / 'lake-files').resolve()).replace("'", "''")
-                self.db.execute(f"SET allowed_directories=['{allowed}']")
+                self.lakehouse = attach_ducklake(self.db, directory)
             for layer in LAYERS:
                 self.db.execute(f'CREATE SCHEMA IF NOT EXISTS {layer}')
             # After controlled initialization, notebook SQL cannot read arbitrary files.
@@ -190,7 +183,7 @@ class Catalog:
         layer, table = asset_name(name).split('.')
         if self.kind == 'sqlite':
             return bool(self.db.execute(f"SELECT name FROM {layer}.sqlite_master WHERE type IN ('table','view') AND name=?", (table,)).fetchone())
-        return bool(self.db.execute('SELECT table_name FROM information_schema.tables WHERE table_schema=? AND table_name=?', [layer, table]).fetchone())
+        return bool(self.db.execute('SELECT table_name FROM information_schema.tables WHERE table_catalog=current_database() AND table_schema=? AND table_name=?', [layer, table]).fetchone())
 
     def fresh(self, name: str, seen: set[str] | None = None) -> bool:
         seen = set() if seen is None else set(seen)
@@ -208,7 +201,7 @@ class Catalog:
             if self.kind == 'sqlite':
                 names = self.db.execute(f"SELECT name FROM {layer}.sqlite_master WHERE type IN ('table','view') ORDER BY name").fetchall()
             else:
-                names = self.db.execute('SELECT table_name FROM information_schema.tables WHERE table_schema=? ORDER BY table_name', [layer]).fetchall()
+                names = self.db.execute('SELECT table_name FROM information_schema.tables WHERE table_catalog=current_database() AND table_schema=? ORDER BY table_name', [layer]).fetchall()
             for (name,) in names:
                 if not IDENT.fullmatch(name):
                     continue
@@ -216,6 +209,47 @@ class Catalog:
                 count = self.db.execute(f'SELECT COUNT(*) FROM {full}').fetchone()[0]
                 items.append({'name': full, 'layer': layer, 'row_count': count, 'fresh': self.fresh(full), **self.versions.get(full, {})})
         return items
+
+    def runtime_contract(self) -> dict:
+        if self.kind == 'ducklake' and self.lakehouse is not None:
+            return self.lakehouse.contract()
+        if self.kind == 'duckdb':
+            version = str(self.db.execute('SELECT version()').fetchone()[0])
+            extension = self.db.execute(
+                "SELECT installed, extension_version FROM duckdb_extensions() WHERE extension_name='ducklake'"
+            ).fetchone()
+            return {
+                'schema_version': 1,
+                'active': False,
+                'table_format': 'ducklake',
+                'compute_engine': 'duckdb',
+                'metadata_backend': None,
+                'metadata_file': None,
+                'data_format': 'parquet',
+                'data_directory': None,
+                'data_inlining_row_limit': 0,
+                'truth': 'real local DuckDB compatibility mode; DuckLake is not attached',
+                'duckdb_version': version,
+                'ducklake_extension_installed': bool(extension and extension[0]),
+                'ducklake_extension_version': str(extension[1]) if extension and extension[1] is not None else None,
+                'legacy_metadata': False,
+            }
+        return {
+            'schema_version': 1,
+            'active': False,
+            'table_format': 'ducklake',
+            'compute_engine': 'sqlite',
+            'metadata_backend': None,
+            'metadata_file': None,
+            'data_format': None,
+            'data_directory': None,
+            'data_inlining_row_limit': 0,
+            'truth': 'SQLite compatibility fallback; DuckLake and DuckDB are unavailable',
+            'duckdb_version': None,
+            'ducklake_extension_installed': False,
+            'ducklake_extension_version': None,
+            'legacy_metadata': False,
+        }
 
     def _result(self, cursor) -> dict:
         if cursor.description is None:
