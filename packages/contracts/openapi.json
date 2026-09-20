@@ -46,8 +46,8 @@
             "type": "string"
           },
           "revision": {
-            "maximum": 9007199254740991.0,
-            "minimum": 0.0,
+            "maximum": 9007199254740991,
+            "minimum": 0,
             "title": "Revision",
             "type": "integer"
           },
@@ -88,6 +88,19 @@
               }
             ],
             "title": "Case Id"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
           }
         },
         "title": "CreateWorkspace",
@@ -156,8 +169,8 @@
             "type": "array"
           },
           "revision": {
-            "maximum": 9007199254740991.0,
-            "minimum": 0.0,
+            "maximum": 9007199254740991,
+            "minimum": 0,
             "title": "Revision",
             "type": "integer"
           },
@@ -276,8 +289,8 @@
             "type": "string"
           },
           "revision": {
-            "maximum": 9007199254740991.0,
-            "minimum": 0.0,
+            "maximum": 9007199254740991,
+            "minimum": 0,
             "title": "Revision",
             "type": "integer"
           },
@@ -952,7 +965,7 @@
             "type": "string"
           },
           "source_revision": {
-            "minimum": 0.0,
+            "minimum": 0,
             "title": "Source Revision",
             "type": "integer"
           }
@@ -1130,8 +1143,8 @@
             "type": "string"
           },
           "revision": {
-            "maximum": 9007199254740991.0,
-            "minimum": 0.0,
+            "maximum": 9007199254740991,
+            "minimum": 0,
             "title": "Revision",
             "type": "integer"
           },
@@ -1287,8 +1300,8 @@
             "type": "string"
           },
           "revision": {
-            "maximum": 9007199254740991.0,
-            "minimum": 0.0,
+            "maximum": 9007199254740991,
+            "minimum": 0,
             "title": "Revision",
             "type": "integer"
           },
@@ -1345,7 +1358,7 @@
             "type": "array"
           },
           "weight": {
-            "maximum": 4.0,
+            "maximum": 4,
             "minimum": 0.25,
             "title": "Weight",
             "type": "number"
@@ -1383,14 +1396,14 @@
         "additionalProperties": false,
         "properties": {
           "x": {
-            "maximum": 100000.0,
-            "minimum": -100000.0,
+            "maximum": 100000,
+            "minimum": -100000,
             "title": "X",
             "type": "number"
           },
           "y": {
-            "maximum": 100000.0,
-            "minimum": -100000.0,
+            "maximum": 100000,
+            "minimum": -100000,
             "title": "Y",
             "type": "number"
           }
@@ -1499,7 +1512,7 @@
             "type": "boolean"
           },
           "revision": {
-            "minimum": 0.0,
+            "minimum": 0,
             "title": "Revision",
             "type": "integer"
           }
@@ -1613,8 +1626,8 @@
         "additionalProperties": false,
         "properties": {
           "absolute_tolerance": {
-            "default": 1e-08,
-            "minimum": 0.0,
+            "default": 1e-8,
+            "minimum": 0,
             "title": "Absolute Tolerance",
             "type": "number"
           },
@@ -1676,8 +1689,8 @@
             "type": "boolean"
           },
           "relative_tolerance": {
-            "default": 1e-09,
-            "minimum": 0.0,
+            "default": 1e-9,
+            "minimum": 0,
             "title": "Relative Tolerance",
             "type": "number"
           },
@@ -1691,7 +1704,7 @@
           "row_count": {
             "anyOf": [
               {
-                "minimum": 0.0,
+                "minimum": 0,
                 "type": "integer"
               },
               {
@@ -1787,7 +1800,7 @@
             "type": "object"
           },
           "revision": {
-            "minimum": 0.0,
+            "minimum": 0,
             "title": "Revision",
             "type": "integer"
           }
@@ -1803,7 +1816,7 @@
         "additionalProperties": false,
         "properties": {
           "revision": {
-            "minimum": 0.0,
+            "minimum": 0,
             "title": "Revision",
             "type": "integer"
           },
@@ -1855,6 +1868,37 @@
           "reveal"
         ],
         "title": "SolutionMetadata",
+        "type": "object"
+      },
+      "SparkRemoteRun": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "collect_limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Collect Limit",
+            "type": "integer"
+          },
+          "notebook_id": {
+            "default": "case-notebook",
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Notebook Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "SparkRemoteRun",
         "type": "object"
       },
       "ValidationError": {
@@ -1998,19 +2042,19 @@
         "additionalProperties": false,
         "properties": {
           "x": {
-            "maximum": 100000.0,
-            "minimum": -100000.0,
+            "maximum": 100000,
+            "minimum": -100000,
             "title": "X",
             "type": "number"
           },
           "y": {
-            "maximum": 100000.0,
-            "minimum": -100000.0,
+            "maximum": 100000,
+            "minimum": -100000,
             "title": "Y",
             "type": "number"
           },
           "zoom": {
-            "maximum": 3.0,
+            "maximum": 3,
             "minimum": 0.2,
             "title": "Zoom",
             "type": "number"
@@ -2065,8 +2109,8 @@
             "type": "string"
           },
           "revision": {
-            "maximum": 9007199254740991.0,
-            "minimum": 0.0,
+            "maximum": 9007199254740991,
+            "minimum": 0,
             "title": "Revision",
             "type": "integer"
           },
@@ -2462,6 +2506,22 @@
           }
         },
         "summary": "Profiles"
+      }
+    },
+    "/api/spark/remote/capabilities": {
+      "get": {
+        "operationId": "spark_remote_capabilities_api_spark_remote_capabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Spark Remote Capabilities"
       }
     },
     "/api/workspaces": {
@@ -3013,6 +3073,154 @@
           }
         },
         "summary": "Restart"
+      }
+    },
+    "/api/workspaces/{id}/spark/remote": {
+      "post": {
+        "operationId": "spark_remote_run_api_workspaces__id__spark_remote_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SparkRemoteRun"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Spark Remote Run"
+      }
+    },
+    "/api/workspaces/{id}/spark/remote/{job_id}": {
+      "get": {
+        "operationId": "spark_remote_status_api_workspaces__id__spark_remote__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Spark Remote Status"
+      }
+    },
+    "/api/workspaces/{id}/spark/remote/{job_id}/result/{request_id}": {
+      "get": {
+        "operationId": "spark_remote_result_api_workspaces__id__spark_remote__job_id__result__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Spark Remote Result"
       }
     },
     "/api/workspaces/{id}/workbench": {

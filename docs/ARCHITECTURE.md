@@ -40,6 +40,26 @@ MotherDuck is a future optional remote DuckDB/DuckLake target, not a required fo
 
 A Fabric-inspired skin can therefore use a two-page Mosaic layout and a SparkLab kernel without making Mosaic depend on Fabric. A SQL-only warehouse case can use the same notebook with no Spark or orchestration at all.
 
+### Presentation presets are product chrome, not new runtimes
+
+The web root now has a small presentation-preset registry above the notebook-view layer:
+
+- **Studio** keeps the full Datapass project explorer and arbitrary notebook views.
+- **Fabric notebook** adds notebook/files navigation to the left explorer while keeping the same block IDs, source, run order, catalog and React Grid canvas.
+- **Interview coding** defaults exercise documents to the existing Interview geometry (problem/browser, editor, result and guidance) and collapses the general workspace explorer until requested.
+
+This is the intended product boundary:
+
+```text
+presentation preset   -> outer chrome / visible navigation
+notebook view         -> block geometry
+block                 -> source + semantic identity
+kernel                -> execution
+workspace catalog     -> data truth
+```
+
+Changing a presentation preset must therefore never copy code, create a second notebook, or change semantic execution order. More product-specific shells can be added as presets over the same document model instead of forking the editor.
+
 ## Shared data, not duplicated fixtures
 
 Each workspace owns a catalog. The reference source fixtures are seeded once, and transformations publish physical tables into that catalog. Steps read the real outputs of prior steps. Modules must not manufacture successful result tables locally.

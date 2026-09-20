@@ -49,6 +49,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Cache pinned Airflow downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: datapass-airflow-${{ runner.os }}-py312-3.3.2
+
       - name: Configure ephemeral Airflow paths
         shell: bash
         run: |

@@ -6,6 +6,14 @@ This is the integration foundation created from the September 17, 2026 uploads. 
 
 The new root contains a React / Fluent UI 2 application, a Mosaic-derived notebook core, a local FastAPI service with persistent kernel workers, connected case studies, a shared catalog and specialist handoffs. Original application sources are retained under `migration-sources/`; they are reference material, not seven embedded apps.
 
+## Current architecture handoff
+
+The current V1 architecture, frozen decisions, Cloudflare target and next-agent handoff live in:
+
+`architecture/00_START_HERE.md`
+
+Use that folder as the continuation source of truth for the active V1 branch. The older `architecture-reference/` directory remains useful historical/context material but should not override the newer decisions in `architecture/`.
+
 ## Architecture reference
 
 The compact architecture archive for Codex and future agents is now kept directly in this repository under `architecture-reference/`:
@@ -84,6 +92,24 @@ python start.py --storage sqlite
 When `apps/web/dist` does not exist, port 8000 serves a clearly labeled **offline API diagnostic client**, not the compiled React application. The diagnostic client uses the same cases, workers and catalog; it is not a second implementation of the data engine. Its source edits are session-only. Use the React app for persistent notebook editing.
 
 For frontend development, run `npm run dev` in a second terminal and use the port-5173 token URL printed by the backend. Vite proxies `/api` to the local backend. Always run one API worker.
+
+## V1 playgrounds
+
+The React shell now has a **New playground** launcher so the product can be tried before any Oracle deployment:
+
+- **DuckLake / DuckDB lab** — real local analytical SQL over the seeded workspace catalog.
+- **Fabric-style Python + SparkLab** — Fabric-inspired notebook chrome with real trusted-local Python when enabled and the bounded SparkLab PySpark subset.
+- **Free coding canvas** — SQL, Python, Polars, SparkLab and notes on the same draggable/resizable notebook.
+- **LeetCode arena** — problem browser plus focused problem/editor/results/guidance layout using the installed exercise packs.
+- **MotherDuck-ready SQL** — deliberately runs locally in V1; the runtime strip says `MotherDuck off` until a real remote adapter is configured. There is no hidden upload or network fallback.
+
+For the fullest local playground, use DuckLake plus trusted Python:
+
+```sh
+python start.py --storage ducklake --install-ducklake --trusted-local-python
+```
+
+After the DuckLake extension is installed once, later starts can omit `--install-ducklake`. The same notebook documents and layouts are used whether the product is shown as Studio, Fabric notebook or interview coding chrome.
 
 ## First connected case
 

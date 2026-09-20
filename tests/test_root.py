@@ -144,6 +144,14 @@ def test_row_comparison_not_just_counts():
     assert not compare_rows([{'wrong':1}],[{'n':1}])
 
 
+def test_standalone_workspace_keeps_playground_title(tmp_path):
+    store=Documents(tmp_path)
+    doc=store.create(None,'Free coding canvas')
+    assert doc['case_id'] is None
+    assert doc['title']=='Free coding canvas'
+    assert store.get(doc['id'])['title']=='Free coding canvas'
+
+
 def test_document_compare_and_swap(tmp_path):
     store=Documents(tmp_path)
     doc=store.create('warehouse-sql')

@@ -118,6 +118,7 @@ class AirflowRemote:
         encoded = base64.b64encode(raw).decode("ascii")
         payload = {
             "ref": self.config.ref,
+            "return_run_details": True,
             "inputs": {
                 "request_id": request_id,
                 "dag_id": dag_id,
@@ -128,19 +129,17 @@ class AirflowRemote:
         url = self._url(f"/actions/workflows/{self.config.workflow}/dispatches")
         with httpx.Client(timeout=self.timeout, follow_redirects=True) as client:
             response = client.post(url, headers=self._headers(), json=payload)
-        if response.status_code not in {200, 204}:
+        if response.status_code != 200:
             detail = response.text[:1000]
             raise RuntimeError(f"GitHub workflow dispatch failed ({response.status_code}): {detail}")
-        body: dict[str, Any] = {}
-        if response.content:
-            try:
-                body = response.json()
-            except ValueError:
-                body = {}
+        body = response.json()
+        run_id = body.get("workflow_run_id")
+        if not run_id:
+            raise RuntimeError("GitHub accepted the Airflow dispatch but returned no workflow run id.")
         return {
             "request_id": request_id,
             "status": "accepted",
-            "run_id": body.get("workflow_run_id"),
+            "run_id": int(run_id),
             "run_url": body.get("html_url"),
             "truth": "dispatch accepted by GitHub Actions; Airflow has not completed yet",
         }

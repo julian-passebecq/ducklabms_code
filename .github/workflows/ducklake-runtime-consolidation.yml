@@ -1,5 +1,9 @@
 name: DuckLake runtime consolidation
 
+concurrency:
+  group: ducklake-runtime-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -7,6 +11,7 @@ on:
       - codex/ducklake-sparklab-fidelity-1
       - codex/ducklake-partition-pruning-1
       - codex/airflow-github-actions-1
+      - codex/real-spark-proxy-1
   workflow_dispatch:
 
 jobs:
@@ -49,3 +54,31 @@ jobs:
       - run: npm test
       - run: npm run typecheck
       - run: npm run build
+
+
+  playground-browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.12"
+          cache: npm
+
+      - name: Create browser-test environment
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r requirements-engines.txt
+
+      - run: npm ci
+      - run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: V1 playground browser smoke
+        run: npx playwright test --grep "V1 playground launcher"

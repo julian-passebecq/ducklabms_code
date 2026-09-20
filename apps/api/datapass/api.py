@@ -21,6 +21,7 @@ from .foundation import RootWorkbench, validate_workspace_references
 from .exercise_contracts import ExerciseDefinition, ExerciseAttempt, ExerciseResult
 from .kernels import KernelManager, KernelTimeout
 from .airflow_remote import AirflowRemote
+from .spark_remote import SparkRemote
 from services.sparklab.runtime import load_cluster_profiles
 
 
@@ -30,6 +31,7 @@ class StrictModel(BaseModel):
 
 class CreateWorkspace(StrictModel):
     case_id: str | None = Field(default=None,min_length=1,max_length=64)
+    title: str | None = Field(default=None,min_length=1,max_length=120)
 
 
 class ExerciseRequest(StrictModel):
@@ -79,6 +81,12 @@ class AirflowRemoteRun(StrictModel):
     source: str = Field(min_length=1,max_length=30000)
 
 
+class SparkRemoteRun(StrictModel):
+    notebook_id: str = Field(default='case-notebook',min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
+    code: str = Field(min_length=1,max_length=20000)
+    collect_limit: int = Field(default=100,ge=1,le=200)
+
+
 class RunWorkflow(StrictModel):
     notebook_id: str = Field(default='case-notebook',min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
     overrides: dict[str,str] = Field(default_factory=dict)
@@ -101,6 +109,7 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
     docs = Documents(data_dir)
     manager = KernelManager(mode, trusted, timeout)
     airflow_remote = AirflowRemote(timeout=timeout)
+    spark_remote = SparkRemote(timeout=timeout)
 
     @asynccontextmanager
     async def lifespan(app):
@@ -108,7 +117,7 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
         manager.close()
 
     app = FastAPI(title='Datapass Studio Root',version='0.1.0',lifespan=lifespan)
-    app.state.manager,app.state.documents,app.state.airflow_remote = manager,docs,airflow_remote
+    app.state.manager,app.state.documents,app.state.airflow_remote,app.state.spark_remote = manager,docs,airflow_remote,spark_remote
     origins = ['http://127.0.0.1:8000','http://localhost:8000','http://127.0.0.1:5173','http://localhost:5173']
     app.add_middleware(CORSMiddleware,allow_origins=origins,allow_methods=['GET','POST','PUT','OPTIONS'],allow_headers=['Authorization','Content-Type'])
     app.add_middleware(TrustedHostMiddleware,allowed_hosts=['127.0.0.1','localhost'])
@@ -249,13 +258,44 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
     def airflow_result(run_id: int, request_id: str):
         return airflow_remote.result(run_id, request_id)
 
+    @app.get('/api/spark/remote/capabilities')
+    def spark_remote_capabilities():
+        return spark_remote.capabilities()
+
+    @app.post('/api/workspaces/{id}/spark/remote',status_code=202)
+    def spark_remote_run(id: str, body: SparkRemoteRun):
+        docs.get(id)
+        fixture = command(id,{
+            'op':'spark_verify_fixture',
+            'notebook_id':body.notebook_id,
+            'code':body.code,
+        })
+        result = spark_remote.dispatch(
+            code=fixture['code'],
+            tables=fixture['tables'],
+            collect_limit=body.collect_limit,
+        )
+        result['fixture_truth'] = fixture['truth']
+        result['sources'] = fixture['sources']
+        return result
+
+    @app.get('/api/workspaces/{id}/spark/remote/{job_id}')
+    def spark_remote_status(id: str, job_id: str):
+        docs.get(id)
+        return spark_remote.status(job_id)
+
+    @app.get('/api/workspaces/{id}/spark/remote/{job_id}/result/{request_id}')
+    def spark_remote_result(id: str, job_id: str, request_id: str):
+        docs.get(id)
+        return spark_remote.result(job_id, request_id)
+
     @app.get('/api/workspaces')
     def workspaces():
         return docs.all()
 
     @app.post('/api/workspaces',status_code=201)
     def new_workspace(body:CreateWorkspace):
-        return docs.create(body.case_id)
+        return docs.create(body.case_id, body.title)
 
     @app.get('/api/workspaces/{id}')
     def workspace(id:str):

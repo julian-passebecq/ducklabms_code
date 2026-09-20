@@ -386,6 +386,55 @@ class Engine:
         run['elapsed_ms'] = round((time.perf_counter() - start) * 1000, 3)
         return run
 
+    def spark_verify_fixture(self, request: dict):
+        """Prepare exact bounded workspace inputs for the real-Spark oracle.
+
+        This does not execute submitted Python. The existing SafeSparkParser
+        identifies source scans. Verification is withheld when a source would
+        be truncated by the bounded local catalog preview, because silently
+        sampling would make the remote result semantically misleading.
+        """
+        code = request.get('code', '')
+        if not code or len(code) > 20_000:
+            raise ValueError('Real Spark verification code must be 1..20,000 characters.')
+        notebook_id = request.get('notebook_id') or 'case-notebook'
+        candidate = deepcopy(self.parser(notebook_id))
+        tables = candidate.spark.profile.setdefault('tables', {})
+        for asset in self.catalog.listing():
+            tables[asset['name']] = {
+                'columns': self.catalog.query(f"SELECT * FROM {asset['name']} LIMIT 0")['columns']
+            }
+        parsed = candidate.parse(code)
+        from services.sparklab.physical import logical_plan
+        sources = []
+        for node in logical_plan(parsed.dataframe):
+            if node['operation'] == 'scan' and node.get('source') not in sources:
+                sources.append(node.get('source'))
+        if not sources:
+            raise ValueError('No Spark source table was found for real verification.')
+        if len(sources) > 8:
+            raise ValueError('Real Spark verification supports at most eight source tables.')
+
+        fixtures = []
+        for source in sources:
+            if source == 'input':
+                raise ValueError('Exercise-only input fixtures are not exported to remote Spark in Pass 1.')
+            result = self.catalog.query(f'SELECT * FROM {source}')
+            if result['truncated']:
+                raise ValueError(
+                    f'Real Spark verification withheld: {source} exceeds the bounded fixture limit. '
+                    'Use SparkLab for modeled scale or a dedicated remote dataset pass.'
+                )
+            if not result['rows']:
+                raise ValueError(f'Real Spark verification Pass 1 requires non-empty source table: {source}.')
+            fixtures.append({'name': source, 'rows': result['rows']})
+        return {
+            'code': code,
+            'tables': fixtures,
+            'sources': sources,
+            'truth': 'exact bounded workspace rows prepared locally; no silent sampling',
+        }
+
     def workflow(self, request: dict):
         case = get_case(request['case_id'])
         ordered = topological_steps(case['steps'])
@@ -419,6 +468,8 @@ class Engine:
             return self.catalog.listing()
         if op == 'lakehouse':
             return self.catalog.lakehouse_overview()
+        if op == 'spark_verify_fixture':
+            return self.spark_verify_fixture(request)
         if op == 'execute':
             return self.execute(request)
         if op == 'exercise':
