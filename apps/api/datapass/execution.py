@@ -171,14 +171,38 @@ class Engine:
         profile = profiles[profile_id]
         aqe = request.get('aqe', profile.aqe_default)
         statistics = {}
+        catalog_assets = {asset['name']: asset for asset in self.catalog.listing()}
+        measured_ducklake_inputs = False
         for node in logical_plan(parsed.dataframe):
             if node['operation'] == 'scan':
                 name = node['source']
                 if name == 'input' and request.get('_exercise_fixture_sql'):
                     count = request.get('_exercise_input_count', 0)
+                    statistics[name] = {
+                        'rows': count,
+                        'bytes': count * 128,
+                        'input_truth': 'bounded exercise fixture; bytes estimated at 128 bytes/row',
+                    }
+                    continue
+                asset = catalog_assets.get(name)
+                count = asset['row_count'] if asset is not None else self.catalog.query(f'SELECT COUNT(*) AS n FROM {name}')['rows'][0]['n']
+                storage = asset.get('storage') if asset else None
+                if storage and storage.get('truth') == 'measured_ducklake_metadata':
+                    measured_ducklake_inputs = True
+                    statistics[name] = {
+                        'rows': count,
+                        'bytes': int(storage.get('size_bytes') or 0),
+                        'partitions': max(1, int(storage.get('file_count') or 0)),
+                        'source_files': int(storage.get('file_count') or 0),
+                        'snapshot_id': storage.get('snapshot_id'),
+                        'input_truth': 'rows measured from table; bytes/files measured from DuckLake metadata',
+                    }
                 else:
-                    count = self.catalog.query(f'SELECT COUNT(*) AS n FROM {name}')['rows'][0]['n']
-                statistics[name] = {'rows':count, 'bytes':count*128}
+                    statistics[name] = {
+                        'rows': count,
+                        'bytes': count * 128,
+                        'input_truth': 'rows measured from catalog; bytes estimated at 128 bytes/row',
+                    }
         pack_id = request.get('truth_pack')
         pack = None
         if pack_id:
@@ -199,11 +223,13 @@ class Engine:
                 stats = pack['statistics']
                 statistics[fact] = {'rows':stats['fact_rows'], 'bytes':stats['fact_bytes_gb']*1073741824,
                                     'partitions':stats['source_files'],
-                                    'hot_fraction':stats['largest_partition_mb']/(stats['fact_bytes_gb']*1024)}
+                                    'hot_fraction':stats['largest_partition_mb']/(stats['fact_bytes_gb']*1024),
+                                    'input_truth':'authored immutable truth-pack scale; not physically processed rows'}
             if len(tables)>1 and tables[1] in statistics:
                 statistics[tables[1]].update(bytes=pack['statistics'].get('dimension_bytes_mb', 2)*1048576,
                                              rows=pack['statistics'].get('dimension_rows',4),
-                                             catalog_statistics_available=pack['statistics'].get('catalog_statistics_available',True))
+                                             catalog_statistics_available=pack['statistics'].get('catalog_statistics_available',True),
+                                             input_truth='authored immutable truth-pack scale; not physically processed rows')
         job, metrics, nodes = simulate_plan(parsed.dataframe, statistics, profile, aqe, result.get('total_rows'))
         comparisons = []
         for other in profiles.values():
@@ -216,7 +242,8 @@ class Engine:
         return {'status':'modeled','schema_version':1, 'truth':'Local semantic result + simulated distributed execution',
                 'profile_id':profile_id, 'aqe':aqe, 'metrics':metrics, 'logical_plan':nodes,
                 'action':parsed.action, 'datapass_credits':credits(job, profile), 'comparisons':comparisons,
-                'assumptions':{'input_statistics':statistics, 'kind':'authored virtual scale' if pack else 'catalog row counts; assumed 128 bytes per row',
+                'assumptions':{'input_statistics':statistics,
+                               'kind':'authored virtual scale' if pack else ('catalog rows + measured DuckLake Parquet files/bytes' if measured_ducklake_inputs else 'catalog row counts; assumed 128 bytes per row'),
                                'calibration':'No real Spark benchmark calibration',
                                'intermediates':'Cardinality and bytes carried forward without selectivity estimates; serial operator-stage dispatch, not Spark codegen fusion; scan counts are real only outside virtual truth-pack scale',
                                'cache':'Unavailable; cache/reuse not modeled'},
