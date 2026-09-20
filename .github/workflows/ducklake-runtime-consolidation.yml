@@ -6,10 +6,6 @@ on:
       - codex/ducklake-runtime-consolidation-1
   workflow_dispatch:
 
-concurrency:
-  group: ducklake-runtime-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   ducklake-runtime:
     runs-on: ubuntu-latest
