@@ -1,5 +1,5 @@
 import type {RootWorkbench} from '../../../packages/contracts/src/foundation.ts';
-import type {Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,LakehouseOverview,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace,ExerciseDefinition,ExerciseRequest,ExerciseResult,ExerciseAttempt,PracticeReview,PracticeProgress} from '../../../packages/contracts/src/index.ts';
+import type {AirflowDispatch,AirflowDispatchRequest,AirflowRemoteCapabilities,AirflowRunResult,AirflowRunStatus,Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,LakehouseOverview,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace,ExerciseDefinition,ExerciseRequest,ExerciseResult,ExerciseAttempt,PracticeReview,PracticeProgress} from '../../../packages/contracts/src/index.ts';
 import type {RootNotebook} from './notebook';
 
 const STORAGE='datapass-local-token';
@@ -35,6 +35,10 @@ export class ApiClient implements RuntimeClient {
  foundationSchema=()=>this.request<Record<string,unknown>>('/foundation/schema');
  catalog=(id:string)=>this.request<Asset[]>(`/workspaces/${id}/catalog`);
  lakehouse=(id:string)=>this.request<LakehouseOverview>(`/workspaces/${id}/lakehouse`);
+ airflowCapabilities=()=>this.request<AirflowRemoteCapabilities>('/airflow/capabilities');
+ airflowDispatch=(request:AirflowDispatchRequest)=>this.request<AirflowDispatch>('/airflow/runs',{method:'POST',body:JSON.stringify(request)});
+ airflowStatus=(runId:number)=>this.request<AirflowRunStatus>(`/airflow/runs/${runId}`);
+ airflowResult=(runId:number,requestId:string)=>this.request<AirflowRunResult>(`/airflow/runs/${runId}/result/${encodeURIComponent(requestId)}`);
  capabilities=(id:string)=>this.request<Capabilities>(`/workspaces/${id}/capabilities`);
  execute=(id:string,request:ExecuteRequest)=>this.request<Execution>(`/workspaces/${id}/execute`,{method:'POST',body:JSON.stringify(request)});
  workflow=(id:string,notebook_id:string,overrides:Record<string,string>,profile:string,aqe:boolean)=>this.request<WorkflowResult>(`/workspaces/${id}/workflow`,{method:'POST',body:JSON.stringify({notebook_id,overrides,profile,aqe})});
