@@ -189,7 +189,7 @@ def test_api_auth_origins_revision_and_real_workflow(tmp_path, mode):
         assert client.get('/api/cases').status_code==401
         client.headers['Authorization']='Bearer test-token'
         assert client.get('/api/cases',headers={'Origin':'https://evil.example'}).status_code==403
-        assert len(client.get('/api/cases').json())==8
+        assert len(client.get('/api/cases').json())==len(cases())
         response=client.post('/api/workspaces',json={'case_id':'retail-medallion'})
         assert response.status_code==201,response.text
         id=response.json()['id']
