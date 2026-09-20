@@ -75,7 +75,18 @@ class ExecuteCell(StrictModel):
 
 
 class AirflowRemoteRun(StrictModel):
-    dag_id: str = Field(min_length=1,max_length=100,pattern=r'^[A-Za-z_][A-Za-z0-9_.-]{0,99}class RunWorkflow(StrictModel):
+    dag_id: str = Field(min_length=1,max_length=100,pattern=r'^[A-Za-z_][A-Za-z0-9_.-]{0,99}$')
+    logical_date: str = Field(default='2026-01-01T00:00:00+00:00',min_length=10,max_length=80)
+    source: str = Field(min_length=1,max_length=30000)
+
+
+class SparkRemoteRun(StrictModel):
+    notebook_id: str = Field(default='case-notebook',min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
+    code: str = Field(min_length=1,max_length=20000)
+    collect_limit: int = Field(default=100,ge=1,le=200)
+
+
+class RunWorkflow(StrictModel):
     notebook_id: str = Field(default='case-notebook',min_length=1,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
     overrides: dict[str,str] = Field(default_factory=dict)
     profile: str = Field(default='generic_8x8',max_length=80)
