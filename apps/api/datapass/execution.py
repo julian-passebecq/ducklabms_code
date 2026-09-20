@@ -196,7 +196,18 @@ class Engine:
                         'partitions': max(1, int(storage.get('file_count') or 0)),
                         'source_files': int(storage.get('file_count') or 0),
                         'snapshot_id': storage.get('snapshot_id'),
-                        'input_truth': 'rows measured from table; bytes/files measured from DuckLake metadata',
+                        'snapshot_count': storage.get('snapshot_count'),
+                        'delete_file_count': int(storage.get('delete_file_count') or 0),
+                        'avg_file_size_bytes': int(storage.get('avg_file_size_bytes') or 0),
+                        'min_file_size_bytes': int(storage.get('min_file_size_bytes') or 0),
+                        'max_file_size_bytes': int(storage.get('max_file_size_bytes') or 0),
+                        'small_file_threshold_bytes': int(storage.get('small_file_threshold_bytes') or 0),
+                        'small_file_count': int(storage.get('small_file_count') or 0),
+                        'small_file_ratio': float(storage.get('small_file_ratio') or 0),
+                        'storage_health': storage.get('health'),
+                        'maintenance_recommendation': storage.get('maintenance_recommendation'),
+                        'pruning_support': storage.get('pruning_support'),
+                        'input_truth': 'rows measured from table; bytes/files/snapshot health measured from DuckLake metadata',
                     }
                 else:
                     statistics[name] = {
