@@ -2,7 +2,7 @@
 
 ## Gate 0: validate this root with actual packages
 
-Install dependencies, generate the npm lockfile, execute strict typechecking and the Vite build, and run actual DuckDB/Polars cases. Verify all React layouts in a browser, including narrow screens and keyboard navigation. Run DuckLake attachment/write/reopen/Parquet evidence as a separate opt-in test. Do not promote the root as fully verified before this gate.
+Install dependencies, execute strict typechecking and the Vite build, and run actual DuckDB/Polars cases. Verify all React layouts in a browser, including narrow screens and keyboard navigation. Run the canonical DuckLake attachment/write/reopen test and require evidence of SQLite metadata, Parquet files and data inlining disabled. Plain DuckDB remains a compatibility mode, not a fake DuckLake fallback. Do not promote the root as fully verified before this gate.
 
 ## Gate 1: make the root pleasant to use
 
@@ -18,7 +18,7 @@ Migrate Power BI model/DAX/refresh lessons behind explicit supported semantics a
 
 ## Gate 4: optional infrastructure
 
-MotherDuck, more advanced DuckLake lifecycle and a hosted sandbox are optional adapters after local correctness. Do not start with Kubernetes or a real cluster merely to draw realistic cluster screens. Remote services require explicit credentials and cost consent.
+MotherDuck, cloud DuckLake, more advanced DuckLake lifecycle and a hosted sandbox are optional adapters after local correctness. Do not start with Kubernetes or a real cluster merely to draw realistic cluster screens. Remote services require explicit credentials and cost consent.
 
 ## Specifically not yet implemented
 
