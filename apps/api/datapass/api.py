@@ -31,6 +31,7 @@ class StrictModel(BaseModel):
 
 class CreateWorkspace(StrictModel):
     case_id: str | None = Field(default=None,min_length=1,max_length=64)
+    title: str | None = Field(default=None,min_length=1,max_length=120)
 
 
 class ExerciseRequest(StrictModel):
@@ -294,7 +295,7 @@ def create_app(data_dir: Path | None = None, token: str | None = None, *, mode=N
 
     @app.post('/api/workspaces',status_code=201)
     def new_workspace(body:CreateWorkspace):
-        return docs.create(body.case_id)
+        return docs.create(body.case_id, body.title)
 
     @app.get('/api/workspaces/{id}')
     def workspace(id:str):
