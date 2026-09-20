@@ -46,7 +46,7 @@ result = (orders
 def test_multikey_join_uses_using_and_excludes_join_keys_from_right_projection():
     code = r'''
 a = spark.table("silver.orders")
-b = spark.table("silver.customers")
+b = spark.table("silver.customers").withColumnRenamed("loaded_at", "customer_loaded_at")
 result = a.join(b, ["customer_id", "segment_id"], "left")
 '''
     df = parse(code)
@@ -54,6 +54,7 @@ result = a.join(b, ["customer_id", "segment_id"], "left")
     cols = df.current_columns() or []
     assert cols.count("customer_id") == 1
     assert cols.count("segment_id") == 1
+    assert "customer_loaded_at" in cols
 
 
 def test_cost_model_includes_driver_and_exposes_slot_utilization():
