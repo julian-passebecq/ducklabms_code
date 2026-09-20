@@ -24,11 +24,15 @@ Case study: task + concept + input/output assets + acceptance + selected modules
                      one workspace catalog
        source / bronze / silver / gold / warehouse / features / metrics
                               |
-           DuckDB preferred; DuckLake explicit opt-in
-           SQLite explicitly labeled compatibility fallback
+              canonical DuckLake table layer
+     DuckDB compute + SQLite metadata + Parquet data
+                  data inlining disabled
+                              |
+       plain DuckDB local compatibility mode when needed
+       SQLite explicitly labeled dependency fallback
 ```
 
-MotherDuck is a future remote adapter, not a required foundation. Polars is a real optional execution engine, not a second lakehouse. Neither is necessary for every case.
+MotherDuck is a future optional remote DuckDB/DuckLake target, not a required foundation. Polars and trusted Python are real optional execution paths, not second lakehouses. The local canonical DuckLake path uses the official DuckDB extension; notebook SQL cannot install/load extensions or attach arbitrary files.
 
 ## Separate the dimensions
 
@@ -70,6 +74,6 @@ A source database or warehouse owns tables and stored procedures. ADF/Fabric Dat
 
 ## Fidelity limits
 
-DuckLake is not Delta Lake. Fabric Lakehouse uses Delta Lake as its default table format. This local backend teaches table/lakehouse concepts with DuckDB and optional DuckLake; it does not reproduce Fabric's storage implementation. DuckDB SQL is not T-SQL. SparkLab is not complete PySpark. SQL-backed KPI cards are not a DAX engine.
+DuckLake is not Delta Lake. Fabric Lakehouse uses Delta Lake as its default table format. Datapass uses DuckLake as its own canonical local teaching table layer because it exposes snapshots, schemas and Parquet-backed lakehouse behavior without pretending to reproduce Fabric's storage implementation. DuckDB SQL is not T-SQL. SparkLab is not complete PySpark. SQL-backed KPI cards are not a DAX engine.
 
 See `SOURCES.md` for the official references supporting these distinctions.
