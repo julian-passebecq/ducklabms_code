@@ -187,7 +187,8 @@ class Engine:
                 asset = catalog_assets.get(name)
                 count = asset['row_count'] if asset is not None else self.catalog.query(f'SELECT COUNT(*) AS n FROM {name}')['rows'][0]['n']
                 storage = asset.get('storage') if asset else None
-                if storage and storage.get('truth') == 'measured_ducklake_metadata':
+                has_physical_files = bool(storage and int(storage.get('file_count') or 0) > 0)
+                if storage and storage.get('truth') == 'measured_ducklake_metadata' and (has_physical_files or count == 0):
                     measured_ducklake_inputs = True
                     statistics[name] = {
                         'rows': count,
@@ -201,7 +202,7 @@ class Engine:
                     statistics[name] = {
                         'rows': count,
                         'bytes': count * 128,
-                        'input_truth': 'rows measured from catalog; bytes estimated at 128 bytes/row',
+                        'input_truth': 'rows measured from catalog; bytes estimated at 128 bytes/row because physical file evidence is unavailable',
                     }
         pack_id = request.get('truth_pack')
         pack = None
