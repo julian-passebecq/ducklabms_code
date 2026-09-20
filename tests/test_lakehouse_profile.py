@@ -137,6 +137,19 @@ def test_real_ducklake_profile_round_trip(tmp_path: Path, monkeypatch):
         assert scan["source_evidence"]["snapshot_id"] == probe["storage"]["snapshot_id"]
         assert any("zone maps" in note for note in scan["notes"])
         assert any("actual files scanned/pruned are unavailable" in note for note in scan["notes"])
+
+        logical_version = engine.catalog.versions["bronze.integration_probe"]["version"]
+        maintenance = engine.catalog.compact_adjacent_files("bronze.integration_probe")
+        assert maintenance["truth"] == "real local DuckLake maintenance"
+        assert maintenance["logical_rows_before"] == 5
+        assert maintenance["logical_rows_after"] == 5
+        assert maintenance["logical_version_changed"] is False
+        assert maintenance["before"]["file_count"] == probe["storage"]["file_count"]
+        assert maintenance["after"]["file_count"] <= maintenance["before"]["file_count"]
+        assert engine.catalog.versions["bronze.integration_probe"]["version"] == logical_version
+        if maintenance["operations"]:
+            assert sum(int(row["files_processed"]) for row in maintenance["operations"]) >= 2
+            assert maintenance["after"]["file_count"] < maintenance["before"]["file_count"]
     finally:
         engine.catalog.close()
 
