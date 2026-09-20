@@ -6,6 +6,14 @@ This is the integration foundation created from the September 17, 2026 uploads. 
 
 The new root contains a React / Fluent UI 2 application, a Mosaic-derived notebook core, a local FastAPI service with persistent kernel workers, connected case studies, a shared catalog and specialist handoffs. Original application sources are retained under `migration-sources/`; they are reference material, not seven embedded apps.
 
+## Current architecture handoff
+
+The current V1 architecture, frozen decisions, Cloudflare target and next-agent handoff live in:
+
+`architecture/00_START_HERE.md`
+
+Use that folder as the continuation source of truth for the active V1 branch. The older `architecture-reference/` directory remains useful historical/context material but should not override the newer decisions in `architecture/`.
+
 ## Architecture reference
 
 The compact architecture archive for Codex and future agents is now kept directly in this repository under `architecture-reference/`:
