@@ -107,6 +107,24 @@ real rows          modeled Spark stages
 
 Measured local timing and modeled distributed timing must never be merged.
 
+### Storage fidelity
+
+When DuckLake is active, Datapass reads real table-file evidence from
+`ducklake_list_files` and real commit history from `ducklake_snapshots`.
+SparkLab may use measured Parquet bytes and file counts as scan/partition input
+assumptions, but it still does not claim real Spark execution or real pruning
+selectivity.
+
+Datapass also reports a small-file advisory. The current threshold (8 MiB) is
+an explicit teaching heuristic; DuckLake documentation only recommends Parquet
+files of at least a few megabytes. The UI can recommend
+`ducklake_merge_adjacent_files`, but normal application use never runs
+maintenance automatically.
+
+The integration gate verifies that explicit DuckLake file compaction reduces
+the number of physical files while preserving both the current table result
+and historical `AT (VERSION => ...)` reads.
+
 ## MotherDuck
 
 MotherDuck remains an optional remote runtime/deployment target. There is no
