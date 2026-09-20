@@ -3,7 +3,7 @@ import type {RootWorkbench} from './foundation.ts';
 export type KernelId = 'sql' | 'sparklab' | 'python' | 'polars' | 'dbt';
 export type TruthKind = 'real' | 'semantic-emulation' | 'simulated' | 'unsupported';
 export interface ResultTable {columns:string[]; rows:Record<string,unknown>[]; total_rows:number|null; truncated:boolean}
-export interface AssetStorageEvidence {format:'parquet';file_count:number;size_bytes:number;delete_file_count:number;snapshot_id:number|null;truth:'measured_ducklake_metadata'}
+export interface AssetStorageEvidence {format:'parquet';file_count:number;size_bytes:number;delete_file_count:number;snapshot_id:number|null;snapshot_count?:number;first_snapshot_id?:number|null;avg_file_size_bytes?:number;min_file_size_bytes?:number;max_file_size_bytes?:number;small_file_threshold_bytes?:number;small_file_count?:number;small_file_ratio?:number;health?:'healthy'|'small_files';maintenance_recommendation?:string;pruning_support?:string;truth:'measured_ducklake_metadata'}
 export interface Asset {name:string;layer:string;row_count:number;version?:string;inputs?:Record<string,string>;producer?:string;fresh:boolean;storage?:AssetStorageEvidence}
 export interface Check {status:string;passed:boolean|null;fresh?:boolean;message:string;actual?:Record<string,unknown>[];expected?:Record<string,unknown>[]}
 export interface SparkPlanNode {id:number;operation:string;source?:string;parents:number[];dependency:string;concept:string}
