@@ -87,6 +87,66 @@ DuckLake requires for its metadata and Parquet files.
 This remains a trusted local single-user application, not a hostile
 multi-tenant SQL sandbox.
 
+## Lakehouse evidence and maintenance
+
+The Data surface can inspect real DuckLake physical evidence without exposing
+maintenance commands to learner-authored SQL.
+
+For physical DuckLake tables, Datapass reads:
+
+- current Parquet data-file count and bytes from `ducklake_list_files`;
+- current DuckLake snapshot id;
+- bounded snapshot history from `ducklake_snapshots`;
+- delete-file count;
+- average/largest file sizes;
+- a teaching small-file flag for files below 1 MiB.
+
+The 1 MiB threshold is a Datapass teaching heuristic, not a DuckLake invariant.
+DuckLake documentation recommends Parquet files of at least a few megabytes and
+documents tiered compaction examples beginning below 1 MiB. Measured file sizes
+remain distinct from that heuristic.
+
+Compaction is an explicit server-owned operation using
+`ducklake_merge_adjacent_files`. It verifies that the current logical row count
+is unchanged and reports before/after file evidence. Compaction does not
+immediately delete historical files that are still referenced by snapshots.
+
+Snapshot previews execute real DuckLake time-travel queries with
+`AT (VERSION => snapshot_id)`. Preview size is bounded. A snapshot that
+predates a table fails explicitly.
+
+### File pruning evidence
+
+For simple numeric SparkLab filters such as:
+
+```python
+spark.table("silver.orders").filter(F.col("net_amount") > 0)
+```
+
+Datapass can read DuckLake's persisted per-file min/max statistics and determine
+which current Parquet files are possible candidates. The resulting evidence is
+labeled `measured_ducklake_zone_map_metadata`.
+
+This means:
+
+```text
+measured:
+  total current files
+  candidate files after zone-map pruning
+  total/candidate Parquet bytes
+
+not measured:
+  rows returned by the filter
+  Spark executor I/O
+  Spark task duration
+  shuffle duration
+  cloud cost
+```
+
+Only a deliberately bounded subset of simple numeric comparisons is recognized
+for this teaching evidence. Unsupported predicates fall back to the full
+measured DuckLake file set rather than inventing pruning.
+
 ## SparkLab
 
 SparkLab does not run Apache Spark. Supported PySpark-style operations are
