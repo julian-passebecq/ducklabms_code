@@ -206,6 +206,198 @@ class Catalog:
                 return False
         return True
 
+    def _ducklake_metadata_connection(self):
+        if self.kind != 'ducklake' or self.lakehouse is None or self.lakehouse.metadata_backend != 'sqlite':
+            return None
+        path = (self.directory / self.lakehouse.metadata_file).resolve()
+        if not path.exists():
+            return None
+        return sqlite3.connect(f'file:{path.as_posix()}?mode=ro', uri=True)
+
+    def _ducklake_partition_evidence(self, layer: str, table: str) -> dict | None:
+        metadata = self._ducklake_metadata_connection()
+        if metadata is None:
+            return None
+        try:
+            table_row = metadata.execute(
+                """
+                SELECT t.table_id
+                FROM ducklake_table t
+                JOIN ducklake_schema s ON s.schema_id=t.schema_id
+                WHERE s.schema_name=? AND t.table_name=?
+                  AND s.end_snapshot IS NULL AND t.end_snapshot IS NULL
+                ORDER BY t.begin_snapshot DESC
+                LIMIT 1
+                """,
+                (layer, table),
+            ).fetchone()
+            if table_row is None:
+                return None
+            table_id = int(table_row[0])
+            partition_row = metadata.execute(
+                """
+                SELECT partition_id
+                FROM ducklake_partition_info
+                WHERE table_id=? AND end_snapshot IS NULL
+                ORDER BY begin_snapshot DESC
+                LIMIT 1
+                """,
+                (table_id,),
+            ).fetchone()
+            if partition_row is None:
+                return {
+                    'partitioned': False,
+                    'partition_id': None,
+                    'columns': [],
+                    'truth': 'measured DuckLake catalog metadata',
+                }
+            partition_id = int(partition_row[0])
+            columns = metadata.execute(
+                """
+                SELECT pc.partition_key_index, c.column_name, c.column_type, pc.transform
+                FROM ducklake_partition_column pc
+                JOIN ducklake_column c
+                  ON c.table_id=pc.table_id AND c.column_id=pc.column_id
+                WHERE pc.table_id=? AND pc.partition_id=? AND c.end_snapshot IS NULL
+                ORDER BY pc.partition_key_index
+                """,
+                (table_id, partition_id),
+            ).fetchall()
+            values = metadata.execute(
+                """
+                SELECT
+                    fpv.partition_key_index,
+                    fpv.partition_value,
+                    COUNT(DISTINCT df.data_file_id) AS file_count,
+                    COALESCE(SUM(df.file_size_bytes), 0) AS size_bytes,
+                    COALESCE(SUM(df.record_count), 0) AS record_count
+                FROM ducklake_data_file df
+                JOIN ducklake_file_partition_value fpv
+                  ON fpv.data_file_id=df.data_file_id AND fpv.table_id=df.table_id
+                WHERE df.table_id=? AND df.end_snapshot IS NULL AND df.partition_id=?
+                GROUP BY fpv.partition_key_index, fpv.partition_value
+                ORDER BY fpv.partition_key_index, fpv.partition_value
+                """,
+                (table_id, partition_id),
+            ).fetchall()
+            by_index: dict[int, list[dict]] = {}
+            for key_index, value, file_count, size_bytes, record_count in values:
+                by_index.setdefault(int(key_index), []).append({
+                    'value': str(value),
+                    'file_count': int(file_count or 0),
+                    'size_bytes': int(size_bytes or 0),
+                    'record_count': int(record_count or 0),
+                })
+            return {
+                'partitioned': True,
+                'partition_id': partition_id,
+                'columns': [
+                    {
+                        'key_index': int(key_index),
+                        'column': str(column_name),
+                        'column_type': str(column_type),
+                        'transform': str(transform),
+                        'values': by_index.get(int(key_index), []),
+                    }
+                    for key_index, column_name, column_type, transform in columns
+                ],
+                'truth': 'measured DuckLake catalog metadata',
+            }
+        finally:
+            metadata.close()
+
+    def partition_pruning_evidence(self, name: str, column: str, value: str) -> dict:
+        """Exact candidate-file evidence for simple equality on identity partitions.
+
+        Files written under older/different partition specs are retained as
+        candidates rather than being incorrectly claimed as pruned.
+        """
+        layer, table = asset_name(name).split('.')
+        if not IDENT.fullmatch(column):
+            raise ValueError('Partition pruning column must be a simple identifier.')
+        partitioning = self._ducklake_partition_evidence(layer, table)
+        storage = self._ducklake_storage_evidence(layer, table)
+        if not partitioning or not storage:
+            return {'eligible': False, 'reason': 'DuckLake partition metadata is unavailable.'}
+        key = next(
+            (
+                item for item in partitioning.get('columns', [])
+                if item['column'] == column and item['transform'] == 'identity'
+            ),
+            None,
+        )
+        if key is None:
+            return {
+                'eligible': False,
+                'reason': 'Only equality filters on current identity partition columns are modeled as exact pruning evidence.',
+                'partitioning': partitioning,
+            }
+        metadata = self._ducklake_metadata_connection()
+        if metadata is None:
+            return {'eligible': False, 'reason': 'SQLite DuckLake metadata is unavailable.'}
+        try:
+            table_row = metadata.execute(
+                """
+                SELECT t.table_id
+                FROM ducklake_table t
+                JOIN ducklake_schema s ON s.schema_id=t.schema_id
+                WHERE s.schema_name=? AND t.table_name=?
+                  AND s.end_snapshot IS NULL AND t.end_snapshot IS NULL
+                ORDER BY t.begin_snapshot DESC LIMIT 1
+                """,
+                (layer, table),
+            ).fetchone()
+            if table_row is None:
+                return {'eligible': False, 'reason': 'DuckLake table metadata is unavailable.'}
+            table_id = int(table_row[0])
+            rows = metadata.execute(
+                """
+                SELECT
+                    df.data_file_id,
+                    df.partition_id,
+                    df.file_size_bytes,
+                    df.record_count,
+                    MAX(CASE
+                        WHEN fpv.partition_key_index=? AND fpv.partition_value=? THEN 1
+                        ELSE 0
+                    END) AS partition_match
+                FROM ducklake_data_file df
+                LEFT JOIN ducklake_file_partition_value fpv
+                  ON fpv.data_file_id=df.data_file_id AND fpv.table_id=df.table_id
+                WHERE df.table_id=? AND df.end_snapshot IS NULL
+                GROUP BY df.data_file_id, df.partition_id, df.file_size_bytes, df.record_count
+                """,
+                (int(key['key_index']), str(value), table_id),
+            ).fetchall()
+        finally:
+            metadata.close()
+        partition_id = int(partitioning['partition_id'])
+        candidates = [
+            row for row in rows
+            if row[1] != partition_id or int(row[4] or 0) == 1
+        ]
+        total_files = len(rows)
+        candidate_files = len(candidates)
+        total_bytes = sum(int(row[2] or 0) for row in rows)
+        candidate_bytes = sum(int(row[2] or 0) for row in candidates)
+        return {
+            'eligible': True,
+            'asset': name,
+            'column': column,
+            'operator': '=',
+            'value': str(value),
+            'partition_transform': 'identity',
+            'total_files': total_files,
+            'candidate_files': candidate_files,
+            'pruned_files': total_files - candidate_files,
+            'total_bytes': total_bytes,
+            'candidate_bytes': candidate_bytes,
+            'pruned_bytes': total_bytes - candidate_bytes,
+            'candidate_records': sum(int(row[3] or 0) for row in candidates),
+            'snapshot_id': storage.get('snapshot_id'),
+            'truth': 'exact candidate-file set from DuckLake identity partition metadata; not runtime scan telemetry',
+        }
+
     def lakehouse_overview(self) -> dict:
         """Return read-only DuckLake maintenance evidence for teaching.
 
@@ -251,6 +443,7 @@ class Catalog:
                 'small_file_count': small_files,
                 'delete_file_count': int(storage.get('delete_file_count') or 0),
                 'snapshot_id': storage.get('snapshot_id'),
+                'partitioning': storage.get('partitioning'),
                 'compaction_advisory': (
                     'consider_merge_adjacent_files'
                     if file_count >= 4 and small_files / max(file_count, 1) >= 0.5
@@ -337,6 +530,9 @@ class Catalog:
                 item = {'name': full, 'layer': layer, 'row_count': count, 'fresh': self.fresh(full), **self.versions.get(full, {})}
                 storage = self._ducklake_storage_evidence(layer, name)
                 if storage is not None:
+                    partitioning = self._ducklake_partition_evidence(layer, name)
+                    if partitioning is not None:
+                        storage['partitioning'] = partitioning
                     item['storage'] = storage
                 items.append(item)
         return items
