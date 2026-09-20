@@ -1,7 +1,7 @@
 import {SparkInspector} from './SparkInspector';
 import {isExecutionFresh,requireModuleCompatibility} from '../../../packages/contracts/src/index.ts';
-import type {ReactNode} from 'react';
-import type {Asset,CaseStudy,Execution,ModuleManifest,RuntimeClient} from '../../../packages/contracts/src/index.ts';
+import {useEffect,useState,type ReactNode} from 'react';
+import type {Asset,CaseStudy,Execution,LakehouseOverview,ModuleManifest,RuntimeClient} from '../../../packages/contracts/src/index.ts';
 import {Badge,Button} from '@fluentui/react-components';
 import {DataTable} from './ResultView';
 
@@ -44,8 +44,16 @@ function formatStorageBytes(value:number):string {
  if(value<1024*1024*1024)return (value/(1024*1024)).toFixed(1)+' MiB';
  return (value/(1024*1024*1024)).toFixed(2)+' GiB';
 }
+function LakehouseEvidence({context}:{context:ToolContext}){
+ const [overview,setOverview]=useState<LakehouseOverview>();
+ useEffect(()=>{let live=true;context.services.runtime.lakehouse(context.workspaceId).then(value=>{if(live)setOverview(value)}).catch(()=>{if(live)setOverview(undefined)});return()=>{live=false}},[context.services.runtime,context.workspaceId,context.assets]);
+ if(!overview?.active)return <div className="notice">DuckLake evidence is unavailable in this workspace. Plain DuckDB/SQLite modes remain valid compatibility modes.</div>;
+ const latest=overview.snapshots[0];
+ const advisory=overview.tables.filter(t=>t.compaction_advisory!=='none');
+ return <section><h2>DuckLake storage evidence</h2><p>Measured from DuckLake metadata. Small-file advice is educational only; no compaction runs automatically.</p><div className="brief-stats"><div><span>Latest snapshot</span><b>{latest?latest.snapshot_id:'—'}</b></div><div><span>Snapshots shown</span><b>{overview.snapshots.length}</b></div><div><span>Compaction candidates</span><b>{advisory.length}</b></div></div>{advisory.length>0&&<div className="notice">{advisory.length} table{advisory.length===1?'':'s'} currently meet the Datapass small-file heuristic. The corresponding DuckLake maintenance capability is <code>{overview.maintenance_capability}</code>; Datapass has not executed it.</div>}<div className="contract-list">{overview.tables.slice(0,8).map(table=><div key={table.name}><b>{table.name}</b><span>{table.file_count} files · {formatStorageBytes(table.size_bytes)} · avg {formatStorageBytes(table.average_file_size_bytes)}</span><span>{table.small_file_count} under 8 MiB · {table.delete_file_count} delete files</span></div>)}</div></section>;
+}
 export function CatalogSurface({context,onInspect}:{context:ToolContext;onInspect:(name:string)=>void}){
- return <div className="surface-page"><div className="section-eyebrow">SHARED WORKSPACE CATALOG</div><h1>The same data in every tool</h1><p className="lead">Publish a table in one notebook and query it from another module. A new upstream version makes dependent assets stale. DuckLake tables also expose measured Parquet file evidence.</p><div className="asset-grid">{context.assets.map(a=><button className="asset-card" key={a.name} onClick={()=>onInspect(a.name)}><div><Badge appearance="tint" color={a.fresh?'success':'warning'}>{a.fresh?'fresh':'stale'}</Badge><span>{a.layer}</span></div><h3>{a.name}</h3><b>{a.row_count.toLocaleString()} rows</b>{a.storage&&<small>{a.storage.file_count} Parquet file{a.storage.file_count===1?'':'s'} · {formatStorageBytes(a.storage.size_bytes)}{a.storage.snapshot_id!==null?' · snapshot '+a.storage.snapshot_id:''}</small>}<p>{a.producer??'No producer recorded'}</p><small>{Object.keys(a.inputs??{}).join(' + ')||'Independent source'}</small></button>)}</div></div>;
+ return <div className="surface-page"><div className="section-eyebrow">SHARED WORKSPACE CATALOG</div><h1>The same data in every tool</h1><p className="lead">Publish a table in one notebook and query it from another module. A new upstream version makes dependent assets stale. DuckLake tables also expose measured Parquet file evidence.</p><div className="asset-grid">{context.assets.map(a=><button className="asset-card" key={a.name} onClick={()=>onInspect(a.name)}><div><Badge appearance="tint" color={a.fresh?'success':'warning'}>{a.fresh?'fresh':'stale'}</Badge><span>{a.layer}</span></div><h3>{a.name}</h3><b>{a.row_count.toLocaleString()} rows</b>{a.storage&&<small>{a.storage.file_count} Parquet file{a.storage.file_count===1?'':'s'} · {formatStorageBytes(a.storage.size_bytes)}{a.storage.snapshot_id!==null?' · snapshot '+a.storage.snapshot_id:''}{a.storage.small_file_count!==undefined?' · '+a.storage.small_file_count+' small':''}</small>}<p>{a.producer??'No producer recorded'}</p><small>{Object.keys(a.inputs??{}).join(' + ')||'Independent source'}</small></button>)}</div><LakehouseEvidence context={context}/></div>;
 }
 export function ReportSurface({context}:{context:ToolContext}){
  const report=[...context.runs].reverse().find(r=>r.cell_id==='report'&&r.status==='success');
