@@ -50,9 +50,11 @@ def logical_plan(df):
 def simulate_plan(df, statistics, profile: ClusterProfile, aqe: bool, result_rows=None):
     nodes = logical_plan(df)
     stages, evidence, states = [], [], {}
+    directly_filtered = {node['parents'][0] for node in nodes if node['operation'] == 'filter' and node['parents']}
     for node in nodes:
         kind, parents = node['operation'], node['parents']
         notes = []
+        scan_evidence = {}
         if kind == 'scan':
             stat = statistics.get(node['source'], {})
             rows = int(stat.get('rows', 0))
@@ -64,6 +66,34 @@ def simulate_plan(df, statistics, profile: ClusterProfile, aqe: bool, result_row
                 parts = [mb * hot] + [mb * (1-hot)/(count-1)] * (count-1)
             operator, shuffle = 'scan', 0.0
             input_rows = rows
+            source_files = int(stat.get('source_files', stat.get('partitions', count)))
+            small_files = int(stat.get('small_file_count', 0))
+            snapshot_id = stat.get('snapshot_id')
+            scan_evidence = {
+                'source_files': source_files,
+                'snapshot_id': snapshot_id,
+                'snapshot_count': stat.get('snapshot_count'),
+                'delete_file_count': int(stat.get('delete_file_count', 0)),
+                'avg_file_size_bytes': int(stat.get('avg_file_size_bytes', 0)),
+                'small_file_count': small_files,
+                'small_file_ratio': float(stat.get('small_file_ratio', 0)),
+                'storage_health': stat.get('storage_health'),
+                'input_truth': stat.get('input_truth'),
+            }
+            if stat.get('input_truth', '').startswith('rows measured from table'):
+                notes.append(
+                    f"Measured DuckLake input: {source_files} Parquet file(s), snapshot {snapshot_id if snapshot_id is not None else 'unknown'}"
+                )
+                if small_files:
+                    notes.append(
+                        f"{small_files}/{source_files} files are below the Datapass {int(stat.get('small_file_threshold_bytes', 0))/1048576:g} MiB teaching threshold"
+                    )
+                if int(stat.get('delete_file_count', 0)):
+                    notes.append(f"{int(stat.get('delete_file_count', 0))} DuckLake delete file(s) are present")
+                if node['id'] in directly_filtered:
+                    notes.append(
+                        'Filter follows this scan. DuckLake may use file-level zone maps for pruning; actual files scanned/pruned are unavailable in this evidence.'
+                    )
         else:
             left = states[parents[0]]
             rows, mb, parts = left['rows'], left['mb'], list(left['parts'])
@@ -124,6 +154,8 @@ def simulate_plan(df, statistics, profile: ClusterProfile, aqe: bool, result_row
                     straggler=stage.max_task_s > max(stage.p50_task_s, 0.001)*3,
                     broadcast_mb=states[parents[1]]['mb'] if operator=='broadcast_join' else 0,
                     sort=kind in {'window','orderBy'} or operator=='shuffle_join')
+        if scan_evidence:
+            data['source_evidence'] = scan_evidence
         evidence.append(data)
     job = _finalize_job(profile, aqe, stages, {'model':'plan-driven-v1','fusion':'not modeled'})
     metrics = job.as_dict()
