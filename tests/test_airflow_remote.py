@@ -92,6 +92,7 @@ def test_dispatch_is_bounded_and_token_stays_server_side(monkeypatch):
     assert kwargs["headers"]["Authorization"] == "Bearer server-only-token"
     payload = kwargs["json"]
     assert payload["ref"] == "main"
+    assert payload["return_run_details"] is True
     assert payload["inputs"]["request_id"] == result["request_id"]
     assert base64.b64decode(payload["inputs"]["dag_source_b64"]).decode() == "from airflow.sdk import dag\n"
 
