@@ -5,9 +5,9 @@ import { parseIpynb, createImportedViews, type ImportedNotebookInfo, type Jupyte
 import { buildIpynbDocument } from '../../../packages/notebook-core/src/v2/ipynbExport.ts';
 import { parseProjectSnapshot } from '../../../packages/notebook-core/src/v2/projectExport.ts';
 import {projectRemovalIds,resetViewLayoutGeometry} from '../../../packages/notebook-core/src/v2/model.ts';
+import type {WorkspacePresentation} from './workspacePresentation';
 
 export interface RootBlock extends WorkbenchPanel {kernel?:KernelId;stepId?:string;outputAsset?:string|null;role?:'code'|'help'|'result'|'note'|'problem'|'exercise-help'|'exercise-browser';readOnly?:boolean;starterSource?:string;exerciseId?:string}
-export type WorkspacePresentation='studio'|'fabric'|'leetcode';
 export interface RootNotebook {schemaVersion:1;id:string;title:string;blocks:RootBlock[];views:NotebookView[];blockState:Record<string,unknown>;info:ImportedNotebookInfo|null;executions:Record<string,Execution>;executedSource:Record<string,string>;practiceLayouts?:Record<string,NotebookView['layout']>;exercise?:{id:string;version:string};revealedHints?:number;solutionRevealed?:boolean;skin?:'neutral'|'fabric'|'databricks';presentation?:WorkspacePresentation;outputCheckpoints?:Record<string,string>;clearedOutputs?:string[]}
 const codeTypes=new Set(['sql','python','polars']);
 export const isRunnable=(b:RootBlock)=>codeTypes.has(b.type)&&!b.readOnly;
