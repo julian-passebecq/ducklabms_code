@@ -53,8 +53,10 @@ def test_api_submit_checkpoint_redaction_attempts_and_timeout(tmp_path,monkeypat
     app=create_app(tmp_path,token='test',mode='duckdb')
     with TestClient(app,base_url='http://localhost',headers={'Authorization':'Bearer test'}) as client:
         definitions=client.get('/api/exercises').json()
-        assert all(e['origin']=='internal-demo' for e in definitions)
-        assert 'source' not in definitions[0]['solution']
+        demo=next(e for e in definitions if e['id']=='demo-sum')
+        assert demo['origin']=='internal-demo'
+        assert {e['pack']['id'] for e in definitions} >= {'internal-demo','sparklab-runtime'}
+        assert 'solution' not in json.dumps(definitions)
         assert 'expected' not in json.dumps(definitions)
         w=client.post('/api/workspaces',json={}).json();base=f"/api/workspaces/{w['id']}"
         code=solution('demo-sum')['source']
