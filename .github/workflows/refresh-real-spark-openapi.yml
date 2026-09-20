@@ -6,6 +6,8 @@ on:
       - codex/real-spark-proxy-1
     paths:
       - .github/workflows/refresh-real-spark-openapi.yml
+      - apps/api/datapass/api.py
+      - apps/api/datapass/spark_remote.py
 
 permissions:
   contents: write
