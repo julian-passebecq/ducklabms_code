@@ -84,7 +84,7 @@ function AirflowSurface({context}:{context:ToolContext}){
  useEffect(()=>{setSource(defaultAirflowDag(context.caseStudy));setDispatch(undefined);setStatus(undefined);setResult(undefined);setRemoteError('')},[context.caseStudy.id]);
  useEffect(()=>{let live=true;context.services.runtime.airflowCapabilities().then(value=>{if(live)setCapabilities(value)}).catch(error=>{if(live)setRemoteError(String(error))});return()=>{live=false}},[context.services.runtime]);
  useEffect(()=>{
-  const runId=dispatch?.run_id;if(!runId)return;
+  const jobId=dispatch?.job_id;if(!jobId)return;
   let live=true,timer:number|undefined;
   const poll=async()=>{
    try{
@@ -159,16 +159,16 @@ function SparkRunSurface({context}:{context:ToolContext}) {
   let live=true,timer:number|undefined;
   const poll=async()=>{
    try{
-    const current=await context.services.runtime.sparkRemoteStatus(context.workspaceId,runId);if(!live)return;setStatus(current);
+    const current=await context.services.runtime.sparkRemoteStatus(context.workspaceId,jobId);if(!live)return;setStatus(current);
     if(current.status==='completed'){
-     const result=await context.services.runtime.sparkRemoteResult(context.workspaceId,runId,dispatch.request_id);
+     const result=await context.services.runtime.sparkRemoteResult(context.workspaceId,jobId,dispatch.request_id);
      if(live){setReal(result);setBusy(false)}
     }else timer=window.setTimeout(poll,2500);
    }catch(err){if(live){setError(String(err));setBusy(false)}}
   };
   void poll();
   return()=>{live=false;if(timer)window.clearTimeout(timer)};
- },[context.services.runtime,context.workspaceId,dispatch?.run_id,dispatch?.request_id]);
+ },[context.services.runtime,context.workspaceId,dispatch?.job_id,dispatch?.request_id]);
  const verify=async()=>{
   if(!step||!capabilities?.enabled)return;
   setBusy(true);setError('');setDispatch(undefined);setStatus(undefined);setReal(undefined);
@@ -188,7 +188,7 @@ function SparkRunSurface({context}:{context:ToolContext}) {
   {capabilities?.public_repo&&<p className="notice">{capabilities.privacy}</p>}
   {step&&<p className="notice">Remote verification currently uses the canonical case source for <b>{step.id}</b>. Edited ad-hoc notebook source is not silently uploaded.</p>}
   {error&&<p className="error-output">{error}</p>}
-  {dispatch&&<div className="airflow-run-strip"><Badge appearance="tint" color={real?.status==='success'?'success':real?.status==='failed'?'danger':'informative'}>{real?('REAL SPARK '+real.status.toUpperCase()):(status?.status?.toUpperCase()??'QUEUED')}</Badge><span>GitHub run {dispatch.run_id}</span><span>{dispatch.sources?.join(', ')}</span></div>}
+  {dispatch&&<div className="airflow-run-strip"><Badge appearance="tint" color={real?.status==='success'?'success':real?.status==='failed'?'danger':'informative'}>{real?('REAL SPARK '+real.status.toUpperCase()):(status?.status?.toUpperCase()??'QUEUED')}</Badge><span>Runner job {dispatch.job_id}</span>{dispatch.run_id&&<span>GitHub run {dispatch.run_id}</span>}<span>{dispatch.sources?.join(', ')}</span></div>}
   {run?.simulation?<SparkInspector simulation={run.simulation}/>:<p>Run a SparkLab cell to inspect its plan and virtual stages.</p>}
   {real&&<section className="real-spark-evidence"><h2>Real Spark oracle</h2><div className="tag-row"><Badge appearance="tint" color="success">REAL APACHE SPARK {real.spark_version}</Badge><Badge appearance="tint">SINGLE HOST {real.master}</Badge><Badge appearance="tint">{real.runner}</Badge></div><div className="brief-stats"><div><span>Stages</span><b>{metrics?.stage_count??0}</b></div><div><span>Tasks</span><b>{metrics?.task_count??0}</b></div><div><span>Shuffle read</span><b>{formatStorageBytes(metrics?.shuffle_read_bytes??0)}</b></div><div><span>Shuffle write</span><b>{formatStorageBytes(metrics?.shuffle_write_bytes??0)}</b></div><div><span>Measured wall time</span><b>{real.wall_elapsed_ms!==undefined?(real.wall_elapsed_ms/1000).toFixed(3)+' s':'—'}</b></div><div><span>Action</span><b>{real.action??'bounded preview'}</b></div></div><p className="notice">{real.truth}. {metrics?.truth}{real.row_count_truth?' '+real.row_count_truth+'.':''}</p>{modeled&&<><h3>SparkLab model vs real Spark evidence</h3><div className="contract-list"><div><b>Stages</b><span>SparkLab modeled: {modeled.stages.length}</span><span>Real Spark event log: {metrics?.stage_count??0}</span></div><div><b>Tasks</b><span>SparkLab modeled: {modeledTasks}</span><span>Real Spark event log: {metrics?.task_count??0}</span></div><div><b>Shuffle</b><span>SparkLab modeled total: {formatStorageBytes(Math.round((modeled.shuffle_gb??0)*1073741824))}</span><span>Real event-log read + write: {formatStorageBytes(realShuffle)}</span></div><div><b>Time</b><span>SparkLab virtual runtime: {modeled.total_duration_s.toFixed(3)} s</span><span>Real single-host wall time: {real.wall_elapsed_ms!==undefined?(real.wall_elapsed_ms/1000).toFixed(3)+' s':'unavailable'}</span></div></div><p className="notice">These values are intentionally not scored against each other. SparkLab models a virtual distributed cluster; the oracle is real Spark running on one GitHub VM, so differences are teaching evidence rather than an accuracy grade.</p></>}<h3>Real result</h3><DataTable result={{columns:real.columns,rows:real.rows,total_rows:real.total_rows,truncated:real.truncated}}/><details><summary>Physical plan</summary><pre className="airflow-log">{real.physical_plan}</pre></details><details><summary>Formatted explain</summary><pre className="airflow-log">{real.formatted_plan}</pre></details><details><summary>Runner log</summary><pre className="airflow-log">{real.log}</pre></details>{real.run_url&&<p><a href={real.run_url} target="_blank" rel="noreferrer">Open GitHub Actions Spark run</a></p>}</section>}
  </div>;
