@@ -24,8 +24,8 @@ jobs:
       - name: Install local engines
         run: python -m pip install -r requirements-engines.txt
 
-      - name: Contract tests
-        run: python -m pytest -q tests/test_lakehouse_profile.py
+      - name: Full Python regression + DuckLake integration
+        run: python -m pytest -q
         env:
           DATAPASS_DUCKLAKE_INTEGRATION: "1"
           DATAPASS_INSTALL_DUCKLAKE: "1"
@@ -47,5 +47,6 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: npm test
       - run: npm run typecheck
       - run: npm run build
