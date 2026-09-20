@@ -181,6 +181,21 @@ def test_worker_timeout_terminates_and_recovers(tmp_path, mode):
     finally:manager.close()
 
 
+def test_ducklake_maintenance_endpoint_is_authenticated_bounded_and_mode_explicit(tmp_path):
+    app=create_app(tmp_path,'test-token',mode='sqlite',trusted_python=False)
+    with TestClient(app,base_url='http://127.0.0.1') as client:
+        path='/api/workspaces/missing/catalog/maintenance/compact-adjacent'
+        assert client.post(path,json={'asset':'bronze.orders'}).status_code==401
+
+        client.headers['Authorization']='Bearer test-token'
+        workspace=client.post('/api/workspaces',json={}).json()
+        path=f"/api/workspaces/{workspace['id']}/catalog/maintenance/compact-adjacent"
+        assert client.post(path,json={'asset':'source.orders'}).status_code==422
+        response=client.post(path,json={'asset':'bronze.orders'})
+        assert response.status_code==503
+        assert 'DuckLake adjacent-file compaction' in response.json()['detail']
+
+
 @pytest.mark.parametrize('mode', ['sqlite', 'duckdb'])
 def test_api_auth_origins_revision_and_real_workflow(tmp_path, mode):
     app=create_app(tmp_path,'test-token',mode=mode,trusted_python=False)
