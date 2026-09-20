@@ -202,17 +202,24 @@ class Catalog:
         try:
             row = self.db.execute(
                 f"""
-                SELECT
-                    COUNT(*) AS file_count,
-                    COALESCE(SUM(data_file_size_bytes), 0) AS size_bytes,
-                    COUNT(*) FILTER (WHERE delete_file IS NOT NULL) AS delete_file_count
-                FROM (
-                    SELECT DISTINCT
-                        data_file,
-                        data_file_size_bytes,
-                        delete_file
+                WITH listed AS (
+                    SELECT *
                     FROM ducklake_list_files('lake', '{table}', schema => '{layer}')
+                ),
+                data_files AS (
+                    SELECT DISTINCT data_file, data_file_size_bytes
+                    FROM listed
+                    WHERE data_file IS NOT NULL
+                ),
+                delete_files AS (
+                    SELECT DISTINCT delete_file
+                    FROM listed
+                    WHERE delete_file IS NOT NULL
                 )
+                SELECT
+                    (SELECT COUNT(*) FROM data_files) AS file_count,
+                    (SELECT COALESCE(SUM(data_file_size_bytes), 0) FROM data_files) AS size_bytes,
+                    (SELECT COUNT(*) FROM delete_files) AS delete_file_count
                 """
             ).fetchone()
         except Exception:
