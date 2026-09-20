@@ -47,10 +47,11 @@ class Documents:
         replace_file(temp, path)
         return doc
 
-    def create(self, case_id: str | None):
-        case = get_case(case_id) if case_id else {'title':'Interview Practice'}
+    def create(self, case_id: str | None, title: str | None = None):
+        case = get_case(case_id) if case_id else None
+        workspace_title = case['title'] if case else (title.strip() if title else 'Interview Practice')
         doc = {'schema_version': 1, 'id': uuid.uuid4().hex, 'case_id': case_id,
-               'title': case['title'], 'revision': 0, 'updated_at': datetime.now(timezone.utc).isoformat(),
+               'title': workspace_title, 'revision': 0, 'updated_at': datetime.now(timezone.utc).isoformat(),
                'notebook': None, 'evidence': {}, 'runs': []}
         with self.lock:
             return self._write(doc)
