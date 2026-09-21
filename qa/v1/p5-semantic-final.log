@@ -1,0 +1,4 @@
+..........ss.........                                                    [100%]
+=========================== short test summary info ============================
+SKIPPED [2] tests/test_semantic_v1.py:39: Native DuckDB/Polars packages not installed; no substitute certification
+19 passed, 2 skipped in 0.48s

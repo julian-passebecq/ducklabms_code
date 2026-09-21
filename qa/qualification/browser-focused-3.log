@@ -1,0 +1,124 @@
+[WebServer] D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+[WebServer]   class ArtifactBundle(Document):
+[WebServer] INFO:     Started server process [34040]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:18080 (Press CTRL+C to quit)
+
+Running 6 tests using 1 worker
+
+(node:29708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey (30.7s)
+(node:32264) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 tests\browser\core.spec.ts:70:1 › editing, keyboard execution, stale lineage, recovery and distinct run scopes (12.7s)
+  ok 3 tests\browser\core.spec.ts:124:1 › V1 playground launcher keeps free-canvas geometry and reopens the selected product shell (6.4s)
+  x  4 tests\browser\interview.spec.ts:4:1 › standalone practice shares notebook, saves drafts and separates Run from Submit (21.4s)
+(node:47308) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  5 tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views (26.2s)
+(node:6664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 6 tests\browser\v1-resources.spec.ts:57:1 › Arena pipeline Run/Submit grades DAG design and persists attempts (4.1s)
+
+
+  1) tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey ─────────
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByRole('tab', { name: 'Practice', exact: true })
+
+
+      59 |  await page.getByRole('button',{name:'Save',exact:true}).click();await idle();
+      60 |  await page.setViewportSize({width:600,height:900});
+    > 61 |  await page.getByRole('tab',{name:'Practice',exact:true}).click();
+         |                                                           ^
+      62 |  await page.screenshot({path:'evidence/core-pass-1-react-narrow.png',fullPage:true});
+      63 |  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
+      64 |  await page.getByRole('button',{name:'Workspace',exact:true}).click();
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\core.spec.ts:61:59
+
+    Error Context: test-results\core-production-React-DuckDB-connected-notebook-journey\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\core-production-React-DuckDB-connected-notebook-journey\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\core-production-React-DuckDB-connected-notebook-journey\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\browser\interview.spec.ts:4:1 › standalone practice shares notebook, saves drafts and separates Run from Submit 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  getByText('SELECT COALESCE(SUM(value), 0) AS total FROM input', { exact: true }).first()
+    Expected: visible
+    Received: hidden
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toBeVisible" getByText('SELECT COALESCE(SUM(value), 0) AS total FROM input', { exact: true }).first() with timeout 15000ms
+      - waiting for getByText('SELECT COALESCE(SUM(value), 0) AS total FROM input', { exact: true }).first()
+        31 × locator resolved to <pre>SELECT COALESCE(SUM(value), 0) AS total FROM input</pre>
+           - unexpected value "hidden"
+
+
+      34 |  await page.getByRole('button',{name:'Reveal next hint',exact:true}).click();
+      35 |  await page.getByRole('button',{name:'Reveal reference solution',exact:true}).click();await idle();
+    > 36 |  await expect(page.getByText('SELECT COALESCE(SUM(value), 0) AS total FROM input',{exact:true}).first()).toBeVisible();
+         |                                                                                                          ^
+      37 |  await page.getByRole('button',{name:'Save',exact:true}).click();await idle();
+      38 |  await page.reload();await expect(page.locator('.monaco-editor')).toBeVisible();
+      39 |  const doc=await (await request.get(`/api/workspaces/${id}`,{headers})).json();
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\interview.spec.ts:36:106
+
+    Error Context: test-results\interview-standalone-pract-cf86c-d-separates-Run-from-Submit\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\interview-standalone-pract-cf86c-d-separates-Run-from-Submit\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\interview-standalone-pract-cf86c-d-separates-Run-from-Submit\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByLabel('Local dbt compiled SQL')
+    Expected substring: "select"
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" getByLabel('Local dbt compiled SQL') with timeout 15000ms
+      - waiting for getByLabel('Local dbt compiled SQL')
+
+
+      18 |  await expect(evidence.locator('strong')).toHaveText('success',{timeout:90000});
+      19 |  await page.getByRole('tab',{name:'Compiled SQL',exact:true}).click();
+    > 20 |  await expect(page.getByLabel('Local dbt compiled SQL')).toContainText('select');
+         |                                                          ^
+      21 |  await page.getByRole('button',{name:'Lineage view',exact:true}).click();
+      22 |  await expect(page.getByLabel('Lineage direction')).toBeVisible();
+      23 |  const catalog=await (await request.get(`/api/workspaces/${wid}/catalog`,{headers})).json();
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\v1-resources.spec.ts:20:58
+
+    Error Context: test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey ──────────
+    tests\browser\interview.spec.ts:4:1 › standalone practice shares notebook, saves drafts and separates Run from Submit 
+    tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views 
+  3 passed (1.8m)

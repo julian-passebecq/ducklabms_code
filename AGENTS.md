@@ -8,6 +8,13 @@ Historical/archive repository URL: https://github.com/julian-passebecq/ducklake_
 
 The archive repository is reference material only. Large source archives previously exceeded GitHub's normal 100 MB single-file limit, so the essential architecture, contracts, verification record, source audit and specialist instructions are also preserved directly in this code repository under `architecture-reference/`.
 
+## Active V1 architecture override - 2026-09-21
+
+Read `architecture/00_START_HERE.md`, `01_CURRENT_ARCHITECTURE.md`, `02_DECISIONS.md`,
+`03_STATUS_AND_ROADMAP.md` and `05_NEXT_AI_HANDOFF.md` first. This folder is the active
+V1 source of truth. Historical architecture-reference and specialist handoffs do not override it.
+Do not add Git/Linux/terminal/IaC/Kubernetes curriculum; those are future sibling ideas.
+
 ## Read first
 
 1. `architecture-reference/README.md`
@@ -62,11 +69,15 @@ The preserved architect direction is one application and one shared project mode
 - one generic Mosaic/Jupyter/Deepnote-inspired notebook and layout system;
 - shared execution services and run history;
 - reusable SparkLab simulated-Spark kernel;
-- DuckDB as the normal local analytical execution/storage choice;
-- DuckLake as an explicit optional storage path;
-- Polars where useful;
-- MotherDuck optional/future, not a requirement for local learning;
-- Fabric/Data Factory, SQL warehousing, Airflow/dbt, Power BI and Databricks-inspired ML are modules/tool experiences of the same application, not independent applications with duplicate state.
+- DuckLake as the canonical lakehouse/table layer for full local learning workspaces;
+- DuckDB as the authoritative local analytical engine and official DuckLake reference implementation;
+- new DuckLake workspaces use SQLite metadata + Parquet data with inlining disabled for transparent teaching/interoperability;
+- plain DuckDB remains a robust local compatibility mode when DuckLake extensions are not installed;
+- Polars/Python where useful;
+- MotherDuck optional/future as a remote DuckDB/DuckLake target, never a requirement for local learning;
+- the active product scope is Notebook + DuckDB/DuckLake + Python/pandas/Polars + dbt + data modeling/SCD + Charts + Pipeline Lab + Arena + guided SparkLab. Pipeline Lab targets the Datapass Local Orchestrator. Older GitHub-Actions Airflow/Spark paths are frozen legacy/reference work, not V1 direction;
+- Pipeline Lab uses a bounded local runner, not a Fabric service or real Airflow scheduler;
+- SQL, Polars, SparkLab, BI/modeling and ML cases may remain as focused learning content without expanding into competing product clones.
 
 Keep **case**, **tool experience**, **document**, **layout** and **runtime** separate. A Fabric-inspired notebook is a skin/tool experience over the shared notebook model, not a second notebook engine.
 
@@ -86,7 +97,7 @@ Use these as migration sources, not as competing roots:
 
 - `migration-sources/mosaic` — notebook/layout foundation.
 - `migration-sources/sparklab` — SparkLab runtime/simulation/truth packs.
-- `migration-sources/fabric` — Fabric/Data Factory inspired surfaces and lessons.
+- `migration-sources/fabric` — Fabric notebook/lakehouse reference material; Data Factory/pipeline material is reference-only.
 - `migration-sources/powerbi` — Power BI learning surfaces and model/report work.
 - `migration-sources/airflow-dbt` — Airflow/dbt learning work.
 - `migration-sources/guide` — Microsoft data guide/curriculum material.

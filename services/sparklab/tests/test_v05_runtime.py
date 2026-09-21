@@ -92,7 +92,7 @@ clean = (spark.table("bronze.trips")
 '''
     spark = SparkSession.from_profile(PROFILES, "mobility")
     out = SafeSparkParser(spark).parse(mobility).dataframe.sql
-    assert 'ROW_NUMBER() OVER (PARTITION BY "trip_id" ORDER BY "loaded_at" DESC)' in out
+    assert 'ROW_NUMBER() OVER (PARTITION BY "trip_id" ORDER BY "loaded_at" DESC NULLS LAST)' in out
 
     energy = '''
 from pyspark.sql import functions as F

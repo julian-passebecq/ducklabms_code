@@ -1,0 +1,5 @@
+
+> datapass-studio-root@0.1.0 test:v1:browser
+> playwright test --config playwright.v1.config.ts
+
+error: unknown command 'test'

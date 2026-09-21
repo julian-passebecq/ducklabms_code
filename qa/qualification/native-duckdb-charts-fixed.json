@@ -1,0 +1,235 @@
+{
+  "gate": "real-local-dbt-shared-catalog",
+  "storage": "duckdb",
+  "status": "PASS",
+  "versions": {
+    "duckdb": "1.5.5",
+    "dbt-core": "1.11.15",
+    "dbt-duckdb": "1.11.0",
+    "polars": "1.44.2",
+    "pandas": "3.0.6",
+    "dbt-charts": "0.8.0"
+  },
+  "checks": [
+    "Real dbt seed/model/test build, matching artifacts, compiled SQL and lineage",
+    "dbt output visible through shared notebook catalog after kernel restart",
+    "Official dct validated and rendered exported bar/line/KPI/table YAML against real dbt output",
+    "Shared Arena fixtures: DuckDB, pandas, native Polars, bounded dbt/Spark semantics"
+  ],
+  "job": {
+    "schema_version": 1,
+    "id": "aa63fad0ff0e461e963a633ef32ee1a8",
+    "workspace_id": "c652896c4f1c4c56884edc2ed3212bf8",
+    "resource_id": "native-dbt",
+    "resource_revision": 0,
+    "workspace_revision": 1,
+    "source_hash": "6fd9f80f07b2e0bc28b28dc556f1b790797b5d9e9a0cddffc8c6f5618d125139",
+    "kind": "dbt",
+    "action": "build",
+    "status": "success",
+    "truth": "real_local",
+    "created_at": "2026-09-21T18:24:40.016828+00:00",
+    "started_at": "2026-09-21T18:24:40.019414+00:00",
+    "finished_at": "2026-09-21T18:24:50.428083+00:00",
+    "elapsed_ms": 10411.241,
+    "runtime": {
+      "adapter": "dbt-core",
+      "versions": {
+        "dbt-core": "1.11.15",
+        "dbt-duckdb": "1.11.0",
+        "duckdb": "1.5.5"
+      },
+      "storage": "duckdb",
+      "lakehouse": {
+        "schema_version": 1,
+        "active": false,
+        "table_format": "ducklake",
+        "compute_engine": "duckdb",
+        "metadata_backend": null,
+        "metadata_file": null,
+        "data_format": "parquet",
+        "data_directory": null,
+        "data_inlining_row_limit": 0,
+        "truth": "real local DuckDB compatibility mode; DuckLake is not attached",
+        "duckdb_version": "v1.5.5",
+        "ducklake_extension_installed": true,
+        "ducklake_extension_version": "d8a1881e",
+        "legacy_metadata": false
+      },
+      "process_isolation": "trusted local subprocess; not a sandbox"
+    },
+    "log": "[dbt] build / canonical resource native-dbt revision 0\n[stdout] 18:24:43  Running with dbt=1.11.15\r\n18:24:44  Registered adapter: duckdb=1.11.0\r\n18:24:47  Found 1 model, 1 test, 1 seed, 500 macros\r\n18:24:47  \r\n18:24:47  Concurrency: 1 threads (target='local')\r\n18:24:47  \r\n18:24:48  1 of 3 START seed file warehouse.smoke_seed .................................... [RUN]\r\n18:24:48  1 of 3 OK loaded seed file warehouse.smoke_seed ................................ [INSERT 2 in 0.11s]\r\n18:24:48  2 of 3 START sql table model warehouse.smoke_model ............................. [RUN]\r\n18:24:48  2 of 3 OK created sql table model warehouse.smoke_model ........................ [OK in 0.12s]\r\n18:24:48  3 of 3 START test assert_smoke ................................................. [RUN]\r\n18:24:48  3 of 3 PASS assert_smoke ....................................................... [PASS in 0.05s]\r\n18:24:48  \r\n18:24:48  Finished running 1 seed, 1 table model, 1 test in 0 hours 0 minutes and 0.79 seconds (0.79s).\r\n18:24:48  \r\n18:24:48  Completed successfully\r\n18:24:48  \r\n18:24:48  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3\r\n",
+    "log_truncated": false,
+    "artifacts": {
+      "manifest": {
+        "file": "manifest.json",
+        "bytes": 559537,
+        "sha256": "bc5608656a5a5631241b9c6ba2f2db5b69da28c02d08216a9ed940462b37508f"
+      },
+      "run_results": {
+        "file": "run_results.json",
+        "bytes": 5509,
+        "sha256": "5bd1168cdb23dea38362226ca75e03b9051b207013cc5cb018b733bb59e9c54c"
+      }
+    },
+    "steps": [],
+    "result": {
+      "runtime": {
+        "adapter": "dbt-core",
+        "versions": {
+          "dbt-core": "1.11.15",
+          "dbt-duckdb": "1.11.0",
+          "duckdb": "1.5.5"
+        },
+        "storage": "duckdb",
+        "lakehouse": {
+          "schema_version": 1,
+          "active": false,
+          "table_format": "ducklake",
+          "compute_engine": "duckdb",
+          "metadata_backend": null,
+          "metadata_file": null,
+          "data_format": "parquet",
+          "data_directory": null,
+          "data_inlining_row_limit": 0,
+          "truth": "real local DuckDB compatibility mode; DuckLake is not attached",
+          "duckdb_version": "v1.5.5",
+          "ducklake_extension_installed": true,
+          "ducklake_extension_version": "d8a1881e",
+          "legacy_metadata": false
+        },
+        "process_isolation": "trusted local subprocess; not a sandbox"
+      },
+      "returncode": 0,
+      "invocation_id": "861e41dc-e143-4ac7-8ba8-5cecb04eda6f",
+      "warnings": [],
+      "action": "build",
+      "selector": "",
+      "resource_id": "native-dbt",
+      "resource_revision": 0,
+      "source_hash": "8306e91f13f773be43594fee7cf260d5dc30d7c05658057d56821dffef88b16d",
+      "files": {
+        "manifest": {
+          "file": "manifest.json",
+          "bytes": 559537,
+          "sha256": "bc5608656a5a5631241b9c6ba2f2db5b69da28c02d08216a9ed940462b37508f"
+        },
+        "run_results": {
+          "file": "run_results.json",
+          "bytes": 5509,
+          "sha256": "5bd1168cdb23dea38362226ca75e03b9051b207013cc5cb018b733bb59e9c54c"
+        }
+      },
+      "truth": "real_local",
+      "catalog_registration": {
+        "registered": [
+          "warehouse.smoke_seed",
+          "warehouse.smoke_model"
+        ],
+        "omitted": []
+      }
+    }
+  },
+  "charts": [
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "validate",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\bar.yml"
+      ],
+      "exit_code": 0,
+      "stdout": "\u00e2\u0153\u201c bar.yml OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "render",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\bar.yml",
+        "--format",
+        "html",
+        "--output",
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-bar.html",
+        "--no-cache"
+      ],
+      "exit_code": 0,
+      "stdout": "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-bar.html\n",
+      "stderr": "Rendered C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\bar.yml to D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-bar.html (html format)\n"
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "validate",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\line.yml"
+      ],
+      "exit_code": 0,
+      "stdout": "\u00e2\u0153\u201c line.yml OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "render",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\line.yml",
+        "--format",
+        "html",
+        "--output",
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-line.html",
+        "--no-cache"
+      ],
+      "exit_code": 0,
+      "stdout": "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-line.html\n",
+      "stderr": "Rendered C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\line.yml to D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-line.html (html format)\n"
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "validate",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\kpi.yml"
+      ],
+      "exit_code": 0,
+      "stdout": "\u00e2\u0153\u201c kpi.yml OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "render",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\kpi.yml",
+        "--format",
+        "html",
+        "--output",
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-kpi.html",
+        "--no-cache"
+      ],
+      "exit_code": 0,
+      "stdout": "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-kpi.html\n",
+      "stderr": "Rendered C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\kpi.yml to D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-kpi.html (html format)\n"
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "validate",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\table.yml"
+      ],
+      "exit_code": 0,
+      "stdout": "\u00e2\u0153\u201c table.yml OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "render",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\table.yml",
+        "--format",
+        "html",
+        "--output",
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-table.html",
+        "--no-cache"
+      ],
+      "exit_code": 0,
+      "stdout": "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-table.html\n",
+      "stderr": "Rendered C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-l13s_tep\\c652896c4f1c4c56884edc2ed3212bf8\\jobs\\aa63fad0ff0e461e963a633ef32ee1a8\\dbt\\source\\table.yml to D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-table.html (html format)\n"
+    }
+  ]
+}

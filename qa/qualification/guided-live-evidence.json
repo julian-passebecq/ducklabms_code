@@ -1,0 +1,2455 @@
+{
+  "endpoint": "https://fastapispark.fastapicloud.dev",
+  "observed_at": "2026-09-21T19:18:38.277202+00:00",
+  "status": "PASS",
+  "exchanges": [
+    {
+      "method": "GET",
+      "path": "/",
+      "request": null,
+      "response": {
+        "service": "datapass-fake-spark",
+        "version": "0.1.0",
+        "status": "ok",
+        "docs": "/docs",
+        "mode": "duckdb-execution + deterministic-spark-simulation"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "request": null,
+      "response": {
+        "status": "ok",
+        "service": "datapass-fake-spark"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1/runtimes",
+      "request": null,
+      "response": {
+        "items": [
+          {
+            "id": "datapass-free",
+            "label": "Datapass Free Lab",
+            "executors": 1,
+            "cores": 2,
+            "memory_gb": 1.0,
+            "partitions": 4,
+            "scan": 180,
+            "shuffle": 90,
+            "rows_sec": 180000,
+            "startup": 80,
+            "credits_hour": 0.0,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-s",
+            "label": "Datapass S",
+            "executors": 2,
+            "cores": 2,
+            "memory_gb": 2.0,
+            "partitions": 8,
+            "scan": 420,
+            "shuffle": 190,
+            "rows_sec": 240000,
+            "startup": 120,
+            "credits_hour": 0.06,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-m",
+            "label": "Datapass M",
+            "executors": 4,
+            "cores": 4,
+            "memory_gb": 4.0,
+            "partitions": 32,
+            "scan": 1050,
+            "shuffle": 520,
+            "rows_sec": 310000,
+            "startup": 180,
+            "credits_hour": 0.18,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-l",
+            "label": "Datapass L",
+            "executors": 8,
+            "cores": 4,
+            "memory_gb": 8.0,
+            "partitions": 64,
+            "scan": 2100,
+            "shuffle": 1100,
+            "rows_sec": 360000,
+            "startup": 260,
+            "credits_hour": 0.42,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/compile",
+      "request": {
+        "code": "df = spark.table(\"orders\")\ndf = df.filter(\"net_amount > 0\")\ndf = df.select(\"order_id\", \"customer_id\", \"net_amount\")"
+      },
+      "response": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 1,
+                "customer_id": 101,
+                "net_amount": 420
+              },
+              {
+                "order_id": 2,
+                "customer_id": 102,
+                "net_amount": 275
+              },
+              {
+                "order_id": 3,
+                "customer_id": 101,
+                "net_amount": -10
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_a58d42506da4471d",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          },
+          {
+            "order_id": 2,
+            "customer_id": 102,
+            "net_amount": 275
+          }
+        ],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select"
+              ],
+              "tasks": 4,
+              "input_rows": 3,
+              "output_rows": 1,
+              "input_bytes": 162,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 1,
+                "customer_id": 101,
+                "net_amount": 420
+              },
+              {
+                "order_id": 2,
+                "customer_id": 102,
+                "net_amount": 275
+              },
+              {
+                "order_id": 3,
+                "customer_id": 101,
+                "net_amount": -10
+              }
+            ]
+          }
+        ],
+        "collect_limit": 1,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_92a3ff74e4334f37",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          }
+        ],
+        "truncated": true,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select"
+              ],
+              "tasks": 4,
+              "input_rows": 3,
+              "output_rows": 1,
+              "input_bytes": 162,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 8,
+                "customer_id": 2,
+                "net_amount": -2
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_4dc7588a7e8e478d",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select"
+              ],
+              "tasks": 4,
+              "input_rows": 1,
+              "output_rows": 0,
+              "input_bytes": 51,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "request": null,
+      "response": {
+        "service": "datapass-fake-spark",
+        "version": "0.1.0",
+        "status": "ok",
+        "docs": "/docs",
+        "mode": "duckdb-execution + deterministic-spark-simulation"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "request": null,
+      "response": {
+        "status": "ok",
+        "service": "datapass-fake-spark"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1/runtimes",
+      "request": null,
+      "response": {
+        "items": [
+          {
+            "id": "datapass-free",
+            "label": "Datapass Free Lab",
+            "executors": 1,
+            "cores": 2,
+            "memory_gb": 1.0,
+            "partitions": 4,
+            "scan": 180,
+            "shuffle": 90,
+            "rows_sec": 180000,
+            "startup": 80,
+            "credits_hour": 0.0,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-s",
+            "label": "Datapass S",
+            "executors": 2,
+            "cores": 2,
+            "memory_gb": 2.0,
+            "partitions": 8,
+            "scan": 420,
+            "shuffle": 190,
+            "rows_sec": 240000,
+            "startup": 120,
+            "credits_hour": 0.06,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-m",
+            "label": "Datapass M",
+            "executors": 4,
+            "cores": 4,
+            "memory_gb": 4.0,
+            "partitions": 32,
+            "scan": 1050,
+            "shuffle": 520,
+            "rows_sec": 310000,
+            "startup": 180,
+            "credits_hour": 0.18,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-l",
+            "label": "Datapass L",
+            "executors": 8,
+            "cores": 4,
+            "memory_gb": 8.0,
+            "partitions": 64,
+            "scan": 2100,
+            "shuffle": 1100,
+            "rows_sec": 360000,
+            "startup": 260,
+            "credits_hour": 0.42,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/compile",
+      "request": {
+        "code": "df = spark.table(\"orders\")\ndf = df.filter(\"net_amount > 0\")\ndf = df.select(\"order_id\", \"customer_id\", \"net_amount\")"
+      },
+      "response": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 1,
+                "customer_id": 101,
+                "net_amount": 420
+              },
+              {
+                "order_id": 2,
+                "customer_id": 102,
+                "net_amount": 275
+              },
+              {
+                "order_id": 3,
+                "customer_id": 101,
+                "net_amount": -10
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_a73d37b8d07a4baa",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          },
+          {
+            "order_id": 2,
+            "customer_id": 102,
+            "net_amount": 275
+          }
+        ],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select"
+              ],
+              "tasks": 4,
+              "input_rows": 3,
+              "output_rows": 1,
+              "input_bytes": 162,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 17,
+                "customer_id": 8,
+                "net_amount": 7
+              },
+              {
+                "order_id": 18,
+                "customer_id": 8,
+                "net_amount": 0
+              },
+              {
+                "order_id": 19,
+                "customer_id": 2,
+                "net_amount": 15
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_09604d611d4a495e",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 17,
+            "customer_id": 8,
+            "net_amount": 7
+          },
+          {
+            "order_id": 19,
+            "customer_id": 2,
+            "net_amount": 15
+          }
+        ],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select"
+              ],
+              "tasks": 4,
+              "input_rows": 3,
+              "output_rows": 1,
+              "input_bytes": 154,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 9,
+                "customer_id": 2,
+                "net_amount": 3
+              },
+              {
+                "order_id": 9,
+                "customer_id": 2,
+                "net_amount": 3
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_5677771c472842bc",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 9,
+            "customer_id": 2,
+            "net_amount": 3
+          },
+          {
+            "order_id": 9,
+            "customer_id": 2,
+            "net_amount": 3
+          }
+        ],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select"
+              ],
+              "tasks": 4,
+              "input_rows": 2,
+              "output_rows": 0,
+              "input_bytes": 100,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 9,
+                "customer_id": 2,
+                "net_amount": -1
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_7df796b9784e4531",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select"
+              ],
+              "tasks": 4,
+              "input_rows": 1,
+              "output_rows": 0,
+              "input_bytes": 51,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "request": null,
+      "response": {
+        "service": "datapass-fake-spark",
+        "version": "0.1.0",
+        "status": "ok",
+        "docs": "/docs",
+        "mode": "duckdb-execution + deterministic-spark-simulation"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "request": null,
+      "response": {
+        "status": "ok",
+        "service": "datapass-fake-spark"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1/runtimes",
+      "request": null,
+      "response": {
+        "items": [
+          {
+            "id": "datapass-free",
+            "label": "Datapass Free Lab",
+            "executors": 1,
+            "cores": 2,
+            "memory_gb": 1.0,
+            "partitions": 4,
+            "scan": 180,
+            "shuffle": 90,
+            "rows_sec": 180000,
+            "startup": 80,
+            "credits_hour": 0.0,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-s",
+            "label": "Datapass S",
+            "executors": 2,
+            "cores": 2,
+            "memory_gb": 2.0,
+            "partitions": 8,
+            "scan": 420,
+            "shuffle": 190,
+            "rows_sec": 240000,
+            "startup": 120,
+            "credits_hour": 0.06,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-m",
+            "label": "Datapass M",
+            "executors": 4,
+            "cores": 4,
+            "memory_gb": 4.0,
+            "partitions": 32,
+            "scan": 1050,
+            "shuffle": 520,
+            "rows_sec": 310000,
+            "startup": 180,
+            "credits_hour": 0.18,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-l",
+            "label": "Datapass L",
+            "executors": 8,
+            "cores": 4,
+            "memory_gb": 8.0,
+            "partitions": 64,
+            "scan": 2100,
+            "shuffle": 1100,
+            "rows_sec": 360000,
+            "startup": 260,
+            "credits_hour": 0.42,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/compile",
+      "request": {
+        "code": "df = spark.table(\"orders\")\ndf = df.filter(\"net_amount > 0\")\ndf = df.select(\"order_id\", \"customer_id\", \"net_amount\")\ndf = df.limit(1)"
+      },
+      "response": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          },
+          {
+            "op": "limit",
+            "args": {
+              "count": 1
+            }
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          },
+          {
+            "op": "limit",
+            "args": {
+              "count": 1
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 1,
+                "customer_id": 101,
+                "net_amount": 420
+              },
+              {
+                "order_id": 2,
+                "customer_id": 102,
+                "net_amount": 275
+              },
+              {
+                "order_id": 3,
+                "customer_id": 101,
+                "net_amount": -10
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_463b2ed4543f4c6d",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          }
+        ],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select",
+                "limit"
+              ],
+              "tasks": 4,
+              "input_rows": 3,
+              "output_rows": 1,
+              "input_bytes": 162,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          },
+          {
+            "op": "limit",
+            "args": {
+              "count": 1
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 17,
+                "customer_id": 8,
+                "net_amount": 7
+              },
+              {
+                "order_id": 18,
+                "customer_id": 8,
+                "net_amount": 0
+              },
+              {
+                "order_id": 19,
+                "customer_id": 2,
+                "net_amount": 15
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_5c11d58083b64811",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 17,
+            "customer_id": 8,
+            "net_amount": 7
+          }
+        ],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select",
+                "limit"
+              ],
+              "tasks": 4,
+              "input_rows": 3,
+              "output_rows": 1,
+              "input_bytes": 154,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          },
+          {
+            "op": "limit",
+            "args": {
+              "count": 1
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 9,
+                "customer_id": 2,
+                "net_amount": 3
+              },
+              {
+                "order_id": 9,
+                "customer_id": 2,
+                "net_amount": 3
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_10bde95184c84c74",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 9,
+            "customer_id": 2,
+            "net_amount": 3
+          }
+        ],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select",
+                "limit"
+              ],
+              "tasks": 4,
+              "input_rows": 2,
+              "output_rows": 0,
+              "input_bytes": 100,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          },
+          {
+            "op": "limit",
+            "args": {
+              "count": 1
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 9,
+                "customer_id": 2,
+                "net_amount": -1
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_65d161410cf240d0",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 0,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "result stage",
+              "operations": [
+                "filter",
+                "select",
+                "limit"
+              ],
+              "tasks": 4,
+              "input_rows": 1,
+              "output_rows": 0,
+              "input_bytes": 51,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 0,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "request": null,
+      "response": {
+        "service": "datapass-fake-spark",
+        "version": "0.1.0",
+        "status": "ok",
+        "docs": "/docs",
+        "mode": "duckdb-execution + deterministic-spark-simulation"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "request": null,
+      "response": {
+        "status": "ok",
+        "service": "datapass-fake-spark"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v1/runtimes",
+      "request": null,
+      "response": {
+        "items": [
+          {
+            "id": "datapass-free",
+            "label": "Datapass Free Lab",
+            "executors": 1,
+            "cores": 2,
+            "memory_gb": 1.0,
+            "partitions": 4,
+            "scan": 180,
+            "shuffle": 90,
+            "rows_sec": 180000,
+            "startup": 80,
+            "credits_hour": 0.0,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-s",
+            "label": "Datapass S",
+            "executors": 2,
+            "cores": 2,
+            "memory_gb": 2.0,
+            "partitions": 8,
+            "scan": 420,
+            "shuffle": 190,
+            "rows_sec": 240000,
+            "startup": 120,
+            "credits_hour": 0.06,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-m",
+            "label": "Datapass M",
+            "executors": 4,
+            "cores": 4,
+            "memory_gb": 4.0,
+            "partitions": 32,
+            "scan": 1050,
+            "shuffle": 520,
+            "rows_sec": 310000,
+            "startup": 180,
+            "credits_hour": 0.18,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          },
+          {
+            "id": "datapass-l",
+            "label": "Datapass L",
+            "executors": 8,
+            "cores": 4,
+            "memory_gb": 8.0,
+            "partitions": 64,
+            "scan": 2100,
+            "shuffle": 1100,
+            "rows_sec": 360000,
+            "startup": 260,
+            "credits_hour": 0.42,
+            "note": "Fictional Datapass teaching profile; not vendor pricing."
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/compile",
+      "request": {
+        "code": "df = spark.table(\"orders\")\ndf = df.filter(\"net_amount > 0\")\ndf = df.select(\"order_id\", \"customer_id\", \"net_amount\")\ndf = df.orderBy(\"order_id\")"
+      },
+      "response": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          },
+          {
+            "op": "order_by",
+            "args": {
+              "columns": [
+                {
+                  "column": "order_id",
+                  "direction": "asc"
+                }
+              ]
+            }
+          }
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          },
+          {
+            "op": "order_by",
+            "args": {
+              "columns": [
+                {
+                  "column": "order_id",
+                  "direction": "asc"
+                }
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 1,
+                "customer_id": 101,
+                "net_amount": 420
+              },
+              {
+                "order_id": 2,
+                "customer_id": 102,
+                "net_amount": 275
+              },
+              {
+                "order_id": 3,
+                "customer_id": 101,
+                "net_amount": -10
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_43ede269b72d4b9c",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          },
+          {
+            "order_id": 2,
+            "customer_id": 102,
+            "net_amount": 275
+          }
+        ],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 16,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "shuffle boundary: order_by",
+              "operations": [
+                "filter",
+                "select",
+                "order_by"
+              ],
+              "tasks": 4,
+              "input_rows": 3,
+              "output_rows": 1,
+              "input_bytes": 162,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 16,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [
+            "Global orderBy/sort requires a shuffle."
+          ],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          },
+          {
+            "op": "order_by",
+            "args": {
+              "columns": [
+                {
+                  "column": "order_id",
+                  "direction": "asc"
+                }
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 17,
+                "customer_id": 8,
+                "net_amount": 7
+              },
+              {
+                "order_id": 18,
+                "customer_id": 8,
+                "net_amount": 0
+              },
+              {
+                "order_id": 19,
+                "customer_id": 2,
+                "net_amount": 15
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_e82685d467c648bf",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 17,
+            "customer_id": 8,
+            "net_amount": 7
+          },
+          {
+            "order_id": 19,
+            "customer_id": 2,
+            "net_amount": 15
+          }
+        ],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 15,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "shuffle boundary: order_by",
+              "operations": [
+                "filter",
+                "select",
+                "order_by"
+              ],
+              "tasks": 4,
+              "input_rows": 3,
+              "output_rows": 1,
+              "input_bytes": 154,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 15,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [
+            "Global orderBy/sort requires a shuffle."
+          ],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          },
+          {
+            "op": "order_by",
+            "args": {
+              "columns": [
+                {
+                  "column": "order_id",
+                  "direction": "asc"
+                }
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 9,
+                "customer_id": 2,
+                "net_amount": 3
+              },
+              {
+                "order_id": 9,
+                "customer_id": 2,
+                "net_amount": 3
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_f39c84c34cf742c4",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [
+          {
+            "order_id": 9,
+            "customer_id": 2,
+            "net_amount": 3
+          },
+          {
+            "order_id": 9,
+            "customer_id": 2,
+            "net_amount": 3
+          }
+        ],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 10,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "shuffle boundary: order_by",
+              "operations": [
+                "filter",
+                "select",
+                "order_by"
+              ],
+              "tasks": 4,
+              "input_rows": 2,
+              "output_rows": 0,
+              "input_bytes": 100,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 10,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [
+            "Global orderBy/sort requires a shuffle."
+          ],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/v1/spark/execute",
+      "request": {
+        "source_table": "orders",
+        "operations": [
+          {
+            "op": "filter",
+            "args": {
+              "condition": "net_amount > 0"
+            }
+          },
+          {
+            "op": "select",
+            "args": {
+              "columns": [
+                "order_id",
+                "customer_id",
+                "net_amount"
+              ]
+            }
+          },
+          {
+            "op": "order_by",
+            "args": {
+              "columns": [
+                {
+                  "column": "order_id",
+                  "direction": "asc"
+                }
+              ]
+            }
+          }
+        ],
+        "runtime_id": "datapass-free",
+        "tables": [
+          {
+            "name": "orders",
+            "rows": [
+              {
+                "order_id": 9,
+                "customer_id": 2,
+                "net_amount": -1
+              }
+            ]
+          }
+        ],
+        "collect_limit": 100,
+        "hints": {}
+      },
+      "response": {
+        "execution_id": "dps_cc3ba0744fce414c",
+        "columns": [
+          "order_id",
+          "customer_id",
+          "net_amount"
+        ],
+        "rows": [],
+        "truncated": false,
+        "physical_engine": "duckdb",
+        "metrics": {
+          "runtime_id": "datapass-free",
+          "total_duration_ms": 85,
+          "total_tasks": 4,
+          "total_shuffle_bytes": 5,
+          "total_spill_bytes": 0,
+          "simulated_credits": 0.0,
+          "stages": [
+            {
+              "stage_id": 0,
+              "reason": "shuffle boundary: order_by",
+              "operations": [
+                "filter",
+                "select",
+                "order_by"
+              ],
+              "tasks": 4,
+              "input_rows": 1,
+              "output_rows": 0,
+              "input_bytes": 51,
+              "shuffle_read_bytes": 0,
+              "shuffle_write_bytes": 5,
+              "spill_bytes": 0,
+              "duration_ms": 85,
+              "skew_factor": 1.0
+            }
+          ],
+          "warnings": [
+            "Global orderBy/sort requires a shuffle."
+          ],
+          "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+        }
+      }
+    }
+  ],
+  "checks": [
+    "Live identity/version/runtime, compiler agreement, full/truncated/empty-result probes",
+    "Visible, hidden, duplicate-sensitive and empty-result grading; hidden results redacted",
+    "LIMIT-induced wrong answer fails; orderBy preserves correct semantics"
+  ],
+  "capabilities": {
+    "configured": true,
+    "available": true,
+    "service_version": "0.1.0",
+    "source_commit": "80ebbbcaf58b1d1922d014a83c9aab49943a81e1",
+    "adapter": "fastapispark-guided-v1",
+    "reason": "",
+    "location": "configured remote service",
+    "privacy": "Only curated lesson source and built-in teaching fixtures, including hidden checks, are sent. No workspace tables.",
+    "limits": {
+      "operations": 20,
+      "result_rows": 100,
+      "fixture_rows": 200,
+      "timeout_seconds": 20
+    },
+    "limitations": [
+      "Not general PySpark",
+      "Empty input tables are not qualified by service 0.1.0",
+      "Distributed metrics are simulated; DuckDB version is not reported"
+    ]
+  },
+  "submission": {
+    "status": "passed",
+    "checks": [
+      {
+        "id": "example",
+        "visibility": "visible",
+        "passed": true,
+        "status": "passed",
+        "execution_id": "cfb1654899c44331b812581184f86fb2",
+        "execution_status": "success",
+        "elapsed_ms": 555.421,
+        "message": "Full bounded result matches.",
+        "input_versions": {},
+        "actual": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          },
+          {
+            "order_id": 2,
+            "customer_id": 102,
+            "net_amount": 275
+          }
+        ],
+        "expected": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          },
+          {
+            "order_id": 2,
+            "customer_id": 102,
+            "net_amount": 275
+          }
+        ]
+      },
+      {
+        "id": "different-values",
+        "visibility": "hidden",
+        "passed": true,
+        "status": "passed",
+        "execution_id": "a5808b4771f44e2082704b29df622e84",
+        "execution_status": "success",
+        "elapsed_ms": 570.43,
+        "message": "Full bounded result matches.",
+        "input_versions": {}
+      },
+      {
+        "id": "duplicate-orders",
+        "visibility": "edge",
+        "passed": true,
+        "status": "passed",
+        "execution_id": "fed2d554caca4798bab98a67a62f080e",
+        "execution_status": "success",
+        "elapsed_ms": 594.939,
+        "message": "Full bounded result matches.",
+        "input_versions": {}
+      },
+      {
+        "id": "empty-result",
+        "visibility": "edge",
+        "passed": true,
+        "status": "passed",
+        "execution_id": "9693d24beb9f4b3c9ef4dfc8b19e4c52",
+        "execution_status": "success",
+        "elapsed_ms": 539.906,
+        "message": "Full bounded result matches.",
+        "input_versions": {}
+      }
+    ],
+    "runs": [
+      {
+        "id": "cfb1654899c44331b812581184f86fb2",
+        "cell_id": "answer",
+        "notebook_id": "live-qualification",
+        "source_hash": "d5b530be5f215c3ac680131bedd7c7925b75902b8f1c37eef5384926ded0bf5c",
+        "session_generation": "32c2f3b4102348a6ae96b220c468c6d1",
+        "sequence": 1,
+        "created_at": "2026-09-21T19:18:44.530736+00:00",
+        "engine": "DuckDB via configured remote service",
+        "language": "sparklab",
+        "status": "success",
+        "result": {
+          "columns": [
+            "order_id",
+            "customer_id",
+            "net_amount"
+          ],
+          "rows": [
+            {
+              "order_id": 1,
+              "customer_id": 101,
+              "net_amount": 420
+            },
+            {
+              "order_id": 2,
+              "customer_id": 102,
+              "net_amount": 275
+            }
+          ],
+          "truncated": false,
+          "total_rows": 2
+        },
+        "elapsed_ms": 555.421,
+        "input_versions": {},
+        "guided_evidence": {
+          "adapter": "fastapispark-guided-v1",
+          "service_version": "0.1.0",
+          "source_commit": "80ebbbcaf58b1d1922d014a83c9aab49943a81e1",
+          "execution_id": "dps_a73d37b8d07a4baa",
+          "fixture_version": "1",
+          "physical_engine": "duckdb",
+          "engine_version": "not reported by service",
+          "metrics": {
+            "runtime_id": "datapass-free",
+            "total_duration_ms": 85,
+            "total_tasks": 4,
+            "total_shuffle_bytes": 0,
+            "total_spill_bytes": 0,
+            "simulated_credits": 0.0,
+            "stages": [
+              {
+                "stage_id": 0,
+                "reason": "result stage",
+                "operations": [
+                  "filter",
+                  "select"
+                ],
+                "tasks": 4,
+                "input_rows": 3,
+                "output_rows": 1,
+                "input_bytes": 162,
+                "shuffle_read_bytes": 0,
+                "shuffle_write_bytes": 0,
+                "spill_bytes": 0,
+                "duration_ms": 85,
+                "skew_factor": 1.0
+              }
+            ],
+            "warnings": [],
+            "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+          },
+          "truth": "bounded results; distributed metrics simulated"
+        }
+      }
+    ],
+    "truth": "semantic-emulation",
+    "runtime": {
+      "adapter": "fastapispark-guided-v1 / configured remote service",
+      "engine": "duckdb",
+      "engine_version": "not reported; service 0.1.0",
+      "session_generation": "32c2f3b4102348a6ae96b220c468c6d1"
+    },
+    "elapsed_ms": 4438.067
+  },
+  "incorrect_submission": {
+    "status": "failed",
+    "checks": [
+      {
+        "id": "example",
+        "visibility": "visible",
+        "passed": false,
+        "status": "failed",
+        "execution_id": "c0e8cc357b9b463785e0e5c09336101a",
+        "execution_status": "success",
+        "elapsed_ms": 564.557,
+        "message": "Complete semantic result differs; truncation cannot pass.",
+        "input_versions": {},
+        "actual": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          }
+        ],
+        "expected": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          },
+          {
+            "order_id": 2,
+            "customer_id": 102,
+            "net_amount": 275
+          }
+        ]
+      },
+      {
+        "id": "different-values",
+        "visibility": "hidden",
+        "passed": false,
+        "status": "failed",
+        "execution_id": "d2ef9158027f499ca409bcb95fa339f6",
+        "execution_status": "success",
+        "elapsed_ms": 625.631,
+        "message": "Complete semantic result differs; truncation cannot pass.",
+        "input_versions": {}
+      },
+      {
+        "id": "duplicate-orders",
+        "visibility": "edge",
+        "passed": false,
+        "status": "failed",
+        "execution_id": "b16d976d5b0e492e85174d123f0d2a5e",
+        "execution_status": "success",
+        "elapsed_ms": 576.591,
+        "message": "Complete semantic result differs; truncation cannot pass.",
+        "input_versions": {}
+      },
+      {
+        "id": "empty-result",
+        "visibility": "edge",
+        "passed": true,
+        "status": "passed",
+        "execution_id": "b215d3fba6e048748a54ff7ba7c878e3",
+        "execution_status": "success",
+        "elapsed_ms": 588.833,
+        "message": "Full bounded result matches.",
+        "input_versions": {}
+      }
+    ],
+    "runs": [
+      {
+        "id": "c0e8cc357b9b463785e0e5c09336101a",
+        "cell_id": "answer",
+        "notebook_id": "live-qualification",
+        "source_hash": "dc7966b94575629d2f42c45686264743327381ba82aa33f81dfcd75dab01560a",
+        "session_generation": "4cb1af6f89f94257a3919fc3df49698b",
+        "sequence": 1,
+        "created_at": "2026-09-21T19:18:49.133640+00:00",
+        "engine": "DuckDB via configured remote service",
+        "language": "sparklab",
+        "status": "success",
+        "result": {
+          "columns": [
+            "order_id",
+            "customer_id",
+            "net_amount"
+          ],
+          "rows": [
+            {
+              "order_id": 1,
+              "customer_id": 101,
+              "net_amount": 420
+            }
+          ],
+          "truncated": false,
+          "total_rows": 1
+        },
+        "elapsed_ms": 564.557,
+        "input_versions": {},
+        "guided_evidence": {
+          "adapter": "fastapispark-guided-v1",
+          "service_version": "0.1.0",
+          "source_commit": "80ebbbcaf58b1d1922d014a83c9aab49943a81e1",
+          "execution_id": "dps_463b2ed4543f4c6d",
+          "fixture_version": "1",
+          "physical_engine": "duckdb",
+          "engine_version": "not reported by service",
+          "metrics": {
+            "runtime_id": "datapass-free",
+            "total_duration_ms": 85,
+            "total_tasks": 4,
+            "total_shuffle_bytes": 0,
+            "total_spill_bytes": 0,
+            "simulated_credits": 0.0,
+            "stages": [
+              {
+                "stage_id": 0,
+                "reason": "result stage",
+                "operations": [
+                  "filter",
+                  "select",
+                  "limit"
+                ],
+                "tasks": 4,
+                "input_rows": 3,
+                "output_rows": 1,
+                "input_bytes": 162,
+                "shuffle_read_bytes": 0,
+                "shuffle_write_bytes": 0,
+                "spill_bytes": 0,
+                "duration_ms": 85,
+                "skew_factor": 1.0
+              }
+            ],
+            "warnings": [],
+            "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+          },
+          "truth": "bounded results; distributed metrics simulated"
+        }
+      }
+    ],
+    "truth": "semantic-emulation",
+    "runtime": {
+      "adapter": "fastapispark-guided-v1 / configured remote service",
+      "engine": "duckdb",
+      "engine_version": "not reported; service 0.1.0",
+      "session_generation": "4cb1af6f89f94257a3919fc3df49698b"
+    },
+    "elapsed_ms": 4688.358
+  },
+  "ordered_submission": {
+    "status": "passed",
+    "checks": [
+      {
+        "id": "example",
+        "visibility": "visible",
+        "passed": true,
+        "status": "passed",
+        "execution_id": "1e282641f52548a6ab35479f0e2682d1",
+        "execution_status": "success",
+        "elapsed_ms": 581.368,
+        "message": "Full bounded result matches.",
+        "input_versions": {},
+        "actual": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          },
+          {
+            "order_id": 2,
+            "customer_id": 102,
+            "net_amount": 275
+          }
+        ],
+        "expected": [
+          {
+            "order_id": 1,
+            "customer_id": 101,
+            "net_amount": 420
+          },
+          {
+            "order_id": 2,
+            "customer_id": 102,
+            "net_amount": 275
+          }
+        ]
+      },
+      {
+        "id": "different-values",
+        "visibility": "hidden",
+        "passed": true,
+        "status": "passed",
+        "execution_id": "d00e988ee702443c8be0ebd312c8908d",
+        "execution_status": "success",
+        "elapsed_ms": 641.998,
+        "message": "Full bounded result matches.",
+        "input_versions": {}
+      },
+      {
+        "id": "duplicate-orders",
+        "visibility": "edge",
+        "passed": true,
+        "status": "passed",
+        "execution_id": "bb792873db3d4e44af1b2f57715887f5",
+        "execution_status": "success",
+        "elapsed_ms": 540.649,
+        "message": "Full bounded result matches.",
+        "input_versions": {}
+      },
+      {
+        "id": "empty-result",
+        "visibility": "edge",
+        "passed": true,
+        "status": "passed",
+        "execution_id": "2da829369bac4c4fb2074a80abd831c1",
+        "execution_status": "success",
+        "elapsed_ms": 1540.473,
+        "message": "Full bounded result matches.",
+        "input_versions": {}
+      }
+    ],
+    "runs": [
+      {
+        "id": "1e282641f52548a6ab35479f0e2682d1",
+        "cell_id": "answer",
+        "notebook_id": "live-qualification",
+        "source_hash": "7ffdeea13d1ac130bc54c858cb7427964ca1cc65c84cdf83e129ff8292f39d5c",
+        "session_generation": "1aa1da12805e426fb81a86f44e0ff7f4",
+        "sequence": 1,
+        "created_at": "2026-09-21T19:18:53.659136+00:00",
+        "engine": "DuckDB via configured remote service",
+        "language": "sparklab",
+        "status": "success",
+        "result": {
+          "columns": [
+            "order_id",
+            "customer_id",
+            "net_amount"
+          ],
+          "rows": [
+            {
+              "order_id": 1,
+              "customer_id": 101,
+              "net_amount": 420
+            },
+            {
+              "order_id": 2,
+              "customer_id": 102,
+              "net_amount": 275
+            }
+          ],
+          "truncated": false,
+          "total_rows": 2
+        },
+        "elapsed_ms": 581.368,
+        "input_versions": {},
+        "guided_evidence": {
+          "adapter": "fastapispark-guided-v1",
+          "service_version": "0.1.0",
+          "source_commit": "80ebbbcaf58b1d1922d014a83c9aab49943a81e1",
+          "execution_id": "dps_43ede269b72d4b9c",
+          "fixture_version": "1",
+          "physical_engine": "duckdb",
+          "engine_version": "not reported by service",
+          "metrics": {
+            "runtime_id": "datapass-free",
+            "total_duration_ms": 85,
+            "total_tasks": 4,
+            "total_shuffle_bytes": 16,
+            "total_spill_bytes": 0,
+            "simulated_credits": 0.0,
+            "stages": [
+              {
+                "stage_id": 0,
+                "reason": "shuffle boundary: order_by",
+                "operations": [
+                  "filter",
+                  "select",
+                  "order_by"
+                ],
+                "tasks": 4,
+                "input_rows": 3,
+                "output_rows": 1,
+                "input_bytes": 162,
+                "shuffle_read_bytes": 0,
+                "shuffle_write_bytes": 16,
+                "spill_bytes": 0,
+                "duration_ms": 85,
+                "skew_factor": 1.0
+              }
+            ],
+            "warnings": [
+              "Global orderBy/sort requires a shuffle."
+            ],
+            "disclaimer": "Distributed metrics and Datapass credits are simulations for learning; they are not measurements or vendor pricing."
+          },
+          "truth": "bounded results; distributed metrics simulated"
+        }
+      }
+    ],
+    "truth": "semantic-emulation",
+    "runtime": {
+      "adapter": "fastapispark-guided-v1 / configured remote service",
+      "engine": "duckdb",
+      "engine_version": "not reported; service 0.1.0",
+      "session_generation": "1aa1da12805e426fb81a86f44e0ff7f4"
+    },
+    "elapsed_ms": 5457.184
+  }
+}

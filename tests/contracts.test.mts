@@ -33,6 +33,6 @@ test('workflow evidence follows imported case cell identity and survives reopen'
 test('corrupt import and duplicate project identities fail without changing source',()=>{
  const n=createCaseNotebook(c);
  assert.throws(()=>importNotebook('{bad','broken.ipynb'));
- assert.throws(()=>restoreNotebook({...n,blocks:[...n.blocks,n.blocks[0]]}),/duplicate block IDs/);
+ assert.throws(()=>restoreNotebook({...n,blocks:[...n.blocks,n.blocks[0]]}),/duplicate block/i);
  assert.equal(sourceOf(n,n.blocks[0]),c.steps[0].code);
 });

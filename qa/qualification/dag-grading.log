@@ -1,0 +1,8 @@
+........                                                                 [100%]
+============================== warnings summary ===============================
+tests/test_pipeline_grading.py::test_design_grades_without_python_or_execution_and_preserves_attempt_contract
+  D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+    class ArtifactBundle(Document):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+8 passed, 1 warning in 0.73s

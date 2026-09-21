@@ -1,13 +1,5 @@
 [
   {
-    "id": "data-factory",
-    "title": "Data Factory",
-    "kind": "ingestion",
-    "persona": "fabric",
-    "status": "foundation",
-    "contract_version": 1
-  },
-  {
     "id": "fabric-notebook",
     "title": "Fabric notebook",
     "kind": "notebook",
@@ -33,7 +25,7 @@
   },
   {
     "id": "airflow",
-    "title": "Airflow tasks",
+    "title": "Local orchestration concepts",
     "kind": "orchestration",
     "persona": "airflow",
     "status": "foundation",

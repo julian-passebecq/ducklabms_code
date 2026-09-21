@@ -59,3 +59,12 @@ A default regression test checks that these checked-in previews still match the 
 - **real/deterministic:** parser, supported relational semantics, bounded-fixture results, truth-pack statistics;
 - **dataset-grounded simulation:** Spark stages/tasks, shuffle, skew, AQE, spill pressure, virtual duration and cost;
 - **not emulated:** JVM GC, actual executor death, real network shuffle, proprietary Fabric/Databricks scheduling, or cloud wall-clock performance.
+
+
+## Root Runtime Pass 1
+
+The root uses `physical.py` to turn the submitted safe logical plan into deterministic teaching evidence over the shared catalog. `capabilities.py` is the public support matrix used by API and notebook help. `cluster_profiles.json` has versioned fictional profiles; `cost.py:credits` supplies Datapass Credits without currency or vendor billing. The legacy standalone scheduler/cost APIs remain reference-compatible.
+
+Run the `spark-window` case for the second immutable truth pack, or open the authored Account running balance exercise in shared Interview Practice. The profile/AQE selector changes only distributed estimates. Real local rows, simulated distributed metrics, assumed input statistics and unavailable behavior have separate UI labels.
+
+See `../../docs/SPARKLAB_RUNTIME_PASS_1_HANDOFF.md` for semantics, formulas, known model limits and exact external QA commands. Optional oracle execution: `python scripts/sparklab-oracle.py --fixtures services/sparklab/oracle.json` from the repository root in an externally provisioned PySpark/JVM environment. It runs trusted checked-in developer fixtures and is never an application execution path.

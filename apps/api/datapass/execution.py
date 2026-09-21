@@ -10,6 +10,7 @@ import importlib.util
 import io
 import json
 import math
+import re
 from pathlib import Path
 import time
 from typing import Any
@@ -19,9 +20,7 @@ from .catalog import Catalog, json_value, references
 from .content import ROOT, compile_dbt, get_case, topological_steps
 from services.sparklab.safe_parser import SafeSparkParser, SparkLabSyntaxError
 from services.sparklab.sparklab import SparkSession
-from services.sparklab.runtime import load_cluster_profiles, simulate_retail_job
-from services.sparklab.cost import price_job
-from services.sparklab.grader import grade_retail
+from services.sparklab.runtime import load_cluster_profiles
 
 SPARK_HOME = ROOT / 'services' / 'sparklab'
 
@@ -71,11 +70,17 @@ class Engine:
         self.directory = directory
 
     def capabilities(self):
+        lakehouse = self.catalog.runtime_contract()
         return {
             'storage': self.catalog.kind,
-            'storage_truth': 'real local data; SQLite compatibility mode' if self.catalog.kind == 'sqlite' else 'real local data',
-            'ducklake_active': self.catalog.kind == 'ducklake',
-            'motherduck': {'enabled': False, 'reason': 'Optional future remote catalog adapter; no credentials required.'},
+            'storage_truth': lakehouse['truth'],
+            'ducklake_active': bool(lakehouse['active']),
+            'lakehouse': lakehouse,
+            'motherduck': {
+                'enabled': False,
+                'mode': 'optional_remote',
+                'reason': 'Optional future remote DuckDB/DuckLake adapter; no hidden network fallback and no credentials required for local use.',
+            },
             'kernels': [
                 {'id':'sql','available':True,'truth':'real SQL execution'},
                 {'id':'sparklab','available':True,'truth':'supported AST compiled to local SQL; distributed compute simulated'},
@@ -85,6 +90,7 @@ class Engine:
             ],
             'session_generation': self.generation,
             'distributed_spark': False,
+            'sparklab': __import__('services.sparklab.capabilities', fromlist=['SUPPORT']).SUPPORT,
         }
 
     def parser(self, notebook_id: str):
@@ -114,6 +120,7 @@ class Engine:
         env = self.python_namespaces.setdefault(notebook_id, {'__name__':'__datapass_notebook__'})
         output = BoundedText()
         shown: list[Any] = []
+        shown_columns: list[str] = []
         dependencies: set[str] = set()
         def query(sql):
             dependencies.update(references(sql))
@@ -131,8 +138,10 @@ class Engine:
             if isinstance(value, dict):
                 return [value]
             return [{'value': json_value(value)}]
-        def display(value):
-            shown.append(normalize(value))
+        def display(value, columns=None):
+            rows = normalize(value)
+            shown.append(rows)
+            shown_columns[:] = list(columns if columns is not None else getattr(value, 'columns', list(rows[0]) if rows else []))
         def publish(name, value):
             return self.catalog.publish_rows(name, normalize(value), request['cell_id'], sorted(dependencies))
         env.update(query=query, display=display, publish=publish)
@@ -151,52 +160,157 @@ class Engine:
         if request.get('output_asset'):
             result = self.catalog.publish_rows(request['output_asset'], rows, request['cell_id'], sorted(dependencies))
         else:
-            result = {'columns':list(rows[0]) if rows else [], 'rows':json_value(rows[:200]),'truncated':len(rows)>200,'total_rows':len(rows)}
+            result = {'columns':shown_columns, 'rows':json_value(rows[:200]),'truncated':len(rows)>200,'total_rows':len(rows)}
         return result, output.getvalue(), sorted(dependencies)
 
+    def _partition_pruning_hints(self, frame) -> dict[str, tuple[str, str]]:
+        """Find only directly provable source equality filters.
+
+        A hint is emitted only when the first relational operation on a source
+        is a simple column = scalar filter. More complex predicates are left
+        unmodeled rather than guessed.
+        """
+        hints: dict[str, tuple[str, str]] = {}
+
+        def visit(current):
+            for op in current.ops:
+                if op.kind == 'join':
+                    visit(op.detail['other'])
+            if not current.ops or current.ops[0].kind != 'filter':
+                return
+            sql = str(current.ops[0].detail['expr'].sql)
+            match = re.fullmatch(
+                r'\("([A-Za-z_][A-Za-z0-9_]*)" = (\'(?:\'\'|[^\'])*\'|-?\d+(?:\.\d+)?|TRUE|FALSE)\)',
+                sql,
+                re.I,
+            )
+            if not match:
+                return
+            raw = match.group(2)
+            if raw.startswith("'") and raw.endswith("'"):
+                value = raw[1:-1].replace("''", "'")
+            else:
+                value = raw.lower() if raw.upper() in {'TRUE', 'FALSE'} else raw
+            hints[current.source] = (match.group(1), value)
+
+        visit(frame)
+        return hints
+
     def simulate(self, request: dict, parsed, result: dict):
-        pack_id = request.get('truth_pack')
-        if not pack_id:
-            return None
-        if pack_id != 'retail_broadcast_join_03':
-            raise ValueError('This root currently connects only the retail broadcast truth pack. Other uploaded packs are retained for migration.')
-        pack = json.loads((SPARK_HOME / 'exercises' / f'{pack_id}.json').read_text())
-        # Compare the full physical input fixture before attaching the virtual-scale scenario.
-        try:
-            from services.semantic.executor import _execute_sqlite
-            # Immutable shipped fixtures, not mutable workspace source tables.
-            expected_orders = _execute_sqlite('SELECT * FROM silver.orders ORDER BY order_id', 'retail', 200)[2]
-            expected_segments = _execute_sqlite('SELECT * FROM silver.dim_customer_segment ORDER BY segment_id', 'retail', 200)[2]
-            orders = self.catalog.query('SELECT * FROM silver.orders ORDER BY order_id')
-            segments = self.catalog.query('SELECT * FROM silver.dim_customer_segment ORDER BY segment_id')
-            input_match = (not orders['truncated'] and not segments['truncated'] and
-                           orders['rows'] == expected_orders and segments['rows'] == expected_segments)
-        except Exception:
-            input_match = False
-        if not input_match:
-            return {'status':'unavailable','reason':'The workspace does not match the bounded reference fixture; modeled cluster metrics were withheld.'}
+        from services.sparklab.physical import simulate_plan, credits, logical_plan
         profiles = load_cluster_profiles(str(SPARK_HOME / 'cluster_profiles.json'))
         profile_id = request.get('profile', 'generic_8x8')
         if profile_id not in profiles:
             raise ValueError('Unknown virtual cluster profile.')
         profile = profiles[profile_id]
-        broadcast = any(op.kind == 'join' and bool(op.detail.get('broadcast')) for op in parsed.dataframe.ops)
-        job = simulate_retail_job(pack, profile, request.get('aqe', True), broadcast=broadcast)
-        metrics = job.as_dict()
-        # The inherited confidence percentages were authored model inputs, not validation evidence.
-        metrics.pop('truth_confidence', None)
-        for stage in metrics['stages']:
-            stage['task_count'] = len(stage['tasks'])
-            stage['tasks'] = stage['tasks'][:12]
-            stage['task_preview_only'] = stage['task_count'] > 12
-        correct = not result['truncated'] and compare_rows(result['rows'], pack['fixture_truth']['rows'])
-        return {
-            'status':'modeled','truth':'scenario-grounded simulation; not real Spark or measured performance',
-            'physical_fixture_rows':12,'virtual_fact_rows':pack['statistics']['fact_rows'],
-            'profile_id':profile_id,'metrics':metrics,
-            'cost':price_job(job, profile),
-            'grade':grade_retail(request['code'],parsed.dataframe,job.as_dict(),pack,semantic_verified=correct),
-        }
+        aqe = request.get('aqe', profile.aqe_default)
+        statistics = {}
+        catalog_assets = {asset['name']: asset for asset in self.catalog.listing()}
+        pruning_hints = self._partition_pruning_hints(parsed.dataframe)
+        measured_ducklake_inputs = False
+        measured_partition_pruning = False
+        for node in logical_plan(parsed.dataframe):
+            if node['operation'] == 'scan':
+                name = node['source']
+                if name == 'input' and request.get('_exercise_fixture_sql'):
+                    count = request.get('_exercise_input_count', 0)
+                    statistics[name] = {
+                        'rows': count,
+                        'bytes': count * 128,
+                        'input_truth': 'bounded exercise fixture; bytes estimated at 128 bytes/row',
+                    }
+                    continue
+                asset = catalog_assets.get(name)
+                count = asset['row_count'] if asset is not None else self.catalog.query(f'SELECT COUNT(*) AS n FROM {name}')['rows'][0]['n']
+                storage = asset.get('storage') if asset else None
+                has_physical_files = bool(storage and int(storage.get('file_count') or 0) > 0)
+                if storage and storage.get('truth') == 'measured_ducklake_metadata' and (has_physical_files or count == 0):
+                    measured_ducklake_inputs = True
+                    full_bytes = int(storage.get('size_bytes') or 0)
+                    full_files = int(storage.get('file_count') or 0)
+                    stat = {
+                        'rows': count,
+                        'table_rows': count,
+                        'bytes': full_bytes,
+                        'full_bytes': full_bytes,
+                        'partitions': max(1, full_files),
+                        'source_files': full_files,
+                        'full_source_files': full_files,
+                        'small_file_count': int(storage.get('small_file_count') or 0),
+                        'min_file_size_bytes': int(storage.get('min_file_size_bytes') or 0),
+                        'max_file_size_bytes': int(storage.get('max_file_size_bytes') or 0),
+                        'average_file_size_bytes': round(full_bytes / max(full_files, 1)),
+                        'snapshot_id': storage.get('snapshot_id'),
+                        'input_truth': 'rows measured from table; bytes/files measured from DuckLake metadata',
+                    }
+                    hint = pruning_hints.get(name)
+                    if hint:
+                        pruning = self.catalog.partition_pruning_evidence(name, hint[0], hint[1])
+                        if pruning.get('eligible'):
+                            measured_partition_pruning = True
+                            stat.update(
+                                rows=int(pruning.get('candidate_records') or 0),
+                                bytes=int(pruning.get('candidate_bytes') or 0),
+                                partitions=max(1, int(pruning.get('candidate_files') or 0)),
+                                candidate_files=int(pruning.get('candidate_files') or 0),
+                                pruned_files=int(pruning.get('pruned_files') or 0),
+                                pruned_bytes=int(pruning.get('pruned_bytes') or 0),
+                                partition_pruning=pruning,
+                                input_truth='DuckLake rows/files/bytes measured; equality partition candidate set derived exactly from catalog metadata, not runtime scan telemetry',
+                            )
+                    statistics[name] = stat
+                else:
+                    statistics[name] = {
+                        'rows': count,
+                        'bytes': count * 128,
+                        'input_truth': 'rows measured from catalog; bytes estimated at 128 bytes/row because physical file evidence is unavailable',
+                    }
+        pack_id = request.get('truth_pack')
+        pack = None
+        if pack_id:
+            if pack_id not in {'retail_broadcast_join_03','finance_account_window_03'}:
+                return {'status':'unavailable','reason':'No registered immutable truth pack.'}
+            pack = json.loads((SPARK_HOME / 'exercises' / f'{pack_id}.json').read_text())
+            from services.semantic.executor import _execute_sqlite
+            tables = (['silver.orders','silver.dim_customer_segment'] if pack_id.startswith('retail') else ['silver.transactions'])
+            for table in tables:
+                expected = _execute_sqlite(f'SELECT * FROM {table}', pack.get('case', 'retail'), 200)[2]
+                actual = self.catalog.query(f'SELECT * FROM {table}')
+                if actual['truncated'] or not compare_rows(actual['rows'], expected):
+                    return {'status':'unavailable','reason':'Immutable reference input changed; scenario metrics withheld.'}
+            if not set(statistics).issubset(tables):
+                return {'status':'unavailable','reason':'Submitted plan reads inputs outside this truth pack.'}
+            fact = tables[0]
+            if fact in statistics:
+                stats = pack['statistics']
+                statistics[fact] = {'rows':stats['fact_rows'], 'bytes':stats['fact_bytes_gb']*1073741824,
+                                    'partitions':stats['source_files'],
+                                    'hot_fraction':stats['largest_partition_mb']/(stats['fact_bytes_gb']*1024),
+                                    'input_truth':'authored immutable truth-pack scale; not physically processed rows'}
+            if len(tables)>1 and tables[1] in statistics:
+                statistics[tables[1]].update(bytes=pack['statistics'].get('dimension_bytes_mb', 2)*1048576,
+                                             rows=pack['statistics'].get('dimension_rows',4),
+                                             catalog_statistics_available=pack['statistics'].get('catalog_statistics_available',True),
+                                             input_truth='authored immutable truth-pack scale; not physically processed rows')
+        job, metrics, nodes = simulate_plan(parsed.dataframe, statistics, profile, aqe, result.get('total_rows'))
+        comparisons = []
+        for other in profiles.values():
+            for adaptive in (False, True):
+                variant, _, _ = simulate_plan(parsed.dataframe, statistics, other, adaptive)
+                comparisons.append({'profile_id':other.id,'aqe':adaptive,'duration_s':variant.total_duration_s,
+                                    'credits':credits(variant, other)['total'],
+                                    'duration_delta_s':round(variant.total_duration_s-job.total_duration_s,3),
+                                    'reason':'Same logical plan and input assumptions; virtual slots, throughput, startup and AQE task grouping differ.'})
+        return {'status':'modeled','schema_version':1, 'truth':'Local semantic result + simulated distributed execution',
+                'profile_id':profile_id, 'aqe':aqe, 'metrics':metrics, 'logical_plan':nodes,
+                'action':parsed.action, 'datapass_credits':credits(job, profile), 'comparisons':comparisons,
+                'assumptions':{'input_statistics':statistics,
+                               'kind':'authored virtual scale' if pack else ('catalog rows + exact DuckLake identity-partition candidate files/bytes' if measured_partition_pruning else ('catalog rows + measured DuckLake Parquet files/bytes' if measured_ducklake_inputs else 'catalog row counts; assumed 128 bytes per row')),
+                               'calibration':'No real Spark benchmark calibration',
+                               'intermediates':'Cardinality and bytes carried forward without selectivity estimates; serial operator-stage dispatch, not Spark codegen fusion; scan counts are real only outside virtual truth-pack scale',
+                               'cache':'Unavailable; cache/reuse not modeled',
+                               'storage_note':'DuckLake source file counts/sizes are measured when available. Identity-partition equality candidate files are exact catalog evidence; this is planning evidence, not runtime scan telemetry. Other pruning/selectivity is not claimed.'},
+                'semantic_match':(not result['truncated'] and compare_rows(result['rows'],pack['fixture_truth']['rows'])) if pack else None}
 
     def execute(self, request: dict):
         start = time.perf_counter()
@@ -218,17 +332,35 @@ class Engine:
             if language in {'sql', 'dbt'}:
                 compiled_sql = request['code']
                 if language == 'dbt':
-                    compiled_sql = compile_dbt(compiled_sql, get_case(request['case_id']))
+                    if request.get('_exercise_fixture_sql'):
+                        from .dbt_drills import compile_fixture_sql
+                        compiled_sql = compile_fixture_sql(compiled_sql)
+                    else:
+                        compiled_sql = compile_dbt(compiled_sql, get_case(request['case_id']))
             elif language == 'sparklab':
                 # A rejected cell cannot partially overwrite earlier Spark symbols.
                 candidate = deepcopy(self.parser(request['notebook_id']))
+                # Refresh schemas from the shared catalog, including saved notebook symbols.
+                tables = candidate.spark.profile.setdefault('tables', {})
+                for asset in self.catalog.listing():
+                    tables[asset['name']] = {'columns':self.catalog.query(f"SELECT * FROM {asset['name']} LIMIT 0")['columns']}
+                if request.get('_exercise_columns'):
+                    tables['input'] = {'columns':request['_exercise_columns']}
                 parsed = candidate.parse(request['code'])
+                if request.get('profile', 'generic_8x8') not in load_cluster_profiles(str(SPARK_HOME / 'cluster_profiles.json')):
+                    raise ValueError('Unknown virtual cluster profile.')
+                columns = parsed.dataframe.current_columns()
+                if columns is not None and len(columns) != len(set(columns)):
+                    raise ValueError('Duplicate result column names cannot be represented faithfully; select distinct aliases.')
                 compiled_sql = parsed.dataframe.sql
             elif language in {'python', 'polars'}:
                 result, run['stdout'], python_inputs = self._python(request)
             else:
                 raise ValueError('Unsupported kernel. Markdown is not executable.')
             if compiled_sql is not None:
+                # Server-owned exercise fixture scope; never accepted by API models.
+                if request.get('_exercise_fixture_sql'):
+                    compiled_sql = f"WITH input AS ({request['_exercise_fixture_sql']}) SELECT * FROM ({compiled_sql.rstrip().rstrip(';')}) AS submitted"
                 if request.get('output_asset'):
                     result = self.catalog.materialize(request['output_asset'], compiled_sql, request['cell_id'])
                 elif language in {'sparklab','dbt'}:
@@ -238,8 +370,12 @@ class Engine:
                 run['compiled_sql'] = compiled_sql
             if parsed is not None:
                 self.parsers[request['notebook_id']] = candidate
-                run['training_plan'] = parsed.dataframe.explain_training()
-                run['simulation'] = self.simulate(request, parsed, result)
+                # Physical evidence failure cannot invalidate a successfully computed semantic result.
+                try:
+                    run['simulation'] = self.simulate(request, parsed, result)
+                except Exception as error:
+                    run['simulation'] = {'status':'unavailable','reason':str(error)}
+                run['training_plan'] = {'truth':'structured teaching plan', 'nodes':run['simulation'].get('logical_plan', [])}
             run.update(status='success', result=result)
             if request.get('check'):
                 run['check'] = self.check(request['check'])
@@ -253,6 +389,55 @@ class Engine:
             run['error'] = {'type':type(error).__name__, 'message':str(error)}
         run['elapsed_ms'] = round((time.perf_counter() - start) * 1000, 3)
         return run
+
+    def spark_verify_fixture(self, request: dict):
+        """Prepare exact bounded workspace inputs for the real-Spark oracle.
+
+        This does not execute submitted Python. The existing SafeSparkParser
+        identifies source scans. Verification is withheld when a source would
+        be truncated by the bounded local catalog preview, because silently
+        sampling would make the remote result semantically misleading.
+        """
+        code = request.get('code', '')
+        if not code or len(code) > 20_000:
+            raise ValueError('Real Spark verification code must be 1..20,000 characters.')
+        notebook_id = request.get('notebook_id') or 'case-notebook'
+        candidate = deepcopy(self.parser(notebook_id))
+        tables = candidate.spark.profile.setdefault('tables', {})
+        for asset in self.catalog.listing():
+            tables[asset['name']] = {
+                'columns': self.catalog.query(f"SELECT * FROM {asset['name']} LIMIT 0")['columns']
+            }
+        parsed = candidate.parse(code)
+        from services.sparklab.physical import logical_plan
+        sources = []
+        for node in logical_plan(parsed.dataframe):
+            if node['operation'] == 'scan' and node.get('source') not in sources:
+                sources.append(node.get('source'))
+        if not sources:
+            raise ValueError('No Spark source table was found for real verification.')
+        if len(sources) > 8:
+            raise ValueError('Real Spark verification supports at most eight source tables.')
+
+        fixtures = []
+        for source in sources:
+            if source == 'input':
+                raise ValueError('Exercise-only input fixtures are not exported to remote Spark in Pass 1.')
+            result = self.catalog.query(f'SELECT * FROM {source}')
+            if result['truncated']:
+                raise ValueError(
+                    f'Real Spark verification withheld: {source} exceeds the bounded fixture limit. '
+                    'Use SparkLab for modeled scale or a dedicated remote dataset pass.'
+                )
+            if not result['rows']:
+                raise ValueError(f'Real Spark verification Pass 1 requires non-empty source table: {source}.')
+            fixtures.append({'name': source, 'rows': result['rows']})
+        return {
+            'code': code,
+            'tables': fixtures,
+            'sources': sources,
+            'truth': 'exact bounded workspace rows prepared locally; no silent sampling',
+        }
 
     def workflow(self, request: dict):
         case = get_case(request['case_id'])
@@ -283,10 +468,41 @@ class Engine:
         op = request['op']
         if op == 'capabilities':
             return self.capabilities()
+        if op == 'import_csv':
+            from .local_data import import_csv
+            return {**import_csv(self.catalog,request['asset'],request['text']),'session_generation':self.generation}
+        if op == 'catalog_preview':
+            from .catalog import asset_name
+            name=asset_name(request['asset'])
+            cursor=self.catalog.db.execute('SELECT * FROM '+name+' LIMIT 0')
+            schema=[{'name':c[0],'type':str(c[1]) if c[1] is not None else 'not reported by compatibility engine'} for c in cursor.description]
+            return {'asset':name,'schema':schema,'result':self.catalog.query('SELECT * FROM '+name),'fresh':self.catalog.fresh(name),'engine':self.catalog.kind}
+        if op == 'read_query':
+            result = self.catalog.query(request['query'])
+            return {'result':result,'engine':self.catalog.kind,'session_generation':self.generation,
+                    'input_versions':{a:self.catalog.versions.get(a,{}).get('version') for a in references(request['query'])}}
+        if op == 'register_dbt_outputs':
+            from .catalog import ASSET
+            registered, omitted = [], []
+            for node in request['nodes']:
+                name = node['name']
+                if not ASSET.fullmatch(name) or not self.catalog.exists(name):
+                    omitted.append(name)
+                    continue
+                self.catalog._touch(name, [ref for ref in node['inputs'] if ASSET.fullmatch(ref)], 'dbt:'+request['invocation_id'])
+                registered.append(name)
+            return {'registered':registered,'omitted':omitted}
         if op == 'catalog':
             return self.catalog.listing()
+        if op == 'lakehouse':
+            return self.catalog.lakehouse_overview()
+        if op == 'spark_verify_fixture':
+            return self.spark_verify_fixture(request)
         if op == 'execute':
             return self.execute(request)
+        if op == 'exercise':
+            from .exercises import grade
+            return grade(self, request)
         if op == 'workflow':
             return self.workflow(request)
         if op == 'check':

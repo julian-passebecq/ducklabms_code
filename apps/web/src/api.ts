@@ -1,5 +1,7 @@
-import type {Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,ModuleManifest,Profile,RuntimeClient,WorkflowResult,Workspace} from '../../../packages/contracts/src/index.ts';
-import type {RootNotebook} from './notebook';
+import type {LocalCapabilities,LocalJob,LocalStart,DbtAction} from '../../../packages/contracts/src/local.ts';
+import type {RootWorkbench} from '../../../packages/contracts/src/foundation.ts';
+import type {AirflowDispatch,AirflowDispatchRequest,AirflowRemoteCapabilities,AirflowRunResult,AirflowRunStatus,Asset,Capabilities,CaseStudy,ExecuteRequest,Execution,LakehouseOverview,ModuleManifest,Profile,RuntimeClient,SparkRemoteCapabilities,SparkRemoteDispatch,SparkRemoteDispatchRequest,SparkRemoteResult,SparkRemoteRunStatus,WorkflowResult,Workspace,ExerciseDefinition,ExerciseRequest,ExerciseResult,ExerciseAttempt,PracticeReview,PracticeProgress} from '../../../packages/contracts/src/index.ts';
+import type {RootNotebook} from './notebook.ts';
 
 const STORAGE='datapass-local-token';
 export function initialToken():string {
@@ -16,14 +18,45 @@ export class ApiClient implements RuntimeClient {
   if(!response.ok)throw new Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail??data));
   return data as T;
  }
+ compilePipeline=(id:string,source:string)=>this.request<import('../../../packages/contracts/src/local.ts').PipelineCompilation>(`/workspaces/${id}/pipelines/compile`,{method:'POST',body:JSON.stringify({source})});
+ runPipeline=(id:string,body:LocalStart)=>this.request<LocalJob>(`/workspaces/${id}/pipelines/run`,{method:'POST',body:JSON.stringify(body)});
+ localCapabilities=(id:string)=>this.request<LocalCapabilities>(`/workspaces/${id}/local/capabilities`);
+ localJobs=(id:string,resourceId?:string)=>this.request<LocalJob[]>(`/workspaces/${id}/jobs${resourceId?'?resource_id='+encodeURIComponent(resourceId):''}`);
+ localJob=(id:string,runId:string)=>this.request<LocalJob>(`/workspaces/${id}/jobs/${encodeURIComponent(runId)}`);
+ cancelLocalJob=(id:string,runId:string)=>this.request<LocalJob>(`/workspaces/${id}/jobs/${encodeURIComponent(runId)}/cancel`,{method:'POST'});
+ localArtifact=(id:string,runId:string,name:string)=>this.request<unknown>(`/workspaces/${id}/jobs/${encodeURIComponent(runId)}/artifacts/${encodeURIComponent(name)}`);
+ runDbt=(id:string,body:LocalStart&{action:DbtAction;select:string})=>this.request<LocalJob>(`/workspaces/${id}/dbt/run`,{method:'POST',body:JSON.stringify(body)});
+ queryBoard=(id:string,body:LocalStart)=>this.request<LocalJob>(`/workspaces/${id}/charts/query`,{method:'POST',body:JSON.stringify(body)});
+ guidedCapabilities=()=>this.request<import('../../../packages/contracts/src/index.ts').GuidedCapabilities>('/guided-spark/capabilities');
+ qualifyGuided=(consent:boolean)=>this.request<import('../../../packages/contracts/src/index.ts').GuidedCapabilities>('/guided-spark/qualify',{method:'POST',body:JSON.stringify({consent})});
  cases=()=>this.request<CaseStudy[]>('/cases');
+ progress=(id:string)=>this.request<PracticeProgress>(`/workspaces/${id}/practice/progress`);
+ exercises=()=>this.request<ExerciseDefinition[]>('/exercises');
+ solution=(id:string)=>this.request<{source:string;exercise_version:string}>(`/exercises/${encodeURIComponent(id)}/solution`,{method:'POST'});
+ attempts=(id:string)=>this.request<ExerciseAttempt[]>(`/workspaces/${id}/attempts`);
+ exercise=(id:string,request:ExerciseRequest)=>this.request<ExerciseResult>(`/workspaces/${id}/exercise`,{method:'POST',body:JSON.stringify(request)});
+ review=(id:string,exercise:string,revision:number,metadata:PracticeReview)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}/practice/${encodeURIComponent(exercise)}/review`,{method:'PUT',body:JSON.stringify({revision,...metadata})});
  modules=()=>this.request<ModuleManifest[]>('/modules');
  profiles=()=>this.request<Profile[]>('/profiles');
  workspaces=()=>this.request<Array<Pick<Workspace,'id'|'case_id'|'title'|'revision'|'updated_at'>>>('/workspaces');
- create=(case_id:string)=>this.request<Workspace<RootNotebook>>('/workspaces',{method:'POST',body:JSON.stringify({case_id})});
+ create=(case_id:string|null,title?:string)=>this.request<Workspace<RootNotebook>>('/workspaces',{method:'POST',body:JSON.stringify({case_id,title})});
  workspace=(id:string)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}`);
  save=(id:string,revision:number,notebook:RootNotebook)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}/notebook`,{method:'PUT',body:JSON.stringify({revision,notebook})});
+ validateWorkbench=(id:string,workbench:unknown)=>this.request<{status:'valid';truth:'design_only';workbench:RootWorkbench}>(`/workspaces/${id}/workbench/validate`,{method:'POST',body:JSON.stringify(workbench)});
+ saveWorkbench=(id:string,revision:number,workbench:RootWorkbench)=>this.request<Workspace<RootNotebook>>(`/workspaces/${id}/workbench`,{method:'PUT',body:JSON.stringify({revision,workbench})});
+ foundationSchema=()=>this.request<Record<string,unknown>>('/foundation/schema');
+ previewCatalog=(id:string,asset:string)=>this.request<import('../../../packages/contracts/src/local.ts').CatalogPreview>(`/workspaces/${id}/catalog/preview?asset=${encodeURIComponent(asset)}`);
+ importCsv=(id:string,asset:string,text:string,workspace_revision:number)=>this.request<{asset:string;rows_imported:number;workspace_revision:number}>(`/workspaces/${id}/catalog/import-csv`,{method:'POST',body:JSON.stringify({asset,text,workspace_revision})});
  catalog=(id:string)=>this.request<Asset[]>(`/workspaces/${id}/catalog`);
+ lakehouse=(id:string)=>this.request<LakehouseOverview>(`/workspaces/${id}/lakehouse`);
+ airflowCapabilities=()=>this.request<AirflowRemoteCapabilities>('/airflow/capabilities');
+ airflowDispatch=(request:AirflowDispatchRequest)=>this.request<AirflowDispatch>('/airflow/runs',{method:'POST',body:JSON.stringify(request)});
+ airflowStatus=(runId:number)=>this.request<AirflowRunStatus>(`/airflow/runs/${runId}`);
+ airflowResult=(runId:number,requestId:string)=>this.request<AirflowRunResult>(`/airflow/runs/${runId}/result/${encodeURIComponent(requestId)}`);
+ sparkRemoteCapabilities=()=>this.request<SparkRemoteCapabilities>('/spark/remote/capabilities');
+ sparkRemoteDispatch=(id:string,request:SparkRemoteDispatchRequest)=>this.request<SparkRemoteDispatch>(`/workspaces/${id}/spark/remote`,{method:'POST',body:JSON.stringify(request)});
+ sparkRemoteStatus=(id:string,jobId:string)=>this.request<SparkRemoteRunStatus>(`/workspaces/${id}/spark/remote/${encodeURIComponent(jobId)}`);
+ sparkRemoteResult=(id:string,jobId:string,requestId:string)=>this.request<SparkRemoteResult>(`/workspaces/${id}/spark/remote/${encodeURIComponent(jobId)}/result/${encodeURIComponent(requestId)}`);
  capabilities=(id:string)=>this.request<Capabilities>(`/workspaces/${id}/capabilities`);
  execute=(id:string,request:ExecuteRequest)=>this.request<Execution>(`/workspaces/${id}/execute`,{method:'POST',body:JSON.stringify(request)});
  workflow=(id:string,notebook_id:string,overrides:Record<string,string>,profile:string,aqe:boolean)=>this.request<WorkflowResult>(`/workspaces/${id}/workflow`,{method:'POST',body:JSON.stringify({notebook_id,overrides,profile,aqe})});

@@ -1,0 +1,1062 @@
+
+> datapass-studio-root@0.1.0 test:v1:models
+> node --experimental-strip-types --test tests/contracts.test.mts tests/interview.test.mts tests/foundation.test.mts && node --test tests/ui-m1-model.test.cjs tests/analytics-m2-model.test.cjs tests/workspace-resources.test.cjs tests/figures-v1.test.cjs
+
+TAP version 13
+# (node:4406) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: graph validates unknown, duplicate and cycle; supports independent tasks
+ok 1 - graph validates unknown, duplicate and cycle; supports independent tasks
+  ---
+  duration_ms: 3.267183
+  type: 'test'
+  ...
+# Subtest: case notebook has shared cell identity across all layouts
+ok 2 - case notebook has shared cell identity across all layouts
+  ---
+  duration_ms: 2.636852
+  type: 'test'
+  ...
+# Subtest: geometry cannot change notebook execution order
+ok 3 - geometry cannot change notebook execution order
+  ---
+  duration_ms: 1.643769
+  type: 'test'
+  ...
+# Subtest: semantic move is explicit and includes its output
+ok 4 - semantic move is explicit and includes its output
+  ---
+  duration_ms: 0.811613
+  type: 'test'
+  ...
+# Subtest: practice canvas honors custom geometry
+ok 5 - practice canvas honors custom geometry
+  ---
+  duration_ms: 0.434749
+  type: 'test'
+  ...
+# Subtest: project restore sanitizes blocks and keeps source
+ok 6 - project restore sanitizes blocks and keeps source
+  ---
+  duration_ms: 4.964575
+  type: 'test'
+  ...
+# Subtest: kernel switch updates export type without losing source
+ok 7 - kernel switch updates export type without losing source
+  ---
+  duration_ms: 0.324078
+  type: 'test'
+  ...
+# Subtest: ipynb roundtrip preserves source metadata attachments and inert HTML
+ok 8 - ipynb roundtrip preserves source metadata attachments and inert HTML
+  ---
+  duration_ms: 22.693642
+  type: 'test'
+  ...
+# Subtest: unsupported notebook magics stay read-only
+ok 9 - unsupported notebook magics stay read-only
+  ---
+  duration_ms: 0.678734
+  type: 'test'
+  ...
+# Subtest: root custom Spark kernel survives ipynb export and import
+ok 10 - root custom Spark kernel survives ipynb export and import
+  ---
+  duration_ms: 2.555315
+  type: 'test'
+  ...
+# Subtest: output evidence is attached to its originating cell only
+ok 11 - output evidence is attached to its originating cell only
+  ---
+  duration_ms: 0.544689
+  type: 'test'
+  ...
+# Subtest: server evidence cannot attach to another notebook
+ok 12 - server evidence cannot attach to another notebook
+  ---
+  duration_ms: 0.629636
+  type: 'test'
+  ...
+# Subtest: stale or changed inputs invalidate report freshness
+ok 13 - stale or changed inputs invalidate report freshness
+  ---
+  duration_ms: 0.174034
+  type: 'test'
+  ...
+# Subtest: new cells appear in all persistent layouts
+ok 14 - new cells appear in all persistent layouts
+  ---
+  duration_ms: 0.481801
+  type: 'test'
+  ...
+# Subtest: incompatible module contract rejected
+ok 15 - incompatible module contract rejected
+  ---
+  duration_ms: 0.211133
+  type: 'test'
+  ...
+# Subtest: custom practice geometry survives project save and restore
+ok 16 - custom practice geometry survives project save and restore
+  ---
+  duration_ms: 1.27011
+  type: 'test'
+  ...
+# Subtest: workflow evidence follows imported case cell identity and survives reopen
+ok 17 - workflow evidence follows imported case cell identity and survives reopen
+  ---
+  duration_ms: 3.891342
+  type: 'test'
+  ...
+# Subtest: corrupt import and duplicate project identities fail without changing source
+ok 18 - corrupt import and duplicate project identities fail without changing source
+  ---
+  duration_ms: 0.625427
+  type: 'test'
+  ...
+# (node:4407) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: shared server/client fixture has valid references
+ok 19 - shared server/client fixture has valid references
+  ---
+  duration_ms: 5.768932
+  type: 'test'
+  ...
+# Subtest: two panes reference exactly one notebook resource
+ok 20 - two panes reference exactly one notebook resource
+  ---
+  duration_ms: 10.294685
+  type: 'test'
+  ...
+# Subtest: opening an already-open resource focuses without duplicating tabs
+ok 21 - opening an already-open resource focuses without duplicating tabs
+  ---
+  duration_ms: 1.132216
+  type: 'test'
+  ...
+# Subtest: geometry/selection does not revise domain source
+ok 22 - geometry/selection does not revise domain source
+  ---
+  duration_ms: 0.555759
+  type: 'test'
+  ...
+# Subtest: semantic update is shared by all views and advances the resource revision
+ok 23 - semantic update is shared by all views and advances the resource revision
+  ---
+  duration_ms: 1.387614
+  type: 'test'
+  ...
+# Subtest: closing views or panes never deletes source and maintains one placement
+ok 24 - closing views or panes never deletes source and maintains one placement
+  ---
+  duration_ms: 2.057565
+  type: 'test'
+  ...
+# Subtest: moving a tab preserves view identity and layout
+ok 25 - moving a tab preserves view identity and layout
+  ---
+  duration_ms: 1.68334
+  type: 'test'
+  ...
+# Subtest: pane limit fails without mutating original
+ok 26 - pane limit fails without mutating original
+  ---
+  duration_ms: 5.887581
+  type: 'test'
+  ...
+# Subtest: dependency and derivation cycles fail closed
+ok 27 - dependency and derivation cycles fail closed
+  ---
+  duration_ms: 1.008978
+  type: 'test'
+  ...
+# Subtest: relationship cycles and distinct column relationships are not dependency cycles
+ok 28 - relationship cycles and distinct column relationships are not dependency cycles
+  ---
+  duration_ms: 0.886691
+  type: 'test'
+  ...
+# Subtest: model relationships require actual declared columns
+ok 29 - model relationships require actual declared columns
+  ---
+  duration_ms: 0.877789
+  type: 'test'
+  ...
+# Subtest: deleting a node cleans all view selections and incident edges
+ok 30 - deleting a node cleans all view selections and incident edges
+  ---
+  duration_ms: 1.096814
+  type: 'test'
+  ...
+# Subtest: missing notebook links and duplicate canonical references are rejected
+ok 31 - missing notebook links and duplicate canonical references are rejected
+  ---
+  duration_ms: 0.566834
+  type: 'test'
+  ...
+# Subtest: removing a design detaches its views without deleting the underlying notebook reference
+ok 32 - removing a design detaches its views without deleting the underlying notebook reference
+  ---
+  duration_ms: 0.636474
+  type: 'test'
+  ...
+# Subtest: unknown edge endpoints reject without accepting a partial graph
+ok 33 - unknown edge endpoints reject without accepting a partial graph
+  ---
+  duration_ms: 0.326193
+  type: 'test'
+  ...
+# Subtest: MotherDuck is a first-class but unavailable target, never a fake successful executor
+ok 34 - MotherDuck is a first-class but unavailable target, never a fake successful executor
+  ---
+  duration_ms: 0.215968
+  type: 'test'
+  ...
+# Subtest: measured local and modeled Spark times remain distinct
+ok 35 - measured local and modeled Spark times remain distinct
+  ---
+  duration_ms: 0.142991
+  type: 'test'
+  ...
+# Subtest: minimal empty workspace is a valid additive envelope
+ok 36 - minimal empty workspace is a valid additive envelope
+  ---
+  duration_ms: 0.105917
+  type: 'test'
+  ...
+# (node:4409) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: interview shares source and semantic order; geometry survives restore and view reset
+ok 37 - interview shares source and semantic order; geometry survives restore and view reset
+  ---
+  duration_ms: 8.945653
+  type: 'test'
+  ...
+# Subtest: scoped reset and clear preserve unrelated notes, geometry and source
+ok 38 - scoped reset and clear preserve unrelated notes, geometry and source
+  ---
+  duration_ms: 2.709723
+  type: 'test'
+  ...
+# Subtest: hide is view-only, reset restores hidden references, deletion groups output
+ok 39 - hide is view-only, reset restores hidden references, deletion groups output
+  ---
+  duration_ms: 1.695073
+  type: 'test'
+  ...
+# Subtest: exercise reset recovers deleted answer and preserves personal notes
+ok 40 - exercise reset recovers deleted answer and preserves personal notes
+  ---
+  duration_ms: 2.104546
+  type: 'test'
+  ...
+# Subtest: server hashes hydrate current source, edits stay historical, reset cannot resurrect output
+ok 41 - server hashes hydrate current source, edits stay historical, reset cannot resurrect output
+  ---
+  duration_ms: 15.672672
+  type: 'test'
+  ...
+# Subtest: failed import leaves current notebook intact; unknown metadata and attachments roundtrip
+ok 42 - failed import leaves current notebook intact; unknown metadata and attachments roundtrip
+  ---
+  duration_ms: 4.048761
+  type: 'test'
+  ...
+# Subtest: case notebooks choose product chrome without changing notebook semantics
+ok 43 - case notebooks choose product chrome without changing notebook semantics
+  ---
+  duration_ms: 0.523335
+  type: 'test'
+  ...
+# Subtest: workspace presentation registry keeps product chrome separate from notebook geometry
+ok 44 - workspace presentation registry keeps product chrome separate from notebook geometry
+  ---
+  duration_ms: 0.463407
+  type: 'test'
+  ...
+# Subtest: V1 playground presets cover local lakehouse, Fabric notebook, free canvas and optional MotherDuck
+ok 45 - V1 playground presets cover local lakehouse, Fabric notebook, free canvas and optional MotherDuck
+  ---
+  duration_ms: 1.5614
+  type: 'test'
+  ...
+# Subtest: playground layout changes do not duplicate source or change canonical notebook order
+ok 46 - playground layout changes do not duplicate source or change canonical notebook order
+  ---
+  duration_ms: 1.562672
+  type: 'test'
+  ...
+1..46
+# tests 46
+# suites 0
+# pass 46
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 600.504984
+TAP version 13
+# Subtest: new project survives validated JSON roundtrip without losing source/model/board rows
+ok 1 - new project survives validated JSON roundtrip without losing source/model/board rows
+  ---
+  duration_ms: 10.106525
+  type: 'test'
+  ...
+# Subtest: namespaced analytics attachment does not require another notebook document
+ok 2 - namespaced analytics attachment does not require another notebook document
+  ---
+  duration_ms: 0.14328
+  type: 'test'
+  ...
+# Subtest: new tab reuses existing layer and does not mutate prior session
+ok 3 - new tab reuses existing layer and does not mutate prior session
+  ---
+  duration_ms: 0.799766
+  type: 'test'
+  ...
+# Subtest: split opens an empty second pane, not a notebook clone
+ok 4 - split opens an empty second pane, not a notebook clone
+  ---
+  duration_ms: 0.294503
+  type: 'test'
+  ...
+# Subtest: moving tabs preserves identity; closing never deletes project source
+ok 5 - moving tabs preserves identity; closing never deletes project source
+  ---
+  duration_ms: 0.317771
+  type: 'test'
+  ...
+# Subtest: single pane retains distinct tabs and active layer
+ok 6 - single pane retains distinct tabs and active layer
+  ---
+  duration_ms: 0.25705
+  type: 'test'
+  ...
+# Subtest: invalid pane ratio/active tab/collapse are rejected
+ok 7 - invalid pane ratio/active tab/collapse are rejected
+  ---
+  duration_ms: 0.47664
+  type: 'test'
+  ...
+# Subtest: unsupported analytics schema and fractional revision are rejected
+ok 8 - unsupported analytics schema and fractional revision are rejected
+  ---
+  duration_ms: 0.552588
+  type: 'test'
+  ...
+# Subtest: invalid restored attachment reports error and leaves supplied object untouched
+ok 9 - invalid restored attachment reports error and leaves supplied object untouched
+  ---
+  duration_ms: 0.696608
+  type: 'test'
+  ...
+# Subtest: edits to files are pure and enforce the source limit
+ok 10 - edits to files are pure and enforce the source limit
+  ---
+  duration_ms: 0.644302
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path ../secrets.sql
+ok 11 - reject unsafe source path ../secrets.sql
+  ---
+  duration_ms: 0.204046
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models/../../x.sql
+ok 12 - reject unsafe source path models/../../x.sql
+  ---
+  duration_ms: 0.083811
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models//x.sql
+ok 13 - reject unsafe source path models//x.sql
+  ---
+  duration_ms: 0.059479
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models/.x.sql
+ok 14 - reject unsafe source path models/.x.sql
+  ---
+  duration_ms: 0.05184
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path profiles.yml
+ok 15 - reject unsafe source path profiles.yml
+  ---
+  duration_ms: 0.054232
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models/CON.sql
+ok 16 - reject unsafe source path models/CON.sql
+  ---
+  duration_ms: 0.048203
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models/a./x.sql
+ok 17 - reject unsafe source path models/a./x.sql
+  ---
+  duration_ms: 0.048358
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models\\a.sql
+ok 18 - reject unsafe source path models\\a.sql
+  ---
+  duration_ms: 0.046499
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path /models/a.sql
+ok 19 - reject unsafe source path /models/a.sql
+  ---
+  duration_ms: 0.047312
+  type: 'test'
+  ...
+# Subtest: prototype keys and deep/oversized JSON are rejected
+ok 20 - prototype keys and deep/oversized JSON are rejected
+  ---
+  duration_ms: 0.244815
+  type: 'test'
+  ...
+# Subtest: parse manifest schema and native dependency identities
+ok 21 - parse manifest schema and native dependency identities
+  ---
+  duration_ms: 1.775404
+  type: 'test'
+  ...
+# Subtest: unsupported manifest schema fails closed
+ok 22 - unsupported manifest schema fails closed
+  ---
+  duration_ms: 0.92047
+  type: 'test'
+  ...
+# Subtest: node identity mismatch and duplicate dependencies are rejected
+ok 23 - node identity mismatch and duplicate dependencies are rejected
+  ---
+  duration_ms: 4.600618
+  type: 'test'
+  ...
+# Subtest: unresolved manifest dependencies are explicitly warned
+ok 24 - unresolved manifest dependencies are explicitly warned
+  ---
+  duration_ms: 0.216142
+  type: 'test'
+  ...
+# Subtest: manifest graph excludes test nodes by default
+ok 25 - manifest graph excludes test nodes by default
+  ---
+  duration_ms: 0.424057
+  type: 'test'
+  ...
+# Subtest: run results require matching invocation; never attach stale results
+ok 26 - run results require matching invocation; never attach stale results
+  ---
+  duration_ms: 1.037942
+  type: 'test'
+  ...
+# Subtest: run results reject orphan IDs, duplicate IDs and negative durations
+ok 27 - run results reject orphan IDs, duplicate IDs and negative durations
+  ---
+  duration_ms: 0.4683
+  type: 'test'
+  ...
+# Subtest: imported run evidence roundtrips without becoming live evidence
+ok 28 - imported run evidence roundtrips without becoming live evidence
+  ---
+  duration_ms: 1.424879
+  type: 'test'
+  ...
+# Subtest: sample dbt graph derives five nodes and four references from source
+ok 29 - sample dbt graph derives five nodes and four references from source
+  ---
+  duration_ms: 1.244475
+  type: 'test'
+  ...
+# Subtest: draft scanner does not count SQL or Jinja comments
+ok 30 - draft scanner does not count SQL or Jinja comments
+  ---
+  duration_ms: 0.652789
+  type: 'test'
+  ...
+# Subtest: missing and dynamic ref warnings never claim successful compile
+ok 31 - missing and dynamic ref warnings never claim successful compile
+  ---
+  duration_ms: 0.319567
+  type: 'test'
+  ...
+# Subtest: cycles are detected and layout is finite
+ok 32 - cycles are detected and layout is finite
+  ---
+  duration_ms: 0.43192
+  type: 'test'
+  ...
+# Subtest: upstream and downstream traversal preserves directed meaning
+ok 33 - upstream and downstream traversal preserves directed meaning
+  ---
+  duration_ms: 0.445849
+  type: 'test'
+  ...
+# Subtest: schema checks flag nullable primary keys and type mismatches
+ok 34 - schema checks flag nullable primary keys and type mismatches
+  ---
+  duration_ms: 0.369982
+  type: 'test'
+  ...
+# Subtest: relationship endpoints and duplicate edges are validated
+ok 35 - relationship endpoints and duplicate edges are validated
+  ---
+  duration_ms: 0.280608
+  type: 'test'
+  ...
+# Subtest: removing table removes dangling relationships and column mappings
+ok 36 - removing table removes dangling relationships and column mappings
+  ---
+  duration_ms: 0.298002
+  type: 'test'
+  ...
+# Subtest: DDL generation quotes identifiers and is a design, not execution
+ok 37 - DDL generation quotes identifiers and is a design, not execution
+  ---
+  duration_ms: 0.642181
+  type: 'test'
+  ...
+# Subtest: Type 1 retains two rows and latest cities
+ok 38 - Type 1 retains two rows and latest cities
+  ---
+  duration_ms: 0.599009
+  type: 'test'
+  ...
+# Subtest: Type 2 records four rows; unchanged event adds none
+ok 39 - Type 2 records four rows; unchanged event adds none
+  ---
+  duration_ms: 0.319404
+  type: 'test'
+  ...
+# Subtest: Type 2 as-of join is half-open and unique at change boundary
+ok 40 - Type 2 as-of join is half-open and unique at change boundary
+  ---
+  duration_ms: 0.141764
+  type: 'test'
+  ...
+# Subtest: Type 3 retains only immediate previous city
+ok 41 - Type 3 retains only immediate previous city
+  ---
+  duration_ms: 0.100496
+  type: 'test'
+  ...
+# Subtest: SCD replay leaves input unchanged and rejects impossible dates/order
+ok 42 - SCD replay leaves input unchanged and rejects impossible dates/order
+  ---
+  duration_ms: 0.258368
+  type: 'test'
+  ...
+# Subtest: SCD exercise answer is tied to displayed type and event index
+ok 43 - SCD exercise answer is tied to displayed type and event index
+  ---
+  duration_ms: 0.253763
+  type: 'test'
+  ...
+# Subtest: chart sample totals match the seed fixture
+ok 44 - chart sample totals match the seed fixture
+  ---
+  duration_ms: 0.324985
+  type: 'test'
+  ...
+# Subtest: chart query edit marks evidence stale rather than generating new rows
+ok 45 - chart query edit marks evidence stale rather than generating new rows
+  ---
+  duration_ms: 0.183809
+  type: 'test'
+  ...
+# Subtest: chart mean KPI is over rows, not an unweighted mean of group means
+ok 46 - chart mean KPI is over rows, not an unweighted mean of group means
+  ---
+  duration_ms: 0.664056
+  type: 'test'
+  ...
+# Subtest: count includes rows with null measures and numeric zero is preserved
+ok 47 - count includes rows with null measures and numeric zero is preserved
+  ---
+  duration_ms: 0.261871
+  type: 'test'
+  ...
+# Subtest: chart imports reject nested cells, mismatched schemas and excess rows
+ok 48 - chart imports reject nested cells, mismatched schemas and excess rows
+  ---
+  duration_ms: 5.936936
+  type: 'test'
+  ...
+# Subtest: numeric overflow is rejected instead of rendering Infinity
+ok 49 - numeric overflow is rejected instead of rendering Infinity
+  ---
+  duration_ms: 0.3768
+  type: 'test'
+  ...
+# Subtest: chart exports use dct board grammar with no execution claim
+ok 50 - chart exports use dct board grammar with no execution claim
+  ---
+  duration_ms: 0.130414
+  type: 'test'
+  ...
+# Subtest: guided Spark is explicit consent plus fixture-bound allowed operations
+ok 51 - guided Spark is explicit consent plus fixture-bound allowed operations
+  ---
+  duration_ms: 0.381587
+  type: 'test'
+  ...
+# Subtest: guided Spark rejects another dataset, unsupported operations and warnings
+ok 52 - guided Spark rejects another dataset, unsupported operations and warnings
+  ---
+  duration_ms: 0.163779
+  type: 'test'
+  ...
+# Subtest: chart groups preserve typed scalar identities despite matching display labels
+ok 53 - chart groups preserve typed scalar identities despite matching display labels
+  ---
+  duration_ms: 0.22136
+  type: 'test'
+  ...
+# Subtest: root restore preserves only the bounded analytics namespace, including invalid schemas for recovery
+ok 54 - root restore preserves only the bounded analytics namespace, including invalid schemas for recovery
+  ---
+  duration_ms: 5.545283
+  type: 'test'
+  ...
+# Subtest: native chart freshness detects changed, missing, and stale registered inputs without claiming untracked lineage
+ok 55 - native chart freshness detects changed, missing, and stale registered inputs without claiming untracked lineage
+  ---
+  duration_ms: 0.326557
+  type: 'test'
+  ...
+# Subtest: local chart project import preserves authenticated versions and empty result schema
+ok 56 - local chart project import preserves authenticated versions and empty result schema
+  ---
+  duration_ms: 0.908136
+  type: 'test'
+  ...
+# Subtest: equality join preserves duplicates and does not match two NULL keys
+ok 57 - equality join preserves duplicates and does not match two NULL keys
+  ---
+  duration_ms: 2.543639
+  type: 'test'
+  ...
+# Subtest: empty input and duplicate left rows retain correct cardinality
+ok 58 - empty input and duplicate left rows retain correct cardinality
+  ---
+  duration_ms: 1.435975
+  type: 'test'
+  ...
+# Subtest: partition fixture is deterministic, covers all row identities and exposes skew
+ok 59 - partition fixture is deterministic, covers all row identities and exposes skew
+  ---
+  duration_ms: 1.033219
+  type: 'test'
+  ...
+# Subtest: all frozen figure frames have stable unique IDs, truth and text without motion
+ok 60 - all frozen figure frames have stable unique IDs, truth and text without motion
+  ---
+  duration_ms: 2.885098
+  type: 'test'
+  ...
+# Subtest: two figure panes preserve one canonical resource and independent playback cursors
+ok 61 - two figure panes preserve one canonical resource and independent playback cursors
+  ---
+  duration_ms: 12.341871
+  type: 'test'
+  ...
+# Subtest: layout safely normalizes null
+ok 62 - layout safely normalizes null
+  ---
+  duration_ms: 4.22029
+  type: 'test'
+  ...
+# Subtest: layout safely normalizes undefined
+ok 63 - layout safely normalizes undefined
+  ---
+  duration_ms: 0.370372
+  type: 'test'
+  ...
+# Subtest: layout safely normalizes []
+ok 64 - layout safely normalizes []
+  ---
+  duration_ms: 0.145497
+  type: 'test'
+  ...
+# Subtest: layout safely normalizes {}
+ok 65 - layout safely normalizes {}
+  ---
+  duration_ms: 0.129281
+  type: 'test'
+  ...
+# Subtest: layout safely normalizes 0
+ok 66 - layout safely normalizes 0
+  ---
+  duration_ms: 0.361835
+  type: 'test'
+  ...
+# Subtest: layout safely normalizes "invalid"
+ok 67 - layout safely normalizes "invalid"
+  ---
+  duration_ms: 0.133444
+  type: 'test'
+  ...
+# Subtest: layout safely normalizes true
+ok 68 - layout safely normalizes true
+  ---
+  duration_ms: 0.403556
+  type: 'test'
+  ...
+# Subtest: layout safely normalizes {"version":2}
+ok 69 - layout safely normalizes {"version":2}
+  ---
+  duration_ms: 0.132741
+  type: 'test'
+  ...
+# Subtest: layout safely normalizes {"version":1,"explorerWidth":null,"resultHeight":null}
+ok 70 - layout safely normalizes {"version":1,"explorerWidth":null,"resultHeight":null}
+  ---
+  duration_ms: 0.690016
+  type: 'test'
+  ...
+# Subtest: layout keeps supported values, clamps bounds and ignores injected fields
+ok 71 - layout keeps supported values, clamps bounds and ignores injected fields
+  ---
+  duration_ms: 2.177175
+  type: 'test'
+  ...
+# Subtest: layout default object cannot be polluted by returned state
+ok 72 - layout default object cannot be polluted by returned state
+  ---
+  duration_ms: 0.446255
+  type: 'test'
+  ...
+# Subtest: workspace and notebook layout keys do not collide
+ok 73 - workspace and notebook layout keys do not collide
+  ---
+  duration_ms: 0.759612
+  type: 'test'
+  ...
+# Subtest: layout persists and restores through the StoragePort contract
+ok 74 - layout persists and restores through the StoragePort contract
+  ---
+  duration_ms: 0.492261
+  type: 'test'
+  ...
+# Subtest: corrupt layout recovers without mutating source
+ok 75 - corrupt layout recovers without mutating source
+  ---
+  duration_ms: 0.450742
+  type: 'test'
+  ...
+# Subtest: quota/security errors are visible not swallowed
+ok 76 - quota/security errors are visible not swallowed
+  ---
+  duration_ms: 0.453301
+  type: 'test'
+  ...
+# Subtest: semantic order ignores physical block order and canvas placement
+ok 77 - semantic order ignores physical block order and canvas placement
+  ---
+  duration_ms: 0.449967
+  type: 'test'
+  ...
+# Subtest: missing/duplicate view references do not duplicate render cells
+ok 78 - missing/duplicate view references do not duplicate render cells
+  ---
+  duration_ms: 0.194085
+  type: 'test'
+  ...
+# Subtest: no notebook view falls back to canonical blocks, without sorting
+ok 79 - no notebook view falls back to canonical blocks, without sorting
+  ---
+  duration_ms: 0.354772
+  type: 'test'
+  ...
+# Subtest: arena uses exercise answer identity, separates scratch and groups its output
+ok 80 - arena uses exercise answer identity, separates scratch and groups its output
+  ---
+  duration_ms: 1.441662
+  type: 'test'
+  ...
+# Subtest: plain notebook cannot accidentally become an arena answer
+ok 81 - plain notebook cannot accidentally become an arena answer
+  ---
+  duration_ms: 0.374277
+  type: 'test'
+  ...
+# Subtest: read-only imported code is not runnable
+ok 82 - read-only imported code is not runnable
+  ---
+  duration_ms: 0.124787
+  type: 'test'
+  ...
+# Subtest: catalog does not lose custom layers or mutate source order
+ok 83 - catalog does not lose custom layers or mutate source order
+  ---
+  duration_ms: 0.441178
+  type: 'test'
+  ...
+# Subtest: SQL table names are quoted, not interpolated as statements
+ok 84 - SQL table names are quoted, not interpolated as statements
+  ---
+  duration_ms: 0.646507
+  type: 'test'
+  ...
+# Subtest: responsive panels leave usable center at width 320
+ok 85 - responsive panels leave usable center at width 320
+  ---
+  duration_ms: 0.325923
+  type: 'test'
+  ...
+# Subtest: responsive panels leave usable center at width 640
+ok 86 - responsive panels leave usable center at width 640
+  ---
+  duration_ms: 0.067199
+  type: 'test'
+  ...
+# Subtest: responsive panels leave usable center at width 899
+ok 87 - responsive panels leave usable center at width 899
+  ---
+  duration_ms: 0.045158
+  type: 'test'
+  ...
+# Subtest: responsive panels leave usable center at width 900
+ok 88 - responsive panels leave usable center at width 900
+  ---
+  duration_ms: 0.045133
+  type: 'test'
+  ...
+# Subtest: responsive panels leave usable center at width 1024
+ok 89 - responsive panels leave usable center at width 1024
+  ---
+  duration_ms: 0.043771
+  type: 'test'
+  ...
+# Subtest: responsive panels leave usable center at width 1180
+ok 90 - responsive panels leave usable center at width 1180
+  ---
+  duration_ms: 0.043294
+  type: 'test'
+  ...
+# Subtest: responsive panels leave usable center at width 1500
+ok 91 - responsive panels leave usable center at width 1500
+  ---
+  duration_ms: 14.828353
+  type: 'test'
+  ...
+# Subtest: focus hides sidebars without changing stored geometry
+ok 92 - focus hides sidebars without changing stored geometry
+  ---
+  duration_ms: 0.198695
+  type: 'test'
+  ...
+# Subtest: command search matches every term and bounds result count
+ok 93 - command search matches every term and bounds result count
+  ---
+  duration_ms: 0.864912
+  type: 'test'
+  ...
+# Subtest: indent selection "abc" 1:1
+ok 94 - indent selection "abc" 1:1
+  ---
+  duration_ms: 0.447464
+  type: 'test'
+  ...
+# Subtest: indent selection "a\\nb\\nc" 0:4
+ok 95 - indent selection "a\\nb\\nc" 0:4
+  ---
+  duration_ms: 0.292054
+  type: 'test'
+  ...
+# Subtest: indent selection "\\na" 0:0
+ok 96 - indent selection "\\na" 0:0
+  ---
+  duration_ms: 0.089514
+  type: 'test'
+  ...
+# Subtest: indent selection "a\\nb" 0:3
+ok 97 - indent selection "a\\nb" 0:3
+  ---
+  duration_ms: 0.092597
+  type: 'test'
+  ...
+# Subtest: multiline indentation can be exactly reversed
+ok 98 - multiline indentation can be exactly reversed
+  ---
+  duration_ms: 0.254673
+  type: 'test'
+  ...
+# Subtest: outdent handles a tab and short indentation
+ok 99 - outdent handles a tab and short indentation
+  ---
+  duration_ms: 0.933455
+  type: 'test'
+  ...
+# Subtest: outdent cursor within leading spaces never goes negative
+ok 100 - outdent cursor within leading spaces never goes negative
+  ---
+  duration_ms: 0.350558
+  type: 'test'
+  ...
+# Subtest: blank first line outdent keeps following line intact
+ok 101 - blank first line outdent keeps following line intact
+  ---
+  duration_ms: 0.196475
+  type: 'test'
+  ...
+# Subtest: python colon newline adds one indentation level
+ok 102 - python colon newline adds one indentation level
+  ---
+  duration_ms: 0.318875
+  type: 'test'
+  ...
+# Subtest: SQL newline copies indentation without Python colon rules
+ok 103 - SQL newline copies indentation without Python colon rules
+  ---
+  duration_ms: 0.162571
+  type: 'test'
+  ...
+# Subtest: newline at start of blank line does not eat source
+ok 104 - newline at start of blank line does not eat source
+  ---
+  duration_ms: 0.34292
+  type: 'test'
+  ...
+# Subtest: SQL and Python comment toggles round-trip multi-line source
+ok 105 - SQL and Python comment toggles round-trip multi-line source
+  ---
+  duration_ms: 0.773083
+  type: 'test'
+  ...
+# Subtest: comment selection ending at next line does not touch next line
+ok 106 - comment selection ending at next line does not touch next line
+  ---
+  duration_ms: 0.222108
+  type: 'test'
+  ...
+# Subtest: comment cursor at start of empty line does not modify next line
+ok 107 - comment cursor at start of empty line does not modify next line
+  ---
+  duration_ms: 0.132362
+  type: 'test'
+  ...
+# Subtest: invalid selection positions are bounded
+ok 108 - invalid selection positions are bounded
+  ---
+  duration_ms: 0.309437
+  type: 'test'
+  ...
+# Subtest: fixture documents use RootNotebook-shaped source and views, no evidence
+ok 109 - fixture documents use RootNotebook-shaped source and views, no evidence
+  ---
+  duration_ms: 3.77094
+  type: 'test'
+  ...
+# Subtest: fixture storage strips claimed execution evidence
+ok 110 - fixture storage strips claimed execution evidence
+  ---
+  duration_ms: 0.931296
+  type: 'test'
+  ...
+# Subtest: fixture restore rejects duplicate IDs, oversized files and hostile geometry
+ok 111 - fixture restore rejects duplicate IDs, oversized files and hostile geometry
+  ---
+  duration_ms: 14.735029
+  type: 'test'
+  ...
+# Subtest: static worker never serves HTML as API success /api
+ok 112 - static worker never serves HTML as API success /api
+  ---
+  duration_ms: 42.659748
+  type: 'test'
+  ...
+# Subtest: static worker never serves HTML as API success /api/workspaces
+ok 113 - static worker never serves HTML as API success /api/workspaces
+  ---
+  duration_ms: 1.591367
+  type: 'test'
+  ...
+# Subtest: static worker never serves HTML as API success /api/foo?x=1
+ok 114 - static worker never serves HTML as API success /api/foo?x=1
+  ---
+  duration_ms: 1.621404
+  type: 'test'
+  ...
+# Subtest: static worker forwards non-API requests unchanged
+ok 115 - static worker forwards non-API requests unchanged
+  ---
+  duration_ms: 1.150213
+  type: 'test'
+  ...
+# Subtest: preferred view restores only known views and never internal practice snapshots
+ok 116 - preferred view restores only known views and never internal practice snapshots
+  ---
+  duration_ms: 0.439131
+  type: 'test'
+  ...
+# Subtest: outdent selection ending inside last-line indentation maps to its new start
+ok 117 - outdent selection ending inside last-line indentation maps to its new start
+  ---
+  duration_ms: 0.26767
+  type: 'test'
+  ...
+# Subtest: prefix edits preserve ordered, bounded selections over exhaustive small examples
+ok 118 - prefix edits preserve ordered, bounded selections over exhaustive small examples
+  ---
+  duration_ms: 6.073751
+  type: 'test'
+  ...
+# Subtest: M2 migrates once and retains original attachment byte-for-byte
+ok 119 - M2 migrates once and retains original attachment byte-for-byte
+  ---
+  duration_ms: 33.683649
+  type: 'test'
+  ...
+# Subtest: identical content on two notebooks shares resources, not ownership
+ok 120 - identical content on two notebooks shares resources, not ownership
+  ---
+  duration_ms: 7.586401
+  type: 'test'
+  ...
+# Subtest: conflicting dbt attachments preserve both projects but dedupe unchanged models
+ok 121 - conflicting dbt attachments preserve both projects but dedupe unchanged models
+  ---
+  duration_ms: 6.909115
+  type: 'test'
+  ...
+# Subtest: unknown attachment is retained with a recovery journal, never replaced by samples
+ok 122 - unknown attachment is retained with a recovery journal, never replaced by samples
+  ---
+  duration_ms: 0.511372
+  type: 'test'
+  ...
+# Subtest: alternate views edit one canonical dbt resource and retain per-view selected files
+ok 123 - alternate views edit one canonical dbt resource and retain per-view selected files
+  ---
+  duration_ms: 3.046268
+  type: 'test'
+  ...
+# Subtest: closing all analytics views never deletes the sources
+ok 124 - closing all analytics views never deletes the sources
+  ---
+  duration_ms: 2.644632
+  type: 'test'
+  ...
+# Subtest: themes and skins are presentation-only data
+ok 125 - themes and skins are presentation-only data
+  ---
+  duration_ms: 4.616202
+  type: 'test'
+  ...
+# Subtest: existing root layout keeps stable view and pane identity during migration
+ok 126 - existing root layout keeps stable view and pane identity during migration
+  ---
+  duration_ms: 3.310778
+  type: 'test'
+  ...
+1..126
+# tests 126
+# suites 0
+# pass 126
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1842.888488

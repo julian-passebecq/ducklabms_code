@@ -1,0 +1,134 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\PROJ\\datapass-v1-final-20260921\\source\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "playwright.guided.config.ts"
+    ],
+    "configFile": "D:\\PROJ\\datapass-v1-final-20260921\\source\\playwright.guided.config.ts",
+    "rootDir": "D:/PROJ/datapass-v1-final-20260921/source/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/PROJ/datapass-v1-final-20260921/source/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/PROJ/datapass-v1-final-20260921/source/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "guided-live.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "qa/qualification/guided-live-browser.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "\"D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\python.exe\" -m uvicorn apps.api.datapass.api:app --host 127.0.0.1 --port 18080",
+      "url": "http://127.0.0.1:18080/api/health",
+      "reuseExistingServer": false,
+      "env": {
+        "DATAPASS_PORT": "18080",
+        "DATAPASS_GUIDED_SPARK_URL": "https://fastapispark.fastapicloud.dev",
+        "DATAPASS_TOKEN": "core-pass-browser",
+        "DATAPASS_STORAGE": "ducklake",
+        "DATAPASS_TRUSTED_PYTHON": "1",
+        "DATAPASS_TRUSTED_DBT": "1",
+        "DATAPASS_DATA_DIR": "D:\\PROJ\\datapass-v1-final-20260921\\source\\.local\\guided-live-proof"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "guided-live.spec.ts",
+      "file": "guided-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "live guided Spark qualifies, enables Run and Submit, and persists truthful evidence",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18686,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T19:19:50.384Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cd918e51072d99b2d102-2e29357650ef0c1aa2c8",
+          "file": "guided-live.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-21T19:19:49.135Z",
+    "duration": 20968.483,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

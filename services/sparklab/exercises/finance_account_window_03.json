@@ -1,7 +1,7 @@
 {
   "id": "finance_account_window_03",
   "case": "finance",
-  "title": "Finance 03 · Account balance window",
+  "title": "Finance 03 \u00c2\u00b7 Account balance window",
   "version": "2026-09-17",
   "grader": "finance_window",
   "simulation": "finance_window",
@@ -43,7 +43,7 @@
     "window_order": "transaction_ts",
     "shuffle_required": true,
     "single_hot_key_splittable": false,
-    "result_semantics": "transaction row → previous_amount, running_net"
+    "result_semantics": "transaction row \u00e2\u2020\u2019 previous_amount, running_net"
   },
   "fixture_truth": {
     "fixture": "finance",
@@ -59,14 +59,116 @@
       "running_net"
     ],
     "rows": [
-      {"transaction_id":"F-001","account_id":"A001","transaction_ts":"2026-09-17T09:00:00","amount":100.0,"balance":100.0,"loaded_at":"2026-09-17T09:01:00","previous_amount":null,"running_net":100.0},
-      {"transaction_id":"F-002","account_id":"A001","transaction_ts":"2026-09-17T10:00:00","amount":-20.0,"balance":80.0,"loaded_at":"2026-09-17T10:01:00","previous_amount":100.0,"running_net":80.0},
-      {"transaction_id":"F-003","account_id":"A001","transaction_ts":"2026-09-17T11:00:00","amount":50.0,"balance":130.0,"loaded_at":"2026-09-17T11:01:00","previous_amount":-20.0,"running_net":130.0},
-      {"transaction_id":"F-004","account_id":"A002","transaction_ts":"2026-09-17T09:15:00","amount":200.0,"balance":200.0,"loaded_at":"2026-09-17T09:16:00","previous_amount":null,"running_net":200.0},
-      {"transaction_id":"F-005","account_id":"A002","transaction_ts":"2026-09-17T10:15:00","amount":-75.0,"balance":125.0,"loaded_at":"2026-09-17T10:16:00","previous_amount":200.0,"running_net":125.0},
-      {"transaction_id":"F-006","account_id":"A-HOT-001","transaction_ts":"2026-09-17T08:30:00","amount":10.0,"balance":10.0,"loaded_at":"2026-09-17T08:31:00","previous_amount":null,"running_net":10.0},
-      {"transaction_id":"F-007","account_id":"A-HOT-001","transaction_ts":"2026-09-17T09:30:00","amount":15.0,"balance":25.0,"loaded_at":"2026-09-17T09:31:00","previous_amount":10.0,"running_net":25.0},
-      {"transaction_id":"F-008","account_id":"A-HOT-001","transaction_ts":"2026-09-17T10:30:00","amount":-5.0,"balance":20.0,"loaded_at":"2026-09-17T10:31:00","previous_amount":15.0,"running_net":20.0}
+      {
+        "transaction_id": "F-001",
+        "account_id": "A001",
+        "transaction_ts": "2026-09-17T09:00:00",
+        "amount": 100.0,
+        "balance": 100.0,
+        "loaded_at": "2026-09-17T09:01:00",
+        "previous_amount": null,
+        "running_net": 100.0
+      },
+      {
+        "transaction_id": "F-002",
+        "account_id": "A001",
+        "transaction_ts": "2026-09-17T10:00:00",
+        "amount": -20.0,
+        "balance": 80.0,
+        "loaded_at": "2026-09-17T10:01:00",
+        "previous_amount": 100.0,
+        "running_net": 80.0
+      },
+      {
+        "transaction_id": "F-003",
+        "account_id": "A001",
+        "transaction_ts": "2026-09-17T11:00:00",
+        "amount": 50.0,
+        "balance": 130.0,
+        "loaded_at": "2026-09-17T11:01:00",
+        "previous_amount": -20.0,
+        "running_net": 130.0
+      },
+      {
+        "transaction_id": "F-004",
+        "account_id": "A002",
+        "transaction_ts": "2026-09-17T09:15:00",
+        "amount": 200.0,
+        "balance": 200.0,
+        "loaded_at": "2026-09-17T09:16:00",
+        "previous_amount": null,
+        "running_net": 200.0
+      },
+      {
+        "transaction_id": "F-005",
+        "account_id": "A002",
+        "transaction_ts": "2026-09-17T10:15:00",
+        "amount": -75.0,
+        "balance": 125.0,
+        "loaded_at": "2026-09-17T10:16:00",
+        "previous_amount": 200.0,
+        "running_net": 125.0
+      },
+      {
+        "transaction_id": "F-006",
+        "account_id": "A-HOT-001",
+        "transaction_ts": "2026-09-17T08:30:00",
+        "amount": 10.0,
+        "balance": 10.0,
+        "loaded_at": "2026-09-17T08:31:00",
+        "previous_amount": null,
+        "running_net": 10.0
+      },
+      {
+        "transaction_id": "F-007",
+        "account_id": "A-HOT-001",
+        "transaction_ts": "2026-09-17T09:30:00",
+        "amount": 15.0,
+        "balance": 25.0,
+        "loaded_at": "2026-09-17T09:31:00",
+        "previous_amount": 10.0,
+        "running_net": 25.0
+      },
+      {
+        "transaction_id": "F-008",
+        "account_id": "A-HOT-001",
+        "transaction_ts": "2026-09-17T10:30:00",
+        "amount": -5.0,
+        "balance": 20.0,
+        "loaded_at": "2026-09-17T10:31:00",
+        "previous_amount": 15.0,
+        "running_net": 20.0
+      }
     ]
+  },
+  "solution": "from pyspark.sql import functions as F\nfrom pyspark.sql import Window\nw = Window.partitionBy(\"account_id\").orderBy(\"transaction_ts\")\nresult = (spark.table(\"silver.transactions\")\n    .withColumn(\"previous_amount\", F.lag(\"amount\").over(w))\n    .withColumn(\"running_net\", F.sum(\"amount\").over(w.rowsBetween(Window.unboundedPreceding, Window.currentRow))))",
+  "counterexamples": [
+    {
+      "name": "Global balance instead of per-account balance",
+      "source": "from pyspark.sql import functions as F\nfrom pyspark.sql import Window\nw = Window.orderBy(\"transaction_ts\")\nresult = (spark.table(\"silver.transactions\")\n    .withColumn(\"previous_amount\", F.lag(\"amount\").over(w))\n    .withColumn(\"running_net\", F.sum(\"amount\").over(w.rowsBetween(Window.unboundedPreceding, Window.currentRow))))"
+    },
+    {
+      "name": "Descending time reverses previous and running balances",
+      "source": "from pyspark.sql import functions as F\nfrom pyspark.sql import Window\nw = Window.partitionBy(\"account_id\").orderBy(F.col(\"transaction_ts\").desc())\nresult = (spark.table(\"silver.transactions\")\n    .withColumn(\"previous_amount\", F.lag(\"amount\").over(w))\n    .withColumn(\"running_net\", F.sum(\"amount\").over(w.rowsBetween(Window.unboundedPreceding, Window.currentRow))))"
+    }
+  ],
+  "profile_comparison": {
+    "profiles": [
+      "local_small",
+      "generic_8x8"
+    ],
+    "invariant": "Identical result rows; virtual timing and credits differ"
+  },
+  "aqe_comparison": {
+    "settings": [
+      false,
+      true
+    ],
+    "invariant": "Ordered hot account is never split; small buckets may coalesce"
+  },
+  "assumptions": {
+    "calibration": "Authored scenario only; no real Spark benchmarks",
+    "physical": "8 immutable rows from services/semantic/fixtures/finance.sql",
+    "virtual": "61,840,000 rows / 9.7 GiB; byte and partition estimates are authored"
   }
 }

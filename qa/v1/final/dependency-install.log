@@ -1,0 +1,2 @@
+
+Observed: npm ci was terminated by timeout (exit 124) after 25 seconds; no install output was produced. Earlier DNS/offline-cache evidence is in ../npm-ci.log and ../npm-offline.log. No successful installation is claimed.

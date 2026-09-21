@@ -1,0 +1,134 @@
+D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+  class ArtifactBundle(Document):
+{
+  "gate": "real-local-dbt-shared-catalog",
+  "storage": "ducklake",
+  "status": "PASS",
+  "versions": {
+    "duckdb": "1.5.5",
+    "dbt-core": "1.11.15",
+    "dbt-duckdb": "1.11.0",
+    "polars": "1.44.2",
+    "pandas": "3.0.6"
+  },
+  "checks": [
+    "Real dbt seed/model/test build, matching artifacts, compiled SQL and lineage",
+    "dbt output visible through shared notebook catalog after kernel restart",
+    "Shared Arena fixtures: DuckDB, pandas, native Polars, bounded dbt/Spark semantics",
+    "Canonical DuckLake persisted Parquet files"
+  ],
+  "job": {
+    "schema_version": 1,
+    "id": "ece1a526da9449c0b3762b4eab97c0a8",
+    "workspace_id": "2505d14653b341568893c1f3aa7f91b1",
+    "resource_id": "native-dbt",
+    "resource_revision": 0,
+    "workspace_revision": 1,
+    "source_hash": "6fd9f80f07b2e0bc28b28dc556f1b790797b5d9e9a0cddffc8c6f5618d125139",
+    "kind": "dbt",
+    "action": "build",
+    "status": "success",
+    "truth": "real_local",
+    "created_at": "2026-09-21T18:13:26.020636+00:00",
+    "started_at": "2026-09-21T18:13:26.022994+00:00",
+    "finished_at": "2026-09-21T18:13:37.047533+00:00",
+    "elapsed_ms": 11026.883,
+    "runtime": {
+      "adapter": "dbt-core",
+      "versions": {
+        "dbt-core": "1.11.15",
+        "dbt-duckdb": "1.11.0",
+        "duckdb": "1.5.5"
+      },
+      "storage": "ducklake",
+      "lakehouse": {
+        "schema_version": 1,
+        "active": true,
+        "table_format": "ducklake",
+        "compute_engine": "duckdb",
+        "metadata_backend": "sqlite",
+        "metadata_file": "lake-metadata.sqlite",
+        "data_format": "parquet",
+        "data_directory": "lake-files",
+        "data_inlining_row_limit": 0,
+        "truth": "real local DuckLake via the official DuckDB extension",
+        "duckdb_version": "v1.5.5",
+        "ducklake_extension_version": "d8a1881e",
+        "sqlite_extension_version": null,
+        "legacy_metadata": false
+      },
+      "process_isolation": "trusted local subprocess; not a sandbox"
+    },
+    "log": "[dbt] build / canonical resource native-dbt revision 0\n[stdout] 18:13:31  Running with dbt=1.11.15\r\n18:13:32  Registered adapter: duckdb=1.11.0\r\n18:13:33  Found 1 model, 1 test, 1 seed, 500 macros\r\n18:13:33  \r\n18:13:33  Concurrency: 1 threads (target='local')\r\n18:13:33  \r\n18:13:34  1 of 3 START seed file warehouse.smoke_seed .................................... [RUN]\r\n18:13:34  1 of 3 OK loaded seed file warehouse.smoke_seed ................................ [INSERT 2 in 0.17s]\r\n18:13:34  2 of 3 START sql table model warehouse.smoke_model ............................. [RUN]\r\n18:13:35  2 of 3 OK created sql table model warehouse.smoke_model ........................ [OK in 0.36s]\r\n18:13:35  3 of 3 START test assert_smoke ................................................. [RUN]\r\n18:13:35  3 of 3 PASS assert_smoke ....................................................... [PASS in 0.08s]\r\n18:13:35  \r\n18:13:35  Finished running 1 seed, 1 table model, 1 test in 0 hours 0 minutes and 1.16 seconds (1.16s).\r\n18:13:35  \r\n18:13:35  Completed successfully\r\n18:13:35  \r\n18:13:35  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3\r\n",
+    "log_truncated": false,
+    "artifacts": {
+      "manifest": {
+        "file": "manifest.json",
+        "bytes": 559506,
+        "sha256": "8f553ddba3658ccf765d9e5702c36ae2ea102c73ccac8868c39b9629c15299ac"
+      },
+      "run_results": {
+        "file": "run_results.json",
+        "bytes": 5491,
+        "sha256": "cb1e5c84d23e4ffbc72cb3bf17331cb53bd4e6873aec69388fec8509fdd73563"
+      }
+    },
+    "steps": [],
+    "result": {
+      "runtime": {
+        "adapter": "dbt-core",
+        "versions": {
+          "dbt-core": "1.11.15",
+          "dbt-duckdb": "1.11.0",
+          "duckdb": "1.5.5"
+        },
+        "storage": "ducklake",
+        "lakehouse": {
+          "schema_version": 1,
+          "active": true,
+          "table_format": "ducklake",
+          "compute_engine": "duckdb",
+          "metadata_backend": "sqlite",
+          "metadata_file": "lake-metadata.sqlite",
+          "data_format": "parquet",
+          "data_directory": "lake-files",
+          "data_inlining_row_limit": 0,
+          "truth": "real local DuckLake via the official DuckDB extension",
+          "duckdb_version": "v1.5.5",
+          "ducklake_extension_version": "d8a1881e",
+          "sqlite_extension_version": null,
+          "legacy_metadata": false
+        },
+        "process_isolation": "trusted local subprocess; not a sandbox"
+      },
+      "returncode": 0,
+      "invocation_id": "b30b28d0-134d-470c-84cc-bb0a8ff5e2af",
+      "warnings": [],
+      "action": "build",
+      "selector": "",
+      "resource_id": "native-dbt",
+      "resource_revision": 0,
+      "source_hash": "8306e91f13f773be43594fee7cf260d5dc30d7c05658057d56821dffef88b16d",
+      "files": {
+        "manifest": {
+          "file": "manifest.json",
+          "bytes": 559506,
+          "sha256": "8f553ddba3658ccf765d9e5702c36ae2ea102c73ccac8868c39b9629c15299ac"
+        },
+        "run_results": {
+          "file": "run_results.json",
+          "bytes": 5491,
+          "sha256": "cb1e5c84d23e4ffbc72cb3bf17331cb53bd4e6873aec69388fec8509fdd73563"
+        }
+      },
+      "truth": "real_local",
+      "catalog_registration": {
+        "registered": [
+          "warehouse.smoke_seed",
+          "warehouse.smoke_model"
+        ],
+        "omitted": []
+      }
+    }
+  }
+}

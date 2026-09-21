@@ -1,0 +1,162 @@
+D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+  class ArtifactBundle(Document):
+{
+  "gate": "real-local-dbt-shared-catalog",
+  "storage": "ducklake",
+  "status": "FAIL",
+  "versions": {
+    "duckdb": "1.5.5",
+    "dbt-core": "1.11.15",
+    "dbt-duckdb": "1.11.0",
+    "polars": "1.44.2",
+    "pandas": "3.0.6",
+    "dbt-charts": "0.8.0"
+  },
+  "checks": [
+    "Real dbt seed/model/test build, matching artifacts, compiled SQL and lineage",
+    "dbt output visible through shared notebook catalog after kernel restart"
+  ],
+  "job": {
+    "schema_version": 1,
+    "id": "7d21a4531f0640baad0949ed6f671937",
+    "workspace_id": "95111adacabf47e3b707e38bd7e7f993",
+    "resource_id": "native-dbt",
+    "resource_revision": 0,
+    "workspace_revision": 1,
+    "source_hash": "6fd9f80f07b2e0bc28b28dc556f1b790797b5d9e9a0cddffc8c6f5618d125139",
+    "kind": "dbt",
+    "action": "build",
+    "status": "success",
+    "truth": "real_local",
+    "created_at": "2026-09-21T18:21:44.627405+00:00",
+    "started_at": "2026-09-21T18:21:44.631979+00:00",
+    "finished_at": "2026-09-21T18:21:56.784538+00:00",
+    "elapsed_ms": 12157.112,
+    "runtime": {
+      "adapter": "dbt-core",
+      "versions": {
+        "dbt-core": "1.11.15",
+        "dbt-duckdb": "1.11.0",
+        "duckdb": "1.5.5"
+      },
+      "storage": "ducklake",
+      "lakehouse": {
+        "schema_version": 1,
+        "active": true,
+        "table_format": "ducklake",
+        "compute_engine": "duckdb",
+        "metadata_backend": "sqlite",
+        "metadata_file": "lake-metadata.sqlite",
+        "data_format": "parquet",
+        "data_directory": "lake-files",
+        "data_inlining_row_limit": 0,
+        "truth": "real local DuckLake via the official DuckDB extension",
+        "duckdb_version": "v1.5.5",
+        "ducklake_extension_version": "d8a1881e",
+        "sqlite_extension_version": null,
+        "legacy_metadata": false
+      },
+      "process_isolation": "trusted local subprocess; not a sandbox"
+    },
+    "log": "[dbt] build / canonical resource native-dbt revision 0\n[stdout] 18:21:49  Running with dbt=1.11.15\r\n18:21:50  Registered adapter: duckdb=1.11.0\r\n18:21:53  Found 1 model, 1 test, 1 seed, 500 macros\r\n18:21:53  \r\n18:21:53  Concurrency: 1 threads (target='local')\r\n18:21:53  \r\n18:21:54  1 of 3 START seed file warehouse.smoke_seed .................................... [RUN]\r\n18:21:54  1 of 3 OK loaded seed file warehouse.smoke_seed ................................ [INSERT 2 in 0.14s]\r\n18:21:54  2 of 3 START sql table model warehouse.smoke_model ............................. [RUN]\r\n18:21:54  2 of 3 OK created sql table model warehouse.smoke_model ........................ [OK in 0.24s]\r\n18:21:54  3 of 3 START test assert_smoke ................................................. [RUN]\r\n18:21:54  3 of 3 PASS assert_smoke ....................................................... [PASS in 0.05s]\r\n18:21:54  \r\n18:21:54  Finished running 1 seed, 1 table model, 1 test in 0 hours 0 minutes and 1.02 seconds (1.02s).\r\n18:21:54  \r\n18:21:54  Completed successfully\r\n18:21:54  \r\n18:21:54  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3\r\n",
+    "log_truncated": false,
+    "artifacts": {
+      "manifest": {
+        "file": "manifest.json",
+        "bytes": 559509,
+        "sha256": "a8908158c1551bf3c332142c49965ae54bfb1cbdc9e5612835d99a2fa1519686"
+      },
+      "run_results": {
+        "file": "run_results.json",
+        "bytes": 5493,
+        "sha256": "b21c34209b64e3942858379434ba6439e19cfd0a0c4d43654018a662dfa628d0"
+      }
+    },
+    "steps": [],
+    "result": {
+      "runtime": {
+        "adapter": "dbt-core",
+        "versions": {
+          "dbt-core": "1.11.15",
+          "dbt-duckdb": "1.11.0",
+          "duckdb": "1.5.5"
+        },
+        "storage": "ducklake",
+        "lakehouse": {
+          "schema_version": 1,
+          "active": true,
+          "table_format": "ducklake",
+          "compute_engine": "duckdb",
+          "metadata_backend": "sqlite",
+          "metadata_file": "lake-metadata.sqlite",
+          "data_format": "parquet",
+          "data_directory": "lake-files",
+          "data_inlining_row_limit": 0,
+          "truth": "real local DuckLake via the official DuckDB extension",
+          "duckdb_version": "v1.5.5",
+          "ducklake_extension_version": "d8a1881e",
+          "sqlite_extension_version": null,
+          "legacy_metadata": false
+        },
+        "process_isolation": "trusted local subprocess; not a sandbox"
+      },
+      "returncode": 0,
+      "invocation_id": "7b8fa1d0-34ac-4e47-8976-4996cc8d9466",
+      "warnings": [],
+      "action": "build",
+      "selector": "",
+      "resource_id": "native-dbt",
+      "resource_revision": 0,
+      "source_hash": "8306e91f13f773be43594fee7cf260d5dc30d7c05658057d56821dffef88b16d",
+      "files": {
+        "manifest": {
+          "file": "manifest.json",
+          "bytes": 559509,
+          "sha256": "a8908158c1551bf3c332142c49965ae54bfb1cbdc9e5612835d99a2fa1519686"
+        },
+        "run_results": {
+          "file": "run_results.json",
+          "bytes": 5493,
+          "sha256": "b21c34209b64e3942858379434ba6439e19cfd0a0c4d43654018a662dfa628d0"
+        }
+      },
+      "truth": "real_local",
+      "catalog_registration": {
+        "registered": [
+          "warehouse.smoke_seed",
+          "warehouse.smoke_model"
+        ],
+        "omitted": []
+      }
+    }
+  },
+  "charts": [
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "validate",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-2o4qq_ef\\95111adacabf47e3b707e38bd7e7f993\\jobs\\7d21a4531f0640baad0949ed6f671937\\dbt\\source\\bar.yml"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "WARN-SINGLE-CHART-REDUNDANT-TITLE  analysis_chart: Board title 'Revenue over \ntime' sits above a single chart that carries its own title 'Revenue over time';\ntwo headers for one chart.\nFix: Give the board one header: drop the chart's `title:` (the board title \nalready heads the board, and it is what listings, search, and nav show), or \ndrop the board `title:` and let the chart title stand.\nAt: bar.yml:19\nDocs: dct docs board\n"
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "render",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-2o4qq_ef\\95111adacabf47e3b707e38bd7e7f993\\jobs\\7d21a4531f0640baad0949ed6f671937\\dbt\\source\\bar.yml",
+        "--format",
+        "html",
+        "--output",
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-ducklake-bar.html",
+        "--no-cache"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "dbt_charts.core.execute.parallel - WARNING - Parallel execution of query 'analysis' failed: Could not open the warehouse: Catalog Error: SET search_path: No catalog + schema named \"warehouse\" found..\ndbt_charts.core.render.layout_sizing - WARNING - Chart 'analysis_chart' failed to resolve: Could not open the warehouse: Catalog Error: SET search_path: No catalog + schema named \"warehouse\" found..\nERR-WAREHOUSE-CONNECTION  Could not open the warehouse: Catalog Error: SET \nsearch_path: No catalog + schema named \"warehouse\" found.. (query: analysis)\nDetail: Catalog Error: SET search_path: No catalog + schema named \"warehouse\" \nfound.\nAt: bar.yml:7\nDocs: dct docs queries\n"
+    }
+  ],
+  "reason": "dbt_charts.core.execute.parallel - WARNING - Parallel execution of query 'analysis' failed: Could not open the warehouse: Catalog Error: SET search_path: No catalog + schema named \"warehouse\" found..\ndbt_charts.core.render.layout_sizing - WARNING - Chart 'analysis_chart' failed to resolve: Could not open the warehouse: Catalog Error: SET search_path: No catalog + schema named \"warehouse\" found..\nERR-WAREHOUSE-CONNECTION  Could not open the warehouse: Catalog Error: SET \nsearch_path: No catalog + schema named \"warehouse\" found.. (query: analysis)\nDetail: Catalog Error: SET search_path: No catalog + schema named \"warehouse\" \nfound.\nAt: bar.yml:7\nDocs: dct docs queries\n",
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\scripts\\v1-local-smoke.py\", line 115, in main\n    assert invocation.returncode == 0, invocation.stderr\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: dbt_charts.core.execute.parallel - WARNING - Parallel execution of query 'analysis' failed: Could not open the warehouse: Catalog Error: SET search_path: No catalog + schema named \"warehouse\" found..\ndbt_charts.core.render.layout_sizing - WARNING - Chart 'analysis_chart' failed to resolve: Could not open the warehouse: Catalog Error: SET search_path: No catalog + schema named \"warehouse\" found..\nERR-WAREHOUSE-CONNECTION  Could not open the warehouse: Catalog Error: SET \nsearch_path: No catalog + schema named \"warehouse\" found.. (query: analysis)\nDetail: Catalog Error: SET search_path: No catalog + schema named \"warehouse\" \nfound.\nAt: bar.yml:7\nDocs: dct docs queries\n\n"
+}

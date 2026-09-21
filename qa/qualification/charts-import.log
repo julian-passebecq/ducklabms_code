@@ -1,0 +1,13 @@
+✔ dbt Charts bar import clears evidence and retains SQL (6.413ms)
+✔ dbt Charts line import clears evidence and retains SQL (1.0474ms)
+✔ dbt Charts kpi import clears evidence and retains SQL (0.781ms)
+✔ dbt Charts table import clears evidence and retains SQL (1.0159ms)
+✔ unsupported or ambiguous YAML fails without silently dropping semantics (4.1012ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2574.044

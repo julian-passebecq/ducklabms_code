@@ -1,0 +1,44 @@
+[WebServer] D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+[WebServer]   class ArtifactBundle(Document):
+[WebServer] INFO:     Started server process [45592]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:18080 (Press CTRL+C to quit)
+
+Running 3 tests using 1 worker
+
+(node:43752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views (16.2s)
+(node:46196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 tests\browser\v1-resources.spec.ts:59:1 › Arena pipeline Run/Submit grades DAG design and persists attempts (4.2s)
+  ok 3 tests\browser\v1-resources.spec.ts:80:1 › imported notebook executes real SQL, pandas and Polars; guided Run stays unavailable (3.7s)
+
+
+  1) tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views 
+
+    TypeError: catalog.some is not a function
+
+      23 |  await expect(page.getByLabel('Lineage direction')).toBeVisible();
+      24 |  const catalog=await (await request.get(`/api/workspaces/${wid}/catalog`,{headers})).json();
+    > 25 |  expect(catalog.some((a:any)=>a.name==='warehouse.fct_sales'&&a.row_count===8)).toBeTruthy();
+         |                 ^
+      26 |  await create(page,'Chart board');
+      27 |  await page.getByRole('button',{name:'Run SQL on shared catalog',exact:true}).click();
+      28 |  await expect(evidence.locator('strong')).toHaveText('success');
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\v1-resources.spec.ts:25:17
+
+    Error Context: test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views 
+  2 passed (28.8s)

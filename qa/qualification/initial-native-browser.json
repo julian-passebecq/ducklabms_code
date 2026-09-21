@@ -1,0 +1,133 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "D:\\PROJ\\datapass-v1-final-20260921\\source\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "playwright.v1.config.ts"
+    ],
+    "configFile": "D:\\PROJ\\datapass-v1-final-20260921\\source\\playwright.v1.config.ts",
+    "rootDir": "D:/PROJ/datapass-v1-final-20260921/source/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/PROJ/datapass-v1-final-20260921/source/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "D:/PROJ/datapass-v1-final-20260921/source/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "v1-native.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "qa/v1/native-browser.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "\"D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\python.exe\" -m uvicorn apps.api.datapass.api:app --host 127.0.0.1 --port 18080",
+      "url": "http://127.0.0.1:18080/api/health",
+      "reuseExistingServer": false,
+      "env": {
+        "DATAPASS_PORT": "18080",
+        "DATAPASS_TOKEN": "core-pass-browser",
+        "DATAPASS_STORAGE": "ducklake",
+        "DATAPASS_TRUSTED_PYTHON": "1",
+        "DATAPASS_TRUSTED_DBT": "1",
+        "DATAPASS_DATA_DIR": "D:\\PROJ\\datapass-v1-final-20260921\\source\\.local\\v1-browser-proof"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "v1-native.spec.ts",
+      "file": "v1-native.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "native shell: one canonical figure, independent panes, persisted skins and source",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10038,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-21T18:15:44.001Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e09ad5462402f39ff51b-da9bd6b5fd3a32f9842e",
+          "file": "v1-native.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-21T18:15:42.644Z",
+    "duration": 12725.185000000001,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

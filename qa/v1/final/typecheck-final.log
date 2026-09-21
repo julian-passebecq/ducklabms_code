@@ -1,0 +1,54 @@
+
+> datapass-studio-root@0.1.0 typecheck
+> npm run typecheck --workspace @datapass/web
+
+
+> @datapass/web@0.1.0 typecheck
+> tsc --noEmit
+
+error TS2688: Cannot find type definition file for 'babel__core'.
+  The file is in the program because:
+    Entry point for implicit type library 'babel__core'
+error TS2688: Cannot find type definition file for 'babel__generator'.
+  The file is in the program because:
+    Entry point for implicit type library 'babel__generator'
+error TS2688: Cannot find type definition file for 'babel__template'.
+  The file is in the program because:
+    Entry point for implicit type library 'babel__template'
+error TS2688: Cannot find type definition file for 'babel__traverse'.
+  The file is in the program because:
+    Entry point for implicit type library 'babel__traverse'
+error TS2688: Cannot find type definition file for 'd3-color'.
+  The file is in the program because:
+    Entry point for implicit type library 'd3-color'
+error TS2688: Cannot find type definition file for 'd3-drag'.
+  The file is in the program because:
+    Entry point for implicit type library 'd3-drag'
+error TS2688: Cannot find type definition file for 'd3-interpolate'.
+  The file is in the program because:
+    Entry point for implicit type library 'd3-interpolate'
+error TS2688: Cannot find type definition file for 'd3-selection'.
+  The file is in the program because:
+    Entry point for implicit type library 'd3-selection'
+error TS2688: Cannot find type definition file for 'd3-transition'.
+  The file is in the program because:
+    Entry point for implicit type library 'd3-transition'
+error TS2688: Cannot find type definition file for 'd3-zoom'.
+  The file is in the program because:
+    Entry point for implicit type library 'd3-zoom'
+error TS2688: Cannot find type definition file for 'estree'.
+  The file is in the program because:
+    Entry point for implicit type library 'estree'
+error TS2688: Cannot find type definition file for 'react'.
+  The file is in the program because:
+    Entry point for implicit type library 'react'
+error TS2688: Cannot find type definition file for 'react-dom'.
+  The file is in the program because:
+    Entry point for implicit type library 'react-dom'
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path /mnt/data/datapass_work/candidate/apps/web
+npm error workspace @datapass/web@0.1.0
+npm error location /mnt/data/datapass_work/candidate/apps/web
+npm error command failed
+npm error command sh -c tsc --noEmit

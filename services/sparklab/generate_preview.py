@@ -2,7 +2,7 @@
 
 The preview is derived from the same runtime code and truth packs as the API.
 Keeping it generated prevents the standalone/reference UI from drifting away
-from the calibrated virtual runtime after cost/scheduler changes.
+from the authored virtual runtime after cost/scheduler changes.
 """
 from __future__ import annotations
 

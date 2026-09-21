@@ -8,7 +8,7 @@
   "modules": [
     "airflow"
   ],
-  "description": "Use the shared DAG runner for extraction, SQL cleaning and aggregation. The advanced Airflow simulator source is retained for migration; Python DAG authoring is not executed by this root yet.",
+  "description": "Author and inspect an Airflow DAG in Datapass. The Fluent DAG surface can optionally execute the generated DAG with real Airflow 3 on an ephemeral GitHub Actions runner; SQL/data results remain separate workspace exercises.",
   "physical_data": "12 physical orders",
   "steps": [
     {
@@ -51,7 +51,7 @@
         "expected": [
           {
             "n": 10,
-            "revenue": 4985.0
+            "revenue": 4985
           }
         ]
       }
@@ -67,7 +67,7 @@
       "depends_on": [
         "clean"
       ],
-      "concept": "The root executes dependency-ordered tasks and records actual task outcomes. It is not an Apache Airflow scheduler.",
+      "concept": "Airflow owns orchestration and task dependency semantics. Datapass can optionally validate/run the generated DAG with real Airflow 3 on GitHub Actions, but no persistent scheduler is claimed.",
       "task": "Aggregate the scheduled batch",
       "hint": "",
       "check": {
@@ -75,27 +75,27 @@
         "expected": [
           {
             "customer_id": "C001",
-            "revenue": 150.0,
+            "revenue": 150,
             "orders": 2
           },
           {
             "customer_id": "C002",
-            "revenue": 225.0,
+            "revenue": 225,
             "orders": 2
           },
           {
             "customer_id": "C005",
-            "revenue": 100.0,
+            "revenue": 100,
             "orders": 2
           },
           {
             "customer_id": "C006",
-            "revenue": 10.0,
+            "revenue": 10,
             "orders": 1
           },
           {
             "customer_id": "CORPORATE_ACCOUNT_01",
-            "revenue": 4500.0,
+            "revenue": 4500,
             "orders": 3
           }
         ]
@@ -103,6 +103,6 @@
     }
   ],
   "schema_version": 1,
-  "version": "2026-09-17",
+  "version": "2026-09-20",
   "status": "foundation"
 }

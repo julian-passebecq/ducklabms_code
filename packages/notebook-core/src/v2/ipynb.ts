@@ -1,6 +1,6 @@
 import type { Layout } from 'react-grid-layout'
-import type { NotebookCellMeta, PanelType, WorkbenchPanel } from '../types'
-import type { NotebookView } from './model'
+import type { NotebookCellMeta, PanelType, WorkbenchPanel } from '../types.ts'
+import type { NotebookView } from './model.ts'
 
 export interface JupyterOutputSnapshot {
   outputType: 'stream' | 'display_data' | 'execute_result' | 'error' | 'unknown'
@@ -524,7 +524,7 @@ export function parseIpynb(text: string, fileName: string): ImportedNotebookProj
       type: blockType,
       title: executable ? `${cellLanguage === 'sql' ? 'SQL' : 'Python'} cell ${codeCellCount}` : `${cellLanguage || 'Code'} cell ${codeCellCount}`,
       subtitle: executable
-        ? `${cellLanguage === 'sql' ? 'DuckDB' : 'Pyodide'} · imported${cell.execution_count != null ? ` · [${cell.execution_count}]` : ''}`
+        ? `${cellLanguage === 'sql' ? 'DuckDB' : 'Python'} · imported${cell.execution_count != null ? ` · [${cell.execution_count}]` : ''}`
         : `Read-only import · ${cellLanguage || 'unknown language'}`,
       notebook: notebookMeta
     }

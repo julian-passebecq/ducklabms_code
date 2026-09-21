@@ -1,0 +1,131 @@
+{
+  "gate": "real-local-dbt-shared-catalog",
+  "storage": "duckdb",
+  "status": "PASS",
+  "versions": {
+    "duckdb": "1.5.5",
+    "dbt-core": "1.11.15",
+    "dbt-duckdb": "1.11.0",
+    "polars": "1.44.2",
+    "pandas": "3.0.6"
+  },
+  "checks": [
+    "Real dbt seed/model/test build, matching artifacts, compiled SQL and lineage",
+    "dbt output visible through shared notebook catalog after kernel restart",
+    "Shared Arena fixtures: DuckDB, pandas, native Polars, bounded dbt/Spark semantics"
+  ],
+  "job": {
+    "schema_version": 1,
+    "id": "ea213ebc8f074d0d9e2759c9b679d493",
+    "workspace_id": "35bbee2c82df425d9b861337b2faf47d",
+    "resource_id": "native-dbt",
+    "resource_revision": 0,
+    "workspace_revision": 1,
+    "source_hash": "6fd9f80f07b2e0bc28b28dc556f1b790797b5d9e9a0cddffc8c6f5618d125139",
+    "kind": "dbt",
+    "action": "build",
+    "status": "success",
+    "truth": "real_local",
+    "created_at": "2026-09-21T18:12:29.010769+00:00",
+    "started_at": "2026-09-21T18:12:29.012966+00:00",
+    "finished_at": "2026-09-21T18:12:42.954881+00:00",
+    "elapsed_ms": 13944.106,
+    "runtime": {
+      "adapter": "dbt-core",
+      "versions": {
+        "dbt-core": "1.11.15",
+        "dbt-duckdb": "1.11.0",
+        "duckdb": "1.5.5"
+      },
+      "storage": "duckdb",
+      "lakehouse": {
+        "schema_version": 1,
+        "active": false,
+        "table_format": "ducklake",
+        "compute_engine": "duckdb",
+        "metadata_backend": null,
+        "metadata_file": null,
+        "data_format": "parquet",
+        "data_directory": null,
+        "data_inlining_row_limit": 0,
+        "truth": "real local DuckDB compatibility mode; DuckLake is not attached",
+        "duckdb_version": "v1.5.5",
+        "ducklake_extension_installed": true,
+        "ducklake_extension_version": "d8a1881e",
+        "legacy_metadata": false
+      },
+      "process_isolation": "trusted local subprocess; not a sandbox"
+    },
+    "log": "[dbt] build / canonical resource native-dbt revision 0\n[stdout] 18:12:32  Running with dbt=1.11.15\r\n18:12:32  Registered adapter: duckdb=1.11.0\r\n18:12:35  Found 1 model, 1 test, 1 seed, 500 macros\r\n18:12:35  \r\n18:12:35  Concurrency: 1 threads (target='local')\r\n18:12:35  \r\n18:12:40  1 of 3 START seed file warehouse.smoke_seed .................................... [RUN]\r\n18:12:41  1 of 3 OK loaded seed file warehouse.smoke_seed ................................ [INSERT 2 in 0.10s]\r\n18:12:41  2 of 3 START sql table model warehouse.smoke_model ............................. [RUN]\r\n18:12:41  2 of 3 OK created sql table model warehouse.smoke_model ........................ [OK in 0.12s]\r\n18:12:41  3 of 3 START test assert_smoke ................................................. [RUN]\r\n18:12:41  3 of 3 PASS assert_smoke ....................................................... [PASS in 0.07s]\r\n18:12:41  \r\n18:12:41  Finished running 1 seed, 1 table model, 1 test in 0 hours 0 minutes and 5.39 seconds (5.39s).\r\n18:12:41  \r\n18:12:41  Completed successfully\r\n18:12:41  \r\n18:12:41  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3\r\n",
+    "log_truncated": false,
+    "artifacts": {
+      "manifest": {
+        "file": "manifest.json",
+        "bytes": 559527,
+        "sha256": "ed64806351bb912531b769db7dd10cb5b8e94e5e2a14d7af9f1b31b0da3c87ef"
+      },
+      "run_results": {
+        "file": "run_results.json",
+        "bytes": 5506,
+        "sha256": "77fd78cea780a779d801d606883a648edf7fd987489680d86c0008d668555a13"
+      }
+    },
+    "steps": [],
+    "result": {
+      "runtime": {
+        "adapter": "dbt-core",
+        "versions": {
+          "dbt-core": "1.11.15",
+          "dbt-duckdb": "1.11.0",
+          "duckdb": "1.5.5"
+        },
+        "storage": "duckdb",
+        "lakehouse": {
+          "schema_version": 1,
+          "active": false,
+          "table_format": "ducklake",
+          "compute_engine": "duckdb",
+          "metadata_backend": null,
+          "metadata_file": null,
+          "data_format": "parquet",
+          "data_directory": null,
+          "data_inlining_row_limit": 0,
+          "truth": "real local DuckDB compatibility mode; DuckLake is not attached",
+          "duckdb_version": "v1.5.5",
+          "ducklake_extension_installed": true,
+          "ducklake_extension_version": "d8a1881e",
+          "legacy_metadata": false
+        },
+        "process_isolation": "trusted local subprocess; not a sandbox"
+      },
+      "returncode": 0,
+      "invocation_id": "b46dade2-55b3-4767-8927-b1716dbdaae1",
+      "warnings": [],
+      "action": "build",
+      "selector": "",
+      "resource_id": "native-dbt",
+      "resource_revision": 0,
+      "source_hash": "8306e91f13f773be43594fee7cf260d5dc30d7c05658057d56821dffef88b16d",
+      "files": {
+        "manifest": {
+          "file": "manifest.json",
+          "bytes": 559527,
+          "sha256": "ed64806351bb912531b769db7dd10cb5b8e94e5e2a14d7af9f1b31b0da3c87ef"
+        },
+        "run_results": {
+          "file": "run_results.json",
+          "bytes": 5506,
+          "sha256": "77fd78cea780a779d801d606883a648edf7fd987489680d86c0008d668555a13"
+        }
+      },
+      "truth": "real_local",
+      "catalog_registration": {
+        "registered": [
+          "warehouse.smoke_seed",
+          "warehouse.smoke_model"
+        ],
+        "omitted": []
+      }
+    }
+  }
+}

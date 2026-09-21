@@ -1,0 +1,61 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_public_contract_has_no_grader_payload_and_openapi_is_current _______
+
+    def test_public_contract_has_no_grader_payload_and_openapi_is_current():
+        spec=definition('demo-sum')
+        assert spec['validation']['duplicate_sensitive']
+        app=create_app()
+        try:
+>           schema=app.openapi()
+                   ^^^^^^^^^^^^^
+
+tests/test_interview.py:96: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/pyvenv/lib/python3.13/site-packages/fastapi/applications.py:1064: in openapi
+    self.openapi_schema = get_openapi(
+/opt/pyvenv/lib/python3.13/site-packages/fastapi/openapi/utils.py:516: in get_openapi
+    field_mapping, definitions = get_definitions(
+/opt/pyvenv/lib/python3.13/site-packages/fastapi/_compat/v2.py:303: in get_definitions
+    field_mapping, definitions = schema_generator.generate_definitions(inputs=inputs)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/pyvenv/lib/python3.13/site-packages/pydantic/json_schema.py:386: in generate_definitions
+    self.generate_inner(schema)
+/opt/pyvenv/lib/python3.13/site-packages/pydantic/json_schema.py:466: in generate_inner
+    if 'ref' in schema:
+       ^^^^^^^^^^^^^^^
+<frozen _collections_abc>:817: in __contains__
+    ???
+/opt/pyvenv/lib/python3.13/site-packages/pydantic/_internal/_mock_val_ser.py:41: in __getitem__
+    return self._get_built().__getitem__(key)
+           ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <pydantic._internal._mock_val_ser.MockCoreSchema object at 0x7f47d7f9c300>
+
+    def _get_built(self) -> CoreSchema:
+        if self._built_memo is not None:
+            return self._built_memo
+    
+        if self._attempt_rebuild:
+            schema = self._attempt_rebuild()
+            if schema is not None:
+                self._built_memo = schema
+                return schema
+>       raise PydanticUserError(self._error_message, code=self._code)
+E       pydantic.errors.PydanticUserError: `TypeAdapter[typing.Annotated[apps.api.datapass.foundation.RootWorkbench, FieldInfo(annotation=NoneType, required=True, alias='body', alias_priority=2, json_schema_extra={})]]` is not fully defined; you should define `typing.Annotated[apps.api.datapass.foundation.RootWorkbench, FieldInfo(annotation=NoneType, required=True, alias='body', alias_priority=2, json_schema_extra={})]` and all referenced types, then call `.rebuild()` on the instance.
+E       
+E       For further information visit https://errors.pydantic.dev/2.13/u/class-not-fully-defined
+
+/opt/pyvenv/lib/python3.13/site-packages/pydantic/_internal/_mock_val_ser.py:58: PydanticUserError
+=============================== warnings summary ===============================
+apps/api/datapass/analytics_contracts.py:52
+  /mnt/data/datapass_work/candidate/apps/api/datapass/analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+    class ArtifactBundle(Document):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_interview.py::test_public_contract_has_no_grader_payload_and_openapi_is_current - pydantic.errors.PydanticUserError: `TypeAdapter[typing.Annotated[apps.api.datapass.foundation.RootWorkbench, FieldInfo(annotation=NoneType, required=True, alias='body', alias_priority=2, json_schema_extra={})]]` is not fully defined; you should define `typing.Annotated[apps.api.datapass.foundation.RootWorkbench, FieldInfo(annotation=NoneType, required=True, alias='body', alias_priority=2, json_schema_extra={})]` and all referenced types, then call `.rebuild()` on the instance.
+
+For further information visit https://errors.pydantic.dev/2.13/u/class-not-fully-defined
+1 failed, 1 warning in 1.16s

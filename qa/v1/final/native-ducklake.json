@@ -1,0 +1,14 @@
+{
+  "gate": "real-local-dbt-shared-catalog",
+  "storage": "ducklake",
+  "status": "BLOCKED",
+  "versions": {
+    "duckdb": null,
+    "dbt-core": null,
+    "dbt-duckdb": null,
+    "polars": null,
+    "pandas": "2.2.3"
+  },
+  "checks": [],
+  "reason": "Missing declared native dependencies: duckdb, dbt-core, dbt-duckdb, polars"
+}

@@ -1,0 +1,3 @@
+-r requirements-dbt.txt
+# Optional official renderer; the native Datapass preview remains separate.
+dbt-charts==0.8.0

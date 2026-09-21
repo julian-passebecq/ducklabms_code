@@ -1,8 +1,8 @@
 import type { Layout } from 'react-grid-layout'
-import type { WorkbenchPanel } from '../types'
-import type { ImportedNotebookInfo, JupyterOutputSnapshot } from './ipynb'
-import type { NotebookView } from './model'
-import type { StorageReader } from './projectExport'
+import type { WorkbenchPanel } from '../types.ts'
+import type { ImportedNotebookInfo, JupyterOutputSnapshot } from './ipynb.ts'
+import type { NotebookView } from './model.ts'
+import type { StorageReader } from './projectExport.ts'
 
 interface ExportCell {
   id: string

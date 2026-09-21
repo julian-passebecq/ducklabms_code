@@ -1,0 +1,35 @@
+{
+  "local_release_status": "PASS",
+  "optional_guided_spark": "PASS - live protocol, grading and browser Run/Submit qualified",
+  "optional_dct_ducklake": "FAIL - unsupported direct attachment in external adapter",
+  "backend": {
+    "passed": 308,
+    "skipped": 0,
+    "failed": 0
+  },
+  "frontend_models": {
+    "passed": 178,
+    "failed": 0
+  },
+  "browser_duckdb": {
+    "passed": 13,
+    "failed": 0
+  },
+  "browser_ducklake": {
+    "passed": 5,
+    "failed": 0
+  },
+  "typecheck": "PASS",
+  "production_build": "PASS",
+  "native_duckdb_dbt_dct": "PASS",
+  "native_ducklake_dbt": "PASS",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.13.1",
+  "node": "v26.9.0",
+  "guided_live_browser": {
+    "passed": 1,
+    "failed": 0
+  },
+  "guided_endpoint": "https://fastapispark.fastapicloud.dev",
+  "guided_live_evidence": "guided-live-evidence.json"
+}

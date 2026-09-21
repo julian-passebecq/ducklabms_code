@@ -1,0 +1,131 @@
+{
+  "status": "IMPLEMENTED_CANDIDATE_NOT_RELEASE_QUALIFIED",
+  "date": "2026-09-21",
+  "base_repository": "julian-passebecq/ducklabms_code",
+  "base_branch": "codex/real-spark-proxy-1",
+  "base_commit": "abb0345a78836508f6024d79710a46973cbed9d6",
+  "base_git_tree": "74b36a228b268637d256c790ff03d1fa51a22ea9",
+  "github_writes": false,
+  "native_certification": false,
+  "checks": [
+    {
+      "gate": "frontend_contract_models",
+      "command": "npm run test:v1:models",
+      "environment_note": "TypeScript resolved from installed system cache via NODE_PATH; this is not dependency-install proof.",
+      "status": "PASS",
+      "passed": 172,
+      "failed": 0,
+      "log": "frontend-final.log",
+      "log_sha256": "1ea6a1de994e99df5d38b2ce697e0fdb158d09a6b18ae4fe8bb17a876c01bf7c"
+    },
+    {
+      "gate": "backend_changed_paths",
+      "command": "python -m pytest -q tests/test_foundation.py tests/test_local_jobs.py tests/test_pipeline_v1.py tests/test_semantic_v1.py tests/test_guided_spark_v1.py tests/test_local_data_v1.py tests/test_interview.py::test_public_contract_has_no_grader_payload_and_openapi_is_current",
+      "status": "PASS_WITH_EXPLICIT_SKIPS",
+      "passed": 140,
+      "failed": 0,
+      "skipped": 3,
+      "log": "backend-targeted-final.log",
+      "log_sha256": "50a7eb420e57c75206afc17ff957ad7a41fec4dd420b56a25f9d03e9a01c825a"
+    },
+    {
+      "gate": "backend_full",
+      "command": "python -m pytest -q",
+      "status": "NOT_PASSED_NATIVE_DEPENDENCIES_MISSING",
+      "passed": 234,
+      "failed": 12,
+      "errors": 43,
+      "skipped": 8,
+      "log": "backend-full-final.log",
+      "log_sha256": "d9f83e582a727d5fb9d197d19cd528f834be522a3e576422407eae91d9e5e154"
+    },
+    {
+      "gate": "domain_strict_types",
+      "command": "tsc -p tsconfig.v1-domain.json",
+      "status": "PASS",
+      "not_proven": "full React/notebook application typecheck",
+      "log": "domain-strict-final.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "gate": "dependency_install",
+      "command": "timeout 25 npm ci --ignore-scripts --no-audit --no-fund --fetch-retries=0 --fetch-timeout=10000",
+      "status": "BLOCKED",
+      "exit_code": 124,
+      "log": "dependency-install.log",
+      "log_sha256": "cb53ef6eb9d74818797e5c938704657bddcdbd5e00aa521d111e6d13b55ec30e"
+    },
+    {
+      "gate": "full_types",
+      "command": "npm run typecheck",
+      "status": "NOT_PASSED",
+      "log": "typecheck-final.log",
+      "log_sha256": "30943aa60c3ec665ced80ebc7b4b7d406f9442dc09e4f61f02be69041c4594dc"
+    },
+    {
+      "gate": "build",
+      "command": "npm run build",
+      "status": "NOT_PASSED",
+      "log": "build-final.log",
+      "log_sha256": "26a7d68ba3f312ffddda6e9e1f4432624314ebac05c14d8eb9dab0edc22f323e"
+    },
+    {
+      "gate": "native_duckdb_dbt",
+      "command": "python scripts/v1-local-smoke.py --storage duckdb --output qa/v1/final/native-duckdb.json",
+      "status": "BLOCKED",
+      "exit_code": 2,
+      "log": "native-duckdb.json",
+      "log_sha256": "e852ccf6c6e88fc52659c7b9b5a69dfdf34ddbddd12379a8370c9376127c8d69"
+    },
+    {
+      "gate": "native_ducklake_dbt",
+      "command": "python scripts/v1-local-smoke.py --storage ducklake --output qa/v1/final/native-ducklake.json",
+      "status": "BLOCKED",
+      "exit_code": 2,
+      "log": "native-ducklake.json",
+      "log_sha256": "35c6fa00d48a22d4d5e4c056899108fc1b142c176915e833b5112db7b0e23fc1"
+    },
+    {
+      "gate": "native_browser",
+      "command": "npm run test:v1:browser",
+      "status": "BLOCKED",
+      "reason": "Declared Playwright test package and real React build absent; unrelated global CLI rejects test.",
+      "log": "native-browser.log",
+      "log_sha256": "e532f4e6d43d5a1616f135ba1af0847ef15c5856c4143ae20925db4874704104"
+    },
+    {
+      "gate": "syntax_typescript",
+      "command": "npm run test:syntax",
+      "status": "PASS",
+      "files": 57,
+      "syntax_errors": 0,
+      "log": "syntax-final.log",
+      "log_sha256": "5c2ca3b59cbd391fe87bd0f671483f62bc1be0338480fdb57ee5f5b054ed490f"
+    },
+    {
+      "gate": "python_syntax",
+      "command": "python -m compileall -q apps/api/datapass scripts/v1-local-smoke.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "log": "python-syntax-final.exit",
+      "log_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    }
+  ],
+  "counts_overlap": true,
+  "functional_limitations": [
+    "General DAG-IR Arena grader not exposed",
+    "Full dct YAML-import/renderer interoperability unqualified",
+    "Original figure adapter, not vendored/certified shared ConceptMotion SDK",
+    "Curated guided Spark subset only; no live endpoint qualification"
+  ],
+  "inputs": [
+    {
+      "filename": "ducklabms_code-codex-real-spark-proxy-1.zip",
+      "sha256": "f34f6ec11a5198cadc43ffd74743bad34541424542a45b34e648376881491b54"
+    },
+    {
+      "filename": "Datapass_V1_PRO_FINAL_HANDOFF_2026-09-21(1).zip",
+      "sha256": "a1a45a678954bafbb6eab1bac6d0d309545c015421e2e251006432b2ec636751"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+src/App.tsx(188,207): error TS18046: 'c' is of type 'unknown'.
+src/App.tsx(221,95): error TS18046: 'n' is of type 'unknown'.
+src/App.tsx(221,106): error TS18046: 'n' is of type 'unknown'.
+src/App.tsx(245,732): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Record<KernelId, string>'.
+src/foundation/WorkbenchSurface.tsx(65,222): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Record<"workflow" | "lineage" | "notebook" | "catalog" | "evidence" | "data-model" | "dbt-project" | "model-design" | "chart-board" | "pipeline" | "figure" | "exercise", string>'.
+src/foundation/WorkbenchSurface.tsx(74,88): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Record<"workflow" | "lineage" | "notebook" | "catalog" | "evidence" | "data-model" | "dbt-project" | "model-design" | "chart-board" | "pipeline" | "figure" | "exercise", string>'.
+src/studio/analytics/AnalyticsWorkbench.tsx(71,263): error TS2347: Untyped function calls may not accept type arguments.
+src/studio/workspace/ResourcePalette.tsx(9,33): error TS2347: Untyped function calls may not accept type arguments.

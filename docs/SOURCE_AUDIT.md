@@ -24,7 +24,7 @@ The two Command Center archives are byte-identical duplicates by SHA-256. They a
 | Source | Reused now | Retained for migration / caveat |
 |---|---|---|
 | Mosaic 2.1.7 | Generic types, layout functions, ipynb parser/export, project sanitizer; canvas pattern | Original full UI and browser runtimes remain reference-only. New execution uses FastAPI. |
-| DuckLake Lab 0.12 / SparkLab | Safe AST compiler, bounded semantic fixtures, virtual resource/cost model | Prior standalone UI/API not embedded. Only one physical-model truth pack is connected in root. Original name did not itself guarantee a general DuckLake-backed catalog. |
+| DuckLake Lab 0.12 / SparkLab | Safe AST compiler, bounded semantic fixtures, virtual resource/cost model | Prior standalone UI/API not embedded. Retail broadcast and finance account-window truth packs are connected in root (Runtime Pass 1; broad QA deferred). Original name did not itself guarantee a general DuckLake-backed catalog. |
 | Fabric/Azure Lab V21 | Freshness-aware dependency principle; case and panel references | Full notebook/pipeline/product editors and independent JS runtime are NOT all migrated. |
 | Airflow/dbt Studio V7 | Requirements, lessons and module source retained; root adds literal ref/source SQL + dependency execution | Advanced DAG/compiler/retry/sensor/snapshot features stay in source pending bounded migration. |
 | Power BI Studio V15 | Shared Gold KPI path establishes integration seam | Original DAX/model/report/refresh tooling is retained, not integrated by renaming a SQL preview. |
@@ -56,3 +56,18 @@ Original release-note claims are historical inputs. They are not a replacement f
 Retained all migration sources unchanged. The existing Mosaic extraction now compiles against the real readonly grid-layout types. Root adapters preserve workflow-to-cell output attachment after ipynb import and root-owned panel registration supplies workspace/runtime services. Responsive stacking changes presentation only. Catalog/document metadata replacement tolerates bounded Windows sharing locks; DuckLake has access only to its workspace data directory. Actual React, DuckDB, Polars, DuckLake and Windows startup evidence replaces the earlier unavailable-package gates in docs/VERIFICATION.md.
 
 No independent application, notebook format, catalog, database abstraction, provider or runtime was added. Root version remains 0.1.0. Full original Power BI, Airflow/dbt, ADF/Fabric, ML and guide functionality remains unmigrated as listed above.
+
+
+## Notebook + Interview Practice Pass 1
+
+Reused Mosaic view creation, scoped removal/grouping and layout reset helpers. Extended the shared notebook wrapper, existing Monaco adapter, RuntimeClient, worker and Documents store. Applied CodeDELeet audit concepts (canonical versus related placement; resume versus recommendation; scoped practice state; durable draft versus cache; safe candidate import) without importing its shell, browser store, editor stack or runtime. The two SQL exercises are internal demos; no CodeDELeet corpus is claimed as migrated. See NOTEBOOK_INTERVIEW_PASS_1_HANDOFF.md for implementation and deferred QA.
+
+
+## Notebook / Interview Pass 2 migration ledger
+
+Shared Mosaic now hosts browser/progress, editor/results and context/guidance/history zones. Existing editor, catalog and execution ownership is retained. The bounded CodeDELeet adapter emits disabled packs and explicit migration reports; no actual corpus was found or migrated. Five internal-demo exercises cover SQL/Python/Polars/SparkLab. See NOTEBOOK_INTERVIEW_PASS_2_HANDOFF.md for scope and verification DEFERRED TO EXTERNAL QA.
+
+
+## SparkLab Runtime Pass 1 — September 18, 2026
+
+Retained the safe parser and deterministic scheduler; added plan-driven physical evidence, versioned fictional profiles and Datapass Credits in the shared runtime. Migrated the retained finance account-window fixture/expected rows into a shared catalog case and shared exercise pack, with authored counterexamples. No standalone shell, notebook, catalog or exercise store was imported. Reference migration sources remain unchanged. Generic catalog simulations use explicitly assumed bytes/cardinalities; immutable truth-pack gating remains mandatory for virtual-scale evidence. See SPARKLAB_RUNTIME_PASS_1_HANDOFF.md for exact checks and broad verification DEFERRED TO EXTERNAL QA.

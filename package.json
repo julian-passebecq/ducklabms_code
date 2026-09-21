@@ -12,11 +12,17 @@
     "dev": "npm run dev --workspace @datapass/web",
     "build": "npm run build --workspace @datapass/web",
     "typecheck": "npm run typecheck --workspace @datapass/web",
-    "test": "node --experimental-strip-types --test tests/contracts.test.mts",
+    "test": "node --experimental-strip-types --test tests/contracts.test.mts tests/interview.test.mts",
     "test:syntax": "node scripts/syntax-check.cjs",
     "test:api": "python -m pytest",
     "verify": "npm run typecheck && npm test && npm run build && python -m pytest",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:foundation": "node --experimental-strip-types --test tests/foundation.test.mts && python -m pytest -q tests/test_foundation.py",
+    "test:foundation:browser": "node scripts/foundation-browser-smoke.mjs",
+    "test:v1:models": "node --experimental-strip-types --test tests/contracts.test.mts tests/interview.test.mts tests/foundation.test.mts && node --test tests/ui-m1-model.test.cjs tests/analytics-m2-model.test.cjs tests/workspace-resources.test.cjs tests/figures-v1.test.cjs tests/charts-interop.test.cjs",
+    "test:v1:browser": "playwright test --config playwright.v1.config.ts",
+    "test:v1:native": "python scripts/v1-local-smoke.py --storage ducklake --output qa/v1/native-local.json",
+    "typecheck:v1:domain": "tsc -p tsconfig.v1-domain.json"
   },
   "engines": {
     "node": ">=22.12"

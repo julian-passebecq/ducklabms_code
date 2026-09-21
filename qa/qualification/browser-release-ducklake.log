@@ -1,0 +1,22 @@
+
+> datapass-studio-root@0.1.0 test:v1:browser
+> playwright test --config playwright.v1.config.ts
+
+[WebServer] D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+[WebServer]   class ArtifactBundle(Document):
+[WebServer] INFO:     Started server process [35828]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:18080 (Press CTRL+C to quit)
+
+Running 5 tests using 1 worker
+
+(node:35396) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\charts-roundtrip.spec.ts:4:1 › Charts YAML imports as design, executes locally, and exports a replayable board (9.0s)
+  ok 2 tests\browser\v1-native.spec.ts:3:1 › native shell: one canonical figure, independent panes, persisted skins and source (6.9s)
+  ok 3 tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views (25.6s)
+  ok 4 tests\browser\v1-resources.spec.ts:62:1 › Arena pipeline Run/Submit grades DAG design and persists attempts (4.4s)
+  ok 5 tests\browser\v1-resources.spec.ts:84:1 › imported notebook executes real SQL, pandas and Polars; guided Run stays unavailable (6.7s)
+
+  5 passed (56.3s)

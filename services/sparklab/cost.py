@@ -31,3 +31,11 @@ def price_job(job: JobRun, profile: ClusterProfile, sparklab_eur_per_scc: float 
             "label": "DBU-equivalent teaching adapter; use dated vendor list price for money",
         },
     }
+
+def credits(job, profile):
+    contributors = dict(compute=job.core_hours*profile.credits_per_core_hour,
+                        memory=0.02*job.memory_gb_hours, shuffle=0.05*job.shuffle_gb, spill=0.12*job.spill_gb)
+    return dict(unit='Datapass Credits', fictional=True, total=round(sum(contributors.values()), 6),
+                contributors={k:round(v,6) for k,v in contributors.items()},
+                formula='core_hours × profile rate + 0.02 × memory_GB_hours + 0.05 × shuffle_GB + 0.12 × spill_GB',
+                explanation='Allocated worker slots and driver include idle time; startup charges driver only. No currency, payment or vendor bill.')

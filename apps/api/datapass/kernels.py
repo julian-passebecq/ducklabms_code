@@ -5,6 +5,7 @@ The API has one process; each worker owns its own database. Do not run this
 manager behind multiple Uvicorn workers.
 """
 from __future__ import annotations
+from contextlib import contextmanager
 import json
 import os
 from pathlib import Path
@@ -67,6 +68,9 @@ class Kernel:
                 self.stop()
                 raise RuntimeError('The worker protocol was corrupted. The process was stopped.')
             if not payload['ok']:
+                # A validated request rejected by the worker is not an outage.
+                if payload.get('error_type') == 'ValueError':
+                    raise ValueError(payload['error'])
                 raise RuntimeError(payload['error'])
             return payload['result']
 
@@ -87,6 +91,7 @@ class KernelManager:
     def __init__(self, mode='auto',trusted=False,timeout=20.0,max_workers=6):
         self.mode,self.trusted,self.timeout,self.max_workers = mode,trusted,timeout,max_workers
         self.workers = {}
+        self.workspace_locks = {}
         self.lock = threading.RLock()
 
     def get(self,id: str,directory: Path):
@@ -104,20 +109,34 @@ class KernelManager:
                 self.workers[id] = Kernel(directory,self.mode,self.trusted)
             return self.workers[id]
 
-    def call(self,id,directory,request):
+    @contextmanager
+    def workspace_lease(self, id):
+        # Reentrant so pipeline tasks can use the same serialized kernel protocol.
         with self.lock:
-            kernel = self.get(id,directory)
-            kernel.reservations += 1
-        try:
-            return kernel.call(request,self.timeout)
-        finally:
-            with self.lock:
-                kernel.reservations -= 1
+            gate = self.workspace_locks.setdefault(id, threading.RLock())
+        with gate:
+            yield
 
-    def restart(self,id):
+    def call(self,id,directory,request):
+        with self.workspace_lease(id):
+            with self.lock:
+                kernel = self.get(id,directory)
+                kernel.reservations += 1
+            try:
+                return kernel.call(request,self.timeout)
+            finally:
+                with self.lock:
+                    kernel.reservations -= 1
+
+    def interrupt(self,id):
+        """Cancellation path: must not wait on an external writer's lease."""
         with self.lock:
             if id in self.workers:
                 self.workers.pop(id).stop()
+
+    def restart(self,id):
+        with self.workspace_lease(id):
+            self.interrupt(id)
         return {'status':'restarted','message':'A new process will start on the next request. Tables persist; variables reset.'}
 
     def close(self):

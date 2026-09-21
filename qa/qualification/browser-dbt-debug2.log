@@ -1,0 +1,49 @@
+[WebServer] D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+[WebServer]   class ArtifactBundle(Document):
+[WebServer] INFO:     Started server process [38404]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:18080 (Press CTRL+C to quit)
+
+Running 1 test using 1 worker
+
+(node:39372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views (29.4s)
+
+
+  1) tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('img', { name: /Revenue over time, bar chart/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('img', { name: /Revenue over time, bar chart/ }) with timeout 15000ms
+      - waiting for getByRole('img', { name: /Revenue over time, bar chart/ })
+
+
+      32 |  await page.getByRole('button',{name:'Use result in board',exact:true}).click();
+      33 |  await expect(page.getByText('Verified local query snapshot',{exact:true})).toBeVisible();
+    > 34 |  await expect(page.getByRole('img',{name:/Revenue over time, bar chart/})).toBeVisible();
+         |                                                                            ^
+      35 |  await page.getByRole('button',{name:'Save workspace',exact:true}).click();
+      36 |  await expect.poll(async()=>((await saved()).workbench.resources.find((r:any)=>r.kind==='chart-board'&&r.board.snapshot.origin==='real_local')?.board.snapshot.rows.length)).toBe(8);
+      37 |  await create(page,'Pipeline Lab');
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\v1-resources.spec.ts:34:76
+
+    Error Context: test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views 

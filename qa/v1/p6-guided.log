@@ -1,0 +1,16 @@
+
+==================================== ERRORS ====================================
+________________ ERROR collecting tests/test_guided_spark_v1.py ________________
+ImportError while importing test module '/mnt/data/datapass_work/candidate/tests/test_guided_spark_v1.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_guided_spark_v1.py:7: in <module>
+    from datapass.guided_spark import GuidedSpark, compile_guard, valid_result, STARTER, PROBE, COLS, VERSION, SERVICE
+E   ModuleNotFoundError: No module named 'datapass'
+=========================== short test summary info ============================
+ERROR tests/test_guided_spark_v1.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.25s

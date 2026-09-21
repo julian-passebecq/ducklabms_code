@@ -1,0 +1,84 @@
+name: DuckLake runtime consolidation
+
+concurrency:
+  group: ducklake-runtime-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - codex/ducklake-runtime-consolidation-1
+      - codex/ducklake-sparklab-fidelity-1
+      - codex/ducklake-partition-pruning-1
+      - codex/airflow-github-actions-1
+      - codex/real-spark-proxy-1
+  workflow_dispatch:
+
+jobs:
+  ducklake-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install local engines
+        run: python -m pip install -r requirements-engines.txt
+
+      - name: Full Python regression + DuckLake integration
+        run: python -m pytest -q
+        env:
+          DATAPASS_DUCKLAKE_INTEGRATION: "1"
+          DATAPASS_INSTALL_DUCKLAKE: "1"
+
+      - name: Real DuckLake smoke
+        run: python scripts/ducklake-smoke.py
+        env:
+          DATAPASS_INSTALL_DUCKLAKE: "1"
+
+  web-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.12"
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run build
+
+
+  playground-browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.12"
+          cache: npm
+
+      - name: Create browser-test environment
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r requirements-engines.txt
+
+      - run: npm ci
+      - run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: V1 playground browser smoke
+        run: npx playwright test --grep "V1 playground launcher"

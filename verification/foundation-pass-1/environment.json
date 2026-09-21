@@ -1,0 +1,17 @@
+{
+  "source_commit": "dee5b0da0fe1cec4a9bd24179fe63cbf46bba7a3",
+  "source_tree": "d10e3e7a34c21291bf0130d18a306bebab9d3cb2",
+  "node": "22.16.0",
+  "browser_check_driver": "environment-provided playwright-core 1.57.0-beta-1764944708000",
+  "browser_executable": "/usr/bin/chromium",
+  "browser_navigation": "blocked_by_environment",
+  "dependency_resolution": "GitHub Actions run 35460785835, artifact 10588933676; source registry npm install with lockfile retained",
+  "new_dependency": "@xyflow/react 12.8.5",
+  "data_engine_in_focused_api_tests": "no kernel invocation; SQLite mode configured",
+  "duckdb_execution_tested_in_this_pass": false,
+  "full_regression": "DEFERRED TO EXTERNAL QA",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "fastapi": "0.128.2",
+  "pydantic": "2.13.4",
+  "pytest": "9.0.2"
+}
