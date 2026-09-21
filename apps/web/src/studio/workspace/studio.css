@@ -1,5 +1,8 @@
 /* Theme affects colors. Experience skin affects chrome/density only. */
-.dp-appearance{--dp-canvas-bg:#f4f6f8;--dp-panel-bg:#fff;--dp-sidebar-bg:#f8fafb;--dp-border:#d9e0e6;--dp-text:#202932;--dp-muted:#576979;--dp-accent:#0f6cbd;--dp-code-bg:#f8f9fb;--dp-tab-active:#fff;--dp-tree-selection:#e5effa;--dp-success:#187343;--dp-warning:#986b00;--dp-danger:#a4262c;min-height:100vh;background:var(--dp-canvas-bg);color:var(--dp-text)}
+.dp-appearance{--dp-canvas-bg:#f4f6f8;--dp-panel-bg:#fff;--dp-sidebar-bg:#f8fafb;--dp-border:#d9e0e6;--dp-text:#202932;--dp-muted:#576979;--dp-accent:#0f6cbd;--dp-code-bg:#f8f9fb;--dp-tab-active:#fff;--dp-tree-selection:#e5effa;--dp-success:#187343;--dp-warning:#986b00;--dp-danger:#a4262c}
+/* Fluent copies the provider class to tooltip portals, but not data-theme.
+   Only the application root should occupy and paint the full viewport. */
+.dp-appearance[data-theme]{min-height:100vh;background:var(--dp-canvas-bg);color:var(--dp-text)}
 .dp-appearance[data-theme=neutral]{--dp-canvas-bg:#f4f3f0;--dp-panel-bg:#fdfcf9;--dp-sidebar-bg:#f1f0ed;--dp-border:#d9d7d1;--dp-text:#313431;--dp-muted:#626b64;--dp-code-bg:#f3f2ee;--dp-tab-active:#fdfcf9;--dp-tree-selection:#e7ebe6}
 .dp-appearance[data-theme=dark]{color-scheme:dark;--dp-canvas-bg:#141a21;--dp-panel-bg:#202831;--dp-sidebar-bg:#19212a;--dp-border:#3b4754;--dp-text:#e6edf3;--dp-muted:#aab9c6;--dp-accent:#84bfff;--dp-code-bg:#171e26;--dp-tab-active:#253342;--dp-tree-selection:#253c51;--dp-success:#77d59f;--dp-warning:#f0c264;--dp-danger:#ffa4a9}
 .dp-appearance[data-skin=fabric]{--dp-accent:#12816c;--dp-tab-radius:5px}
