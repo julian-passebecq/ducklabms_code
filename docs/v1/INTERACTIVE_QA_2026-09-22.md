@@ -81,7 +81,7 @@ Created `codex/ducklake-evidence-loading` from current main only after observing
 - Some browser automation clicks at a changing narrow layout landed on sidebar items. Retried using fresh accessibility state and visible targets; these were not classified as application defects. No source loss was observed.
 - Exact launcher stdout/stderr remain in ignored `.local/interactive-qa-20260922/`. Stdout contains the private session URL and must not be committed or published.
 - The interactive matrix above is fresh evidence. Historical release-suite counts are not claimed as rerun here.
-- Automated regression execution is **DEFERRED TO EXTERNAL QA**. Run the new focused regression on a separate port with the repository browser configuration, followed by broader suites if desired:
+- Automated regression execution was completed in the follow-up QA pass below; it is no longer deferred for these commands:
 
 ```powershell
 $env:DATAPASS_PORT='18081'
@@ -91,3 +91,22 @@ npm run test:v1:browser
 ```
 
 The server on 18080 is deliberately left available for continued use.
+
+## Fresh automated regression QA — 2026-09-22
+
+Tested `codex/ducklake-evidence-loading` at `5305c65ba7fc5f4c76f8c1c094856896fc9ee520` with an initially clean working tree. Rebuilt the production React bundle before browser execution. All browser commands used `$env:DATAPASS_PORT='18081'`; Playwright managed its own server, separate from the existing application on 18080. The core configuration used DuckDB, and the V1 configuration used its default DuckLake storage.
+
+| Exact command | Fresh result | Local evidence |
+|---|---|---|
+| `npm run typecheck` | PASS, exit 0 | `typecheck.log` |
+| `npm run build` | PASS, exit 0; Vite build 32.74s | `build.log` |
+| `.\.venv\Scripts\python.exe -m pytest -q` | PASS, exit 0; 304 passed, 4 skipped, 2 warnings in 75.18s | `pytest.log` |
+| `npx playwright test tests/browser/core.spec.ts --grep 'Monaco restores canonical source'` | PASS, exit 0; 1 passed in 7.0s | `monaco.log` |
+| `npm run test:browser` | PASS, exit 0; 14 passed, 1 skipped in 2.1m | `browser.log` |
+| `npm run test:v1:browser` | PASS, exit 0; 5 passed in 1.1m | `v1-browser.log`, `native-browser.json` |
+
+Evidence files are retained in ignored `.local/deferred-qa-20260922/`. The fresh V1 JSON reporter output was copied there and the historical tracked `qa/qualification/native-browser.json` restored, keeping this follow-up commit report-only. Browser counts overlap: the focused Monaco test also passed within the full suite, and the V1 suite repeats five journeys against DuckLake.
+
+Skip boundaries: the default backend command skipped the live guided-service test because `DATAPASS_GUIDED_SPARK_QA_URL` was not set, plus three DuckLake extension/maintenance/partition integration tests because `DATAPASS_DUCKLAKE_INTEGRATION` was not enabled. The full browser suite likewise skipped its explicit live guided-service opt-in test. These optional gates were not rerun or certified by this pass; the five V1 DuckLake browser journeys did run and pass.
+
+No genuine regression or test failure occurred, so no production/test source changes were needed. The first shell invocation emitted errors from the local PowerShell Conda startup profile; all QA commands ran in a profile-free shell using the repository virtual environment. Existing non-failing diagnostics remained: the Vite large-chunk advisory, ArtifactBundle `schema` warning, AnyIO deprecation warning and Playwright color-environment warning. No merge was performed.
