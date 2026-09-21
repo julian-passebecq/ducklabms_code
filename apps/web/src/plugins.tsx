@@ -137,7 +137,9 @@ function formatStorageBytes(value:number):string {
 }
 function LakehouseEvidence({context}:{context:ToolContext}){
  const [overview,setOverview]=useState<LakehouseOverview>();
- useEffect(()=>{let live=true;context.services.runtime.lakehouse(context.workspaceId).then(value=>{if(live)setOverview(value)}).catch(()=>{if(live)setOverview(undefined)});return()=>{live=false}},[context.services.runtime,context.workspaceId,context.assets]);
+ const [loading,setLoading]=useState(true);
+ useEffect(()=>{let live=true;setLoading(true);context.services.runtime.lakehouse(context.workspaceId).then(value=>{if(live){setOverview(value);setLoading(false)}}).catch(()=>{if(live){setOverview(undefined);setLoading(false)}});return()=>{live=false}},[context.services.runtime,context.workspaceId,context.assets]);
+ if(loading)return <div className="notice" role="status">Loading DuckLake storage evidence...</div>;
  if(!overview?.active)return <div className="notice">DuckLake evidence is unavailable in this workspace. Plain DuckDB/SQLite modes remain valid compatibility modes.</div>;
  const latest=overview.snapshots[0];
  const advisory=overview.tables.filter(t=>t.compaction_advisory!=='none');
