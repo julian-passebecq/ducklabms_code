@@ -1,0 +1,30 @@
+
+> datapass-studio-root@0.1.0 test:browser
+> playwright test
+
+[WebServer] D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+[WebServer]   class ArtifactBundle(Document):
+[WebServer] INFO:     Started server process [46892]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:18080 (Press CTRL+C to quit)
+
+Running 13 tests using 1 worker
+
+(node:43232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\browser\analytics-m2.spec.ts:3:1 › M2 native preview keeps analytics and notebook source across save/reload (1.2s)
+  ok  2 tests\browser\charts-roundtrip.spec.ts:4:1 › Charts YAML imports as design, executes locally, and exports a replayable board (6.5s)
+  ok  3 tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey (16.8s)
+  ok  4 tests\browser\core.spec.ts:70:1 › editing, keyboard execution, stale lineage, recovery and distinct run scopes (16.1s)
+  ok  5 tests\browser\core.spec.ts:124:1 › V1 playground launcher keeps free-canvas geometry and reopens the selected product shell (5.8s)
+  ok  6 tests\browser\interview.spec.ts:4:1 › standalone practice shares notebook, saves drafts and separates Run from Submit (7.9s)
+  ok  7 tests\browser\ui-m1-connected.spec.ts:5:1 › UI M1 connected notebook preserves its chosen view and canonical source after reopen (2.9s)
+  ok  8 tests\browser\ui-m1.spec.ts:5:1 › UI M1 preview edits one source across layouts and never calls the API (909ms)
+  ok  9 tests\browser\ui-m1.spec.ts:37:1 › UI M1 arena keeps answers while switching fixtures and works on a narrow screen (850ms)
+  ok 10 tests\browser\v1-native.spec.ts:3:1 › native shell: one canonical figure, independent panes, persisted skins and source (3.9s)
+  ok 11 tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views (20.8s)
+  ok 12 tests\browser\v1-resources.spec.ts:62:1 › Arena pipeline Run/Submit grades DAG design and persists attempts (3.9s)
+  ok 13 tests\browser\v1-resources.spec.ts:84:1 › imported notebook executes real SQL, pandas and Polars; guided Run stays unavailable (4.4s)
+
+  13 passed (1.6m)

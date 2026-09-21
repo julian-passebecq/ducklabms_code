@@ -1,0 +1,104 @@
+[WebServer] D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+[WebServer]   class ArtifactBundle(Document):
+[WebServer] INFO:     Started server process [17084]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:18080 (Press CTRL+C to quit)
+
+Running 4 tests using 1 worker
+
+(node:10268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey (18.1s)
+(node:34584) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 tests\browser\core.spec.ts:69:1 › editing, keyboard execution, stale lineage, recovery and distinct run scopes (31.2s)
+(node:48744) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 tests\browser\core.spec.ts:123:1 › V1 playground launcher keeps free-canvas geometry and reopens the selected product shell (5.9s)
+  x  4 tests\browser\interview.spec.ts:4:1 › standalone practice shares notebook, saves drafts and separates Run from Submit (15.8s)
+
+
+  1) tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey ─────────
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Run Copy source orders into Bronze', exact: true })
+
+
+      15 |  const doc=async()=>{const r=await request.get(`/api/workspaces/${workspace}`,{headers});expect(r.ok()).toBeTruthy();return r.json()};
+      16 |  const idle=()=>expect(page.getByRole('button',{name:'Save',exact:true})).toBeEnabled();
+    > 17 |  await page.getByRole('button',{name:'Run Copy source orders into Bronze',exact:true}).click();await idle();
+         |                                                                                        ^
+      18 |  expect((await doc()).runs.map((r:any)=>r.cell_id)).toEqual(['ingest']);
+      19 |  await page.getByRole('button',{name:'Run notebook',exact:true}).click();await idle();
+      20 |  let saved=await doc();expect(saved.runs.slice(-4).map((r:any)=>r.cell_id)).toEqual(['ingest','clean','aggregate','report']);
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\core.spec.ts:17:88
+
+    Error Context: test-results\core-production-React-DuckDB-connected-notebook-journey\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\core-production-React-DuckDB-connected-notebook-journey\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\core-production-React-DuckDB-connected-notebook-journey\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\browser\core.spec.ts:69:1 › editing, keyboard execution, stale lineage, recovery and distinct run scopes 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByRole('tab', { name: 'Notebook', exact: true })
+
+
+      116 |  await expect(page.getByRole('button',{name:'Open',exact:true})).toBeFocused();
+      117 |  await page.getByRole('button',{name:'Notebook',exact:true}).click();
+    > 118 |  await page.getByRole('tab',{name:'Notebook',exact:true}).click();
+          |                                                           ^
+      119 |  await page.screenshot({path:'evidence/core-pass-1-react-notebook.png',fullPage:true});
+      120 | });
+      121 |
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\core.spec.ts:118:59
+
+    Error Context: test-results\core-editing-keyboard-exec-d9e92-ery-and-distinct-run-scopes\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\core-editing-keyboard-exec-d9e92-ery-and-distinct-run-scopes\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\core-editing-keyboard-exec-d9e92-ery-and-distinct-run-scopes\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests\browser\interview.spec.ts:4:1 › standalone practice shares notebook, saves drafts and separates Run from Submit 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByText('Canvas presets, notebook skins and source tools', { exact: true })
+
+
+       9 |  const sum=page.locator('.case-card').filter({has:page.getByRole('heading',{name:'Sum with duplicates and NULL',exact:true})});
+      10 |  await sum.getByRole('button').click();
+    > 11 |  await page.getByText('Canvas presets, notebook skins and source tools',{exact:true}).click();
+         |                                                                                       ^
+      12 |  await page.getByText('Review and advanced exercise actions',{exact:true}).click();
+      13 |  await expect(page.getByRole('tab',{name:'Interview',exact:true})).toHaveAttribute('aria-selected','true');
+      14 |  await expect(page.locator('.monaco-editor')).toBeVisible();
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\interview.spec.ts:11:87
+
+    Error Context: test-results\interview-standalone-pract-cf86c-d-separates-Run-from-Submit\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\interview-standalone-pract-cf86c-d-separates-Run-from-Submit\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\interview-standalone-pract-cf86c-d-separates-Run-from-Submit\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey ──────────
+    tests\browser\core.spec.ts:69:1 › editing, keyboard execution, stale lineage, recovery and distinct run scopes 
+    tests\browser\interview.spec.ts:4:1 › standalone practice shares notebook, saves drafts and separates Run from Submit 
+  1 passed (1.3m)

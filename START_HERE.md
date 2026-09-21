@@ -1,4 +1,14 @@
+# Current candidate entrypoint
+
+Read `docs/v1/RELEASE_STATUS.md` first, then `docs/v1/LOCAL_RUN.md`. This source already includes the cleanup, M2 and subsequent implementation; do not reassemble them. Exact provenance: `docs/v1/MIGRATION_AND_PROVENANCE.md`.
+
+---
+
+## Retained earlier entrypoint (historical context)
+
 # Start here: the integration baseline
+
+> **Current V1 override (2026-09-21):** read `architecture/00_START_HERE.md` first. This file is the historical Root 0.1.0 integration baseline; the focused architecture folder is authoritative.
 
 ## The decision
 

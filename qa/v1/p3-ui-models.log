@@ -1,0 +1,382 @@
+TAP version 13
+# Subtest: new project survives validated JSON roundtrip without losing source/model/board rows
+ok 1 - new project survives validated JSON roundtrip without losing source/model/board rows
+  ---
+  duration_ms: 12.483068
+  type: 'test'
+  ...
+# Subtest: namespaced analytics attachment does not require another notebook document
+ok 2 - namespaced analytics attachment does not require another notebook document
+  ---
+  duration_ms: 0.32069
+  type: 'test'
+  ...
+# Subtest: new tab reuses existing layer and does not mutate prior session
+ok 3 - new tab reuses existing layer and does not mutate prior session
+  ---
+  duration_ms: 2.183454
+  type: 'test'
+  ...
+# Subtest: split opens an empty second pane, not a notebook clone
+ok 4 - split opens an empty second pane, not a notebook clone
+  ---
+  duration_ms: 0.562637
+  type: 'test'
+  ...
+# Subtest: moving tabs preserves identity; closing never deletes project source
+ok 5 - moving tabs preserves identity; closing never deletes project source
+  ---
+  duration_ms: 0.723292
+  type: 'test'
+  ...
+# Subtest: single pane retains distinct tabs and active layer
+ok 6 - single pane retains distinct tabs and active layer
+  ---
+  duration_ms: 0.657796
+  type: 'test'
+  ...
+# Subtest: invalid pane ratio/active tab/collapse are rejected
+ok 7 - invalid pane ratio/active tab/collapse are rejected
+  ---
+  duration_ms: 1.141225
+  type: 'test'
+  ...
+# Subtest: unsupported analytics schema and fractional revision are rejected
+ok 8 - unsupported analytics schema and fractional revision are rejected
+  ---
+  duration_ms: 6.976618
+  type: 'test'
+  ...
+# Subtest: invalid restored attachment reports error and leaves supplied object untouched
+ok 9 - invalid restored attachment reports error and leaves supplied object untouched
+  ---
+  duration_ms: 1.219826
+  type: 'test'
+  ...
+# Subtest: edits to files are pure and enforce the source limit
+ok 10 - edits to files are pure and enforce the source limit
+  ---
+  duration_ms: 1.163073
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path ../secrets.sql
+ok 11 - reject unsafe source path ../secrets.sql
+  ---
+  duration_ms: 0.36822
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models/../../x.sql
+ok 12 - reject unsafe source path models/../../x.sql
+  ---
+  duration_ms: 0.181011
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models//x.sql
+ok 13 - reject unsafe source path models//x.sql
+  ---
+  duration_ms: 0.133652
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models/.x.sql
+ok 14 - reject unsafe source path models/.x.sql
+  ---
+  duration_ms: 0.11206
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path profiles.yml
+ok 15 - reject unsafe source path profiles.yml
+  ---
+  duration_ms: 0.092119
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models/CON.sql
+ok 16 - reject unsafe source path models/CON.sql
+  ---
+  duration_ms: 0.122873
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models/a./x.sql
+ok 17 - reject unsafe source path models/a./x.sql
+  ---
+  duration_ms: 0.116454
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path models\\a.sql
+ok 18 - reject unsafe source path models\\a.sql
+  ---
+  duration_ms: 0.09718
+  type: 'test'
+  ...
+# Subtest: reject unsafe source path /models/a.sql
+ok 19 - reject unsafe source path /models/a.sql
+  ---
+  duration_ms: 0.10054
+  type: 'test'
+  ...
+# Subtest: prototype keys and deep/oversized JSON are rejected
+ok 20 - prototype keys and deep/oversized JSON are rejected
+  ---
+  duration_ms: 0.369475
+  type: 'test'
+  ...
+# Subtest: parse manifest schema and native dependency identities
+ok 21 - parse manifest schema and native dependency identities
+  ---
+  duration_ms: 1.391343
+  type: 'test'
+  ...
+# Subtest: unsupported manifest schema fails closed
+ok 22 - unsupported manifest schema fails closed
+  ---
+  duration_ms: 1.205761
+  type: 'test'
+  ...
+# Subtest: node identity mismatch and duplicate dependencies are rejected
+ok 23 - node identity mismatch and duplicate dependencies are rejected
+  ---
+  duration_ms: 0.790471
+  type: 'test'
+  ...
+# Subtest: unresolved manifest dependencies are explicitly warned
+ok 24 - unresolved manifest dependencies are explicitly warned
+  ---
+  duration_ms: 0.302335
+  type: 'test'
+  ...
+# Subtest: manifest graph excludes test nodes by default
+ok 25 - manifest graph excludes test nodes by default
+  ---
+  duration_ms: 0.97737
+  type: 'test'
+  ...
+# Subtest: run results require matching invocation; never attach stale results
+ok 26 - run results require matching invocation; never attach stale results
+  ---
+  duration_ms: 1.835864
+  type: 'test'
+  ...
+# Subtest: run results reject orphan IDs, duplicate IDs and negative durations
+ok 27 - run results reject orphan IDs, duplicate IDs and negative durations
+  ---
+  duration_ms: 0.827454
+  type: 'test'
+  ...
+# Subtest: imported run evidence roundtrips without becoming live evidence
+ok 28 - imported run evidence roundtrips without becoming live evidence
+  ---
+  duration_ms: 1.718227
+  type: 'test'
+  ...
+# Subtest: sample dbt graph derives five nodes and four references from source
+ok 29 - sample dbt graph derives five nodes and four references from source
+  ---
+  duration_ms: 3.21669
+  type: 'test'
+  ...
+# Subtest: draft scanner does not count SQL or Jinja comments
+ok 30 - draft scanner does not count SQL or Jinja comments
+  ---
+  duration_ms: 0.593961
+  type: 'test'
+  ...
+# Subtest: missing and dynamic ref warnings never claim successful compile
+ok 31 - missing and dynamic ref warnings never claim successful compile
+  ---
+  duration_ms: 0.569023
+  type: 'test'
+  ...
+# Subtest: cycles are detected and layout is finite
+ok 32 - cycles are detected and layout is finite
+  ---
+  duration_ms: 0.791517
+  type: 'test'
+  ...
+# Subtest: upstream and downstream traversal preserves directed meaning
+ok 33 - upstream and downstream traversal preserves directed meaning
+  ---
+  duration_ms: 0.607284
+  type: 'test'
+  ...
+# Subtest: schema checks flag nullable primary keys and type mismatches
+ok 34 - schema checks flag nullable primary keys and type mismatches
+  ---
+  duration_ms: 0.658391
+  type: 'test'
+  ...
+# Subtest: relationship endpoints and duplicate edges are validated
+ok 35 - relationship endpoints and duplicate edges are validated
+  ---
+  duration_ms: 0.478619
+  type: 'test'
+  ...
+# Subtest: removing table removes dangling relationships and column mappings
+ok 36 - removing table removes dangling relationships and column mappings
+  ---
+  duration_ms: 0.388192
+  type: 'test'
+  ...
+# Subtest: DDL generation quotes identifiers and is a design, not execution
+ok 37 - DDL generation quotes identifiers and is a design, not execution
+  ---
+  duration_ms: 1.406111
+  type: 'test'
+  ...
+# Subtest: Type 1 retains two rows and latest cities
+ok 38 - Type 1 retains two rows and latest cities
+  ---
+  duration_ms: 2.160333
+  type: 'test'
+  ...
+# Subtest: Type 2 records four rows; unchanged event adds none
+ok 39 - Type 2 records four rows; unchanged event adds none
+  ---
+  duration_ms: 0.997233
+  type: 'test'
+  ...
+# Subtest: Type 2 as-of join is half-open and unique at change boundary
+ok 40 - Type 2 as-of join is half-open and unique at change boundary
+  ---
+  duration_ms: 0.254859
+  type: 'test'
+  ...
+# Subtest: Type 3 retains only immediate previous city
+ok 41 - Type 3 retains only immediate previous city
+  ---
+  duration_ms: 0.229329
+  type: 'test'
+  ...
+# Subtest: SCD replay leaves input unchanged and rejects impossible dates/order
+ok 42 - SCD replay leaves input unchanged and rejects impossible dates/order
+  ---
+  duration_ms: 0.643558
+  type: 'test'
+  ...
+# Subtest: SCD exercise answer is tied to displayed type and event index
+ok 43 - SCD exercise answer is tied to displayed type and event index
+  ---
+  duration_ms: 0.316283
+  type: 'test'
+  ...
+# Subtest: chart sample totals match the seed fixture
+ok 44 - chart sample totals match the seed fixture
+  ---
+  duration_ms: 0.627949
+  type: 'test'
+  ...
+# Subtest: chart query edit marks evidence stale rather than generating new rows
+ok 45 - chart query edit marks evidence stale rather than generating new rows
+  ---
+  duration_ms: 0.241847
+  type: 'test'
+  ...
+# Subtest: chart mean KPI is over rows, not an unweighted mean of group means
+ok 46 - chart mean KPI is over rows, not an unweighted mean of group means
+  ---
+  duration_ms: 1.701214
+  type: 'test'
+  ...
+# Subtest: count includes rows with null measures and numeric zero is preserved
+ok 47 - count includes rows with null measures and numeric zero is preserved
+  ---
+  duration_ms: 1.450952
+  type: 'test'
+  ...
+# Subtest: chart imports reject nested cells, mismatched schemas and excess rows
+ok 48 - chart imports reject nested cells, mismatched schemas and excess rows
+  ---
+  duration_ms: 17.35003
+  type: 'test'
+  ...
+# Subtest: numeric overflow is rejected instead of rendering Infinity
+ok 49 - numeric overflow is rejected instead of rendering Infinity
+  ---
+  duration_ms: 0.549864
+  type: 'test'
+  ...
+# Subtest: chart exports use dct board grammar with no execution claim
+ok 50 - chart exports use dct board grammar with no execution claim
+  ---
+  duration_ms: 0.341124
+  type: 'test'
+  ...
+# Subtest: guided Spark is explicit consent plus fixture-bound allowed operations
+ok 51 - guided Spark is explicit consent plus fixture-bound allowed operations
+  ---
+  duration_ms: 0.726435
+  type: 'test'
+  ...
+# Subtest: guided Spark rejects another dataset, unsupported operations and warnings
+ok 52 - guided Spark rejects another dataset, unsupported operations and warnings
+  ---
+  duration_ms: 0.354056
+  type: 'test'
+  ...
+# Subtest: chart groups preserve typed scalar identities despite matching display labels
+ok 53 - chart groups preserve typed scalar identities despite matching display labels
+  ---
+  duration_ms: 0.571004
+  type: 'test'
+  ...
+# Subtest: root restore preserves only the bounded analytics namespace, including invalid schemas for recovery
+ok 54 - root restore preserves only the bounded analytics namespace, including invalid schemas for recovery
+  ---
+  duration_ms: 14.193546
+  type: 'test'
+  ...
+# Subtest: M2 migrates once and retains original attachment byte-for-byte
+ok 55 - M2 migrates once and retains original attachment byte-for-byte
+  ---
+  duration_ms: 54.010212
+  type: 'test'
+  ...
+# Subtest: identical content on two notebooks shares resources, not ownership
+ok 56 - identical content on two notebooks shares resources, not ownership
+  ---
+  duration_ms: 15.410523
+  type: 'test'
+  ...
+# Subtest: conflicting dbt attachments preserve both projects but dedupe unchanged models
+ok 57 - conflicting dbt attachments preserve both projects but dedupe unchanged models
+  ---
+  duration_ms: 17.541557
+  type: 'test'
+  ...
+# Subtest: unknown attachment is retained with a recovery journal, never replaced by samples
+ok 58 - unknown attachment is retained with a recovery journal, never replaced by samples
+  ---
+  duration_ms: 1.679929
+  type: 'test'
+  ...
+# Subtest: alternate views edit one canonical dbt resource and retain per-view selected files
+ok 59 - alternate views edit one canonical dbt resource and retain per-view selected files
+  ---
+  duration_ms: 4.492904
+  type: 'test'
+  ...
+# Subtest: closing all analytics views never deletes the sources
+ok 60 - closing all analytics views never deletes the sources
+  ---
+  duration_ms: 4.315924
+  type: 'test'
+  ...
+# Subtest: themes and skins are presentation-only data
+ok 61 - themes and skins are presentation-only data
+  ---
+  duration_ms: 3.649498
+  type: 'test'
+  ...
+# Subtest: existing root layout keeps stable view and pane identity during migration
+ok 62 - existing root layout keeps stable view and pane identity during migration
+  ---
+  duration_ms: 3.140001
+  type: 'test'
+  ...
+1..62
+# tests 62
+# suites 0
+# pass 62
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1307.975172

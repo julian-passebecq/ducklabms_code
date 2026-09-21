@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "resources": [
+    {
+      "id": "workflow-fixture",
+      "title": "Ingest and transform",
+      "schema_version": 1,
+      "revision": 0,
+      "kind": "workflow",
+      "tasks": [
+        {
+          "id": "ingest",
+          "label": "Ingest source",
+          "runtime": "local.sql",
+          "notebook_resource_id": null
+        },
+        {
+          "id": "transform",
+          "label": "Transform in notebook",
+          "runtime": "local.sparklab",
+          "notebook_resource_id": "notebook-fixture"
+        }
+      ],
+      "dependencies": [
+        {
+          "id": "dep-1",
+          "source": "ingest",
+          "target": "transform",
+          "condition": "success"
+        }
+      ]
+    },
+    {
+      "id": "lineage-fixture",
+      "title": "Bronze to gold lineage",
+      "schema_version": 1,
+      "revision": 0,
+      "kind": "lineage",
+      "datasets": [
+        {
+          "id": "bronze",
+          "label": "Raw orders",
+          "asset_ref": null
+        },
+        {
+          "id": "silver",
+          "label": "Validated orders",
+          "asset_ref": null
+        },
+        {
+          "id": "gold",
+          "label": "Daily sales",
+          "asset_ref": null
+        }
+      ],
+      "derivations": [
+        {
+          "id": "derive-1",
+          "source": "bronze",
+          "target": "silver",
+          "note": "validate"
+        },
+        {
+          "id": "derive-2",
+          "source": "silver",
+          "target": "gold",
+          "note": "aggregate"
+        }
+      ]
+    },
+    {
+      "id": "data-model-fixture",
+      "title": "Sales star model",
+      "schema_version": 1,
+      "revision": 0,
+      "kind": "data-model",
+      "tables": [
+        {
+          "id": "customer",
+          "label": "Dim Customer",
+          "asset_ref": null,
+          "grain": "One row per customer version",
+          "role": "dimension",
+          "scd": 2,
+          "columns": [
+            {
+              "id": "customer_key",
+              "data_type": "BIGINT",
+              "key": "primary",
+              "nullable": false
+            }
+          ]
+        },
+        {
+          "id": "sales",
+          "label": "Fact Sales",
+          "asset_ref": null,
+          "grain": "One row per order line",
+          "role": "fact",
+          "scd": 0,
+          "columns": [
+            {
+              "id": "customer_key",
+              "data_type": "BIGINT",
+              "key": "foreign",
+              "nullable": false
+            },
+            {
+              "id": "amount",
+              "data_type": "DECIMAL(18,2)",
+              "key": "none",
+              "nullable": false
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "id": "rel-1",
+          "source": "customer",
+          "source_column": "customer_key",
+          "target": "sales",
+          "target_column": "customer_key",
+          "cardinality": "one-to-many"
+        }
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "notebook-fixture",
+      "kind": "notebook",
+      "title": "Existing notebook",
+      "revision": 0,
+      "notebook_id": "fixture-notebook"
+    }
+  ],
+  "views": [
+    {
+      "id": "view-workflow",
+      "resource_id": "workflow-fixture",
+      "mode": "visual",
+      "positions": {
+        "ingest": {
+          "x": 10,
+          "y": 20
+        }
+      },
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "zoom": 1
+      },
+      "selected_node": "ingest",
+      "selected_edge": null,
+      "state": {}
+    }
+  ],
+  "panes": [
+    {
+      "id": "pane-main",
+      "view_ids": [
+        "view-workflow"
+      ],
+      "active_view_id": "view-workflow",
+      "weight": 1
+    }
+  ],
+  "active_pane_id": "pane-main",
+  "persona": "neutral",
+  "direction": "horizontal",
+  "resource_schema_version": 2,
+  "ui": {
+    "theme": "fluent",
+    "skin": "studio",
+    "explorer_open": true,
+    "context_open": false
+  },
+  "migrations": []
+}

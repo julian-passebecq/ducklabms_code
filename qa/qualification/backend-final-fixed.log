@@ -1,0 +1,18 @@
+.................................................................s...... [ 23%]
+........................................................................ [ 47%]
+........................................................................ [ 70%]
+........................................................................ [ 94%]
+.................                                                        [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:45
+  D:\PROJ\datapass-v1-final-20260921\source\.venv\Lib\site-packages\starlette\testclient.py:45: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+apps\api\datapass\analytics_contracts.py:52
+  D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+    class ArtifactBundle(Document):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] tests\test_guided_spark_v1.py:112: No live endpoint supplied; mock conformance is not deployment certification.
+304 passed, 1 skipped, 2 warnings in 69.66s (0:01:09)

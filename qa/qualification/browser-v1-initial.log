@@ -1,0 +1,14 @@
+
+> datapass-studio-root@0.1.0 test:v1:browser
+> playwright test --config playwright.v1.config.ts
+
+[WebServer] D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+[WebServer]   class ArtifactBundle(Document):
+[WebServer] INFO:     Started server process [42284]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] ERROR:    [Errno 13] error while attempting to bind on address ('127.0.0.1', 8000): [winerror 10013] an attempt was made to access a socket in a way forbidden by its access permissions
+[WebServer] INFO:     Waiting for application shutdown.
+[WebServer] INFO:     Application shutdown complete.
+Error: Process from config.webServer was not able to start. Exit code: 3
+

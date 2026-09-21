@@ -1,0 +1,172 @@
+
+> datapass-studio-root@0.1.0 test:browser
+> playwright test
+
+[WebServer] D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+[WebServer]   class ArtifactBundle(Document):
+[WebServer] INFO:     Started server process [32724]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:18080 (Press CTRL+C to quit)
+
+Running 9 tests using 1 worker
+
+(node:27108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\analytics-m2.spec.ts:3:1 › M2 native preview keeps analytics and notebook source across save/reload (907ms)
+  x  2 tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey (16.9s)
+(node:49072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  3 tests\browser\core.spec.ts:67:1 › editing, keyboard execution, stale lineage, recovery and distinct run scopes (16.9s)
+(node:48484) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  4 tests\browser\core.spec.ts:119:1 › V1 playground launcher keeps free-canvas geometry and reopens the selected product shell (20.4s)
+(node:42556) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  5 tests\browser\interview.spec.ts:4:1 › standalone practice shares notebook, saves drafts and separates Run from Submit (15.5s)
+(node:6908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 6 tests\browser\ui-m1-connected.spec.ts:5:1 › UI M1 connected notebook preserves its chosen view and canonical source after reopen (2.8s)
+  ok 7 tests\browser\ui-m1.spec.ts:5:1 › UI M1 preview edits one source across layouts and never calls the API (882ms)
+  ok 8 tests\browser\ui-m1.spec.ts:37:1 › UI M1 arena keeps answers while switching fixtures and works on a narrow screen (813ms)
+  ok 9 tests\browser\v1-native.spec.ts:3:1 › native shell: one canonical figure, independent panes, persisted skins and source (3.3s)
+
+
+  1) tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey ─────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.monaco-editor').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.monaco-editor').first() with timeout 15000ms
+      - waiting for locator('.monaco-editor').first()
+
+
+       9 |  await page.getByRole('button',{name:/Retail revenue lakehouse/}).click();
+      10 |  await expect(page.locator('.runtime-strip')).toContainText('duckdb');
+    > 11 |  await expect(page.locator('.monaco-editor').first()).toBeVisible();
+         |                                                       ^
+      12 |  const workspace=await page.getByLabel('Open workspace').inputValue();
+      13 |  const doc=async()=>{const r=await request.get(`/api/workspaces/${workspace}`,{headers});expect(r.ok()).toBeTruthy();return r.json()};
+      14 |  const idle=()=>expect(page.getByRole('button',{name:'Save',exact:true})).toBeEnabled();
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\core.spec.ts:11:55
+
+    Error Context: test-results\core-production-React-DuckDB-connected-notebook-journey\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\core-production-React-DuckDB-connected-notebook-journey\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\core-production-React-DuckDB-connected-notebook-journey\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\browser\core.spec.ts:67:1 › editing, keyboard execution, stale lineage, recovery and distinct run scopes 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.monaco-editor').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.monaco-editor').first() with timeout 15000ms
+      - waiting for locator('.monaco-editor').first()
+
+
+      68 |  await page.goto('/#token=core-pass-browser');
+      69 |  await page.getByRole('button',{name:/Retail revenue lakehouse/}).click();
+    > 70 |  await expect(page.locator('.monaco-editor').first()).toBeVisible();
+         |                                                       ^
+      71 |  const id=await page.getByLabel('Open workspace').inputValue();
+      72 |  const headers={Authorization:'Bearer core-pass-browser'};
+      73 |  const doc=async()=>(await request.get(`/api/workspaces/${id}`,{headers})).json();
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\core.spec.ts:70:55
+
+    Error Context: test-results\core-editing-keyboard-exec-d9e92-ery-and-distinct-run-scopes\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\core-editing-keyboard-exec-d9e92-ery-and-distinct-run-scopes\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\core-editing-keyboard-exec-d9e92-ery-and-distinct-run-scopes\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests\browser\core.spec.ts:119:1 › V1 playground launcher keeps free-canvas geometry and reopens the selected product shell 
+
+    TimeoutError: locator.selectOption: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByLabel('Quick playground')
+        - locator resolved to <select disabled aria-label="Quick playground" class="fui-Select__select ___rrxg8c0 fqrijq1 f4ikngz fy0fskl f15xbau f1jj8ep1 fm9niy ft85np5 f1couhl3 f1ewtqcl f1s2aq7o fdrzuqr fqerorx f6dzj5z f1qch9an f1g0x7ka fatbyko f1grzc83 f19shzzi frvgh55 f1xile11 fiqd4sw fk6fouc fy9rknc figsok6 fwrc4pm f1c21dwh f9dbb4x f3qs60o fwd1oij f5u9ap2">…</select>
+      - attempting select option action
+        2 × waiting for element to be visible and enabled
+          - element is not enabled
+        - retrying select option action
+        - waiting 20ms
+        2 × waiting for element to be visible and enabled
+          - element is not enabled
+        - retrying select option action
+          - waiting 100ms
+        29 × waiting for element to be visible and enabled
+           - element is not enabled
+         - retrying select option action
+           - waiting 500ms
+
+
+      152 |  await expect(page.locator('.dp-explorer').getByText('sparklab',{exact:true})).toBeVisible();
+      153 |
+    > 154 |  await page.getByLabel('Quick playground').selectOption('leetcode');
+          |                                            ^
+      155 |  await expect(page.locator('.interview-browser')).toBeVisible();
+      156 | });
+      157 |
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\core.spec.ts:154:44
+
+    Error Context: test-results\core-V1-playground-launche-b24fb--the-selected-product-shell\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\core-V1-playground-launche-b24fb--the-selected-product-shell\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\core-V1-playground-launche-b24fb--the-selected-product-shell\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests\browser\interview.spec.ts:4:1 › standalone practice shares notebook, saves drafts and separates Run from Submit 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Interview', exact: true })
+
+
+       6 |  const headers={Authorization:'Bearer core-pass-browser'};
+       7 |  await page.goto('/#token=core-pass-browser');
+    >  8 |  await page.getByRole('button',{name:'Interview',exact:true}).click();
+         |                                                               ^
+       9 |  const sum=page.locator('.case-card').filter({has:page.getByRole('heading',{name:'Sum with duplicates and NULL',exact:true})});
+      10 |  await sum.getByRole('button').click();
+      11 |  await expect(page.getByRole('tab',{name:'Interview',exact:true})).toHaveAttribute('aria-selected','true');
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\interview.spec.ts:8:63
+
+    Error Context: test-results\interview-standalone-pract-cf86c-d-separates-Run-from-Submit\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\interview-standalone-pract-cf86c-d-separates-Run-from-Submit\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\interview-standalone-pract-cf86c-d-separates-Run-from-Submit\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    tests\browser\core.spec.ts:4:1 › production React / DuckDB connected notebook journey ──────────
+    tests\browser\core.spec.ts:67:1 › editing, keyboard execution, stale lineage, recovery and distinct run scopes 
+    tests\browser\core.spec.ts:119:1 › V1 playground launcher keeps free-canvas geometry and reopens the selected product shell 
+    tests\browser\interview.spec.ts:4:1 › standalone practice shares notebook, saves drafts and separates Run from Submit 
+  5 passed (1.4m)

@@ -1,0 +1,13 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at http://127.0.0.1:8000/#token=foundation-smoke
+Call log:
+  - navigating to "http://127.0.0.1:8000/#token=foundation-smoke", waiting until "load"
+
+    at /mnt/data/ducklabms_code/scripts/foundation-browser-smoke.mjs:11:13 {
+  name: 'Error'
+}
+
+Node.js v22.16.0

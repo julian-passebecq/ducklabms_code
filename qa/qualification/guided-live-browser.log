@@ -1,0 +1,14 @@
+[WebServer] D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+[WebServer]   class ArtifactBundle(Document):
+[WebServer] INFO:     Started server process [46640]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:18080 (Press CTRL+C to quit)
+
+Running 1 test using 1 worker
+
+(node:6920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\guided-live.spec.ts:3:1 › live guided Spark qualifies, enables Run and Submit, and persists truthful evidence (18.7s)
+
+  1 passed (21.0s)

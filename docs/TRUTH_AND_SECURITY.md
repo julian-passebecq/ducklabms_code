@@ -12,9 +12,9 @@
 | dbt | Resolves literal registered ref/source calls and executes SQL | dbt Core, arbitrary Jinja, full incremental/snapshot behavior |
 | Workflow | Validates dependencies and executes/skips sequential tasks | Airflow scheduler or Data Factory runtime |
 | BI | Computes a SQL-backed Gold KPI | DAX/VertiPaq, Direct Lake or Power BI embedding |
-| DuckDB | Preferred real local storage engine, implementation unverified here | That SQLite test results prove DuckDB compatibility |
-| DuckLake | Explicit extension attachment and data directory, unverified here | That schema names alone constitute a DuckLake |
-| MotherDuck | Inactive future adapter | Any active connection, free-tier assumption or uploaded user data |
+| DuckDB | Authoritative local analytical engine; plain DuckDB is also an explicit compatibility mode | That DuckDB alone is a DuckLake table format |
+| DuckLake | Canonical full local lakehouse profile through the official DuckDB extension: SQLite metadata + Parquet data, with inlining disabled by Datapass | That schema names alone constitute DuckLake, or that DuckLake reproduces Delta/Fabric storage |
+| MotherDuck | Inactive optional remote DuckDB/DuckLake target | Any active connection, free-tier entitlement, hidden upload or uploaded user data |
 
 ## Spark physical model
 

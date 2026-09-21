@@ -9,10 +9,12 @@ test('production React / DuckDB connected notebook journey',async({page,request}
  await page.getByRole('button',{name:/Retail revenue lakehouse/}).click();
  await expect(page.locator('.runtime-strip')).toContainText('duckdb');
  await expect(page.locator('.monaco-editor').first()).toBeVisible();
+ await page.getByText('Canvas presets, notebook skins and source tools',{exact:true}).click();
+ await page.getByText('Optional runtime profiles and capabilities',{exact:true}).click();
  const workspace=await page.getByLabel('Open workspace').inputValue();
  const doc=async()=>{const r=await request.get(`/api/workspaces/${workspace}`,{headers});expect(r.ok()).toBeTruthy();return r.json()};
  const idle=()=>expect(page.getByRole('button',{name:'Save',exact:true})).toBeEnabled();
- await page.getByRole('button',{name:'Run Copy source orders into Bronze',exact:true}).click();await idle();
+ await page.getByRole('button',{name:'Run Load source orders into Bronze',exact:true}).click();await idle();
  expect((await doc()).runs.map((r:any)=>r.cell_id)).toEqual(['ingest']);
  await page.getByRole('button',{name:'Run notebook',exact:true}).click();await idle();
  let saved=await doc();expect(saved.runs.slice(-4).map((r:any)=>r.cell_id)).toEqual(['ingest','clean','aggregate','report']);
@@ -22,6 +24,7 @@ test('production React / DuckDB connected notebook journey',async({page,request}
   await expect(page.locator('.notebook-block').first()).toBeVisible();
   await expect(page.getByRole('tab',{name:label,exact:true})).toHaveAttribute('aria-selected','true');
  }
+ await page.locator('.react-resizable-handle-se').first().scrollIntoViewIfNeeded();
  const handle=await page.locator('.react-resizable-handle-se').first().boundingBox();expect(handle).not.toBeNull();
  await page.mouse.move(handle!.x+3,handle!.y+3);await page.mouse.down();await page.mouse.move(handle!.x+3,handle!.y+55,{steps:8});await page.mouse.up();
  await page.getByRole('button',{name:'Save',exact:true}).click();await idle();
@@ -35,13 +38,13 @@ test('production React / DuckDB connected notebook journey',async({page,request}
  expect((await doc()).runs.slice(-4).every((r:any)=>r.status==='success')).toBeTruthy();
  await page.getByRole('button',{name:'KPI preview',exact:true}).click();
  await expect(page.locator('.report-metrics')).toContainText('4,985');
- await page.screenshot({path:'evidence/core-pass-1-react-retail.png',fullPage:true});
+ await page.screenshot({path:'qa/qualification/core-pass-1-react-retail.png',fullPage:true});
  await page.getByRole('button',{name:'Notebook',exact:true}).click();
  const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'.ipynb',exact:true}).click();
  const download=await downloadPromise;const filename=await download.path();const exported=JSON.parse(readFileSync(filename!,'utf8'));
  const code=exported.cells.filter((c:any)=>c.cell_type==='code');expect(code.map((c:any)=>c.id)).toEqual(['ingest','clean','aggregate','report']);
  const runCount=(await doc()).runs.length;
- await page.locator('input[type=file]').setInputFiles({name:'roundtrip.ipynb',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(exported))});await idle();
+ await page.locator('.command-bar input[type=file]').setInputFiles({name:'roundtrip.ipynb',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(exported))});await idle();
  await expect(page.getByText(/Imported without execution/)).toBeVisible();
  saved=await doc();expect(saved.runs).toHaveLength(runCount);
  const roundtrip=saved.notebook.blocks.filter((b:any)=>b.notebook?.cellType==='code');
@@ -50,13 +53,13 @@ test('production React / DuckDB connected notebook journey',async({page,request}
  await page.getByRole('button',{name:'Workflow',exact:true}).click();await page.getByRole('button',{name:'Run workflow',exact:true}).click();await idle();
  await page.getByRole('button',{name:'Notebook',exact:true}).click();
  await expect(page.locator('.result-view')).toHaveCount(4);
- await page.locator('input[type=file]').setInputFiles({name:'broken.ipynb',mimeType:'application/json',buffer:Buffer.from('{bad')});await idle();
+ await page.locator('.command-bar input[type=file]').setInputFiles({name:'broken.ipynb',mimeType:'application/json',buffer:Buffer.from('{bad')});await idle();
  await expect(page.getByText(/^SyntaxError:/)).toBeVisible();
  expect((await doc()).notebook.id).toBe(saved.notebook.id);
  await page.getByRole('button',{name:'Save',exact:true}).click();await idle();
  await page.setViewportSize({width:600,height:900});
- await page.getByRole('tab',{name:'Practice',exact:true}).click();
- await page.screenshot({path:'evidence/core-pass-1-react-narrow.png',fullPage:true});
+ await page.getByLabel('Shared notebook layout').selectOption('practice');
+ await page.screenshot({path:'qa/qualification/core-pass-1-react-narrow.png',fullPage:true});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy();
  await page.getByRole('button',{name:'Workspace',exact:true}).click();
  await expect(page.getByLabel('Open workspace')).toBeVisible();
@@ -68,6 +71,8 @@ test('editing, keyboard execution, stale lineage, recovery and distinct run scop
  await page.goto('/#token=core-pass-browser');
  await page.getByRole('button',{name:/Retail revenue lakehouse/}).click();
  await expect(page.locator('.monaco-editor').first()).toBeVisible();
+ await page.getByText('Canvas presets, notebook skins and source tools',{exact:true}).click();
+ await page.getByText('Optional runtime profiles and capabilities',{exact:true}).click();
  const id=await page.getByLabel('Open workspace').inputValue();
  const headers={Authorization:'Bearer core-pass-browser'};
  const doc=async()=>(await request.get(`/api/workspaces/${id}`,{headers})).json();
@@ -111,6 +116,48 @@ test('editing, keyboard execution, stale lineage, recovery and distinct run scop
  await page.getByRole('button',{name:'Save',exact:true}).focus();await page.keyboard.press('Tab');
  await expect(page.getByRole('button',{name:'Open',exact:true})).toBeFocused();
  await page.getByRole('button',{name:'Notebook',exact:true}).click();
- await page.getByRole('tab',{name:'Notebook',exact:true}).click();
- await page.screenshot({path:'evidence/core-pass-1-react-notebook.png',fullPage:true});
+ await page.getByLabel('Shared notebook layout').selectOption('notebook');
+ await page.screenshot({path:'qa/qualification/core-pass-1-react-notebook.png',fullPage:true});
+});
+
+
+test('V1 playground launcher keeps free-canvas geometry and reopens the selected product shell',async({page,request})=>{
+ const headers={Authorization:'Bearer core-pass-browser'};
+ await page.goto('/#token=core-pass-browser');
+ await page.getByRole('button',{name:/Free coding canvas/}).click();
+ await expect(page.getByRole('tab',{name:'Free canvas',exact:true,includeHidden:true})).toHaveAttribute('aria-selected','true');
+ await expect(page.locator('.notebook-block')).toHaveCount(5);
+ const workspace=await page.getByLabel('Open workspace').inputValue();
+ const doc=async()=>(await request.get(`/api/workspaces/${workspace}`,{headers})).json();
+ expect((await doc()).title).toBe('Free coding canvas');
+ expect((await doc()).notebook.playground).toBe('free');
+
+ await page.getByText('Canvas presets, notebook skins and source tools',{exact:true}).click();
+ await page.getByLabel('New cell kernel').selectOption('sql');
+ await page.getByRole('button',{name:'Cell',exact:true}).click();
+ await expect(page.getByRole('tab',{name:'Free canvas',exact:true,includeHidden:true})).toHaveAttribute('aria-selected','true');
+ await page.getByRole('button',{name:'Save',exact:true}).click();
+ await expect(page.getByText(/checkpoint/i)).toBeVisible();
+
+ await page.getByRole('button',{name:'Data',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Tables',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:/source\.orders/}).click();
+ await expect(page.getByRole('tab',{name:'Free canvas',exact:true,includeHidden:true})).toHaveAttribute('aria-selected','true');
+ await page.getByRole('button',{name:'Save',exact:true}).click();
+
+ await page.reload();
+ await expect(page.getByRole('tab',{name:'Free canvas',exact:true,includeHidden:true})).toHaveAttribute('aria-selected','true');
+ await expect(page.getByLabel('Open workspace')).toHaveValue(workspace);
+
+ await page.getByLabel('Quick playground').selectOption('fabric');
+ await expect(page.getByLabel('Workspace presentation')).toHaveValue('fabric');
+ await expect(page.getByRole('tab',{name:'Notebook',exact:true,includeHidden:true})).toHaveAttribute('aria-selected','true');
+ await page.getByRole('tab',{name:'Notebooks',exact:true}).click();
+ await expect(page.locator('.dp-explorer')).toBeVisible();
+ await expect(page.locator('.dp-explorer').getByText('sparklab',{exact:true})).toBeVisible();
+
+ await page.getByRole('button',{name:'Save',exact:true}).click();
+ await expect(page.getByLabel('Quick playground')).toBeEnabled();
+ await page.getByLabel('Quick playground').selectOption('leetcode');
+ await expect(page.locator('.interview-browser')).toBeVisible();
 });

@@ -1,0 +1,851 @@
+F..................F....                                                 [100%]
+=================================== FAILURES ===================================
+_________________ test_shared_contract_fixture_and_json_schema _________________
+
+    def test_shared_contract_fixture_and_json_schema():
+        value = RootWorkbench.model_validate(fixture())
+>       assert value.model_dump(mode='json') == fixture()
+E       AssertionError: assert {'active_pane...': 1.0}], ...} == {'active_pane...neutral', ...}
+E         
+E         Omitting 6 identical items, use -vv to show
+E         Differing items:
+E         {'views': [{'id': 'view-workflow', 'mode': 'visual', 'positions': {'ingest': {'x': 10.0, 'y': 20.0}}, 'resource_id': 'workflow-fixture', ...}]} != {'views': [{'id': 'view-workflow', 'mode': 'visual', 'positions': {'ingest': {'x': 10, 'y': 20}}, 'resource_id': 'workflow-fixture', ...}]}
+E         Left contains 3 more items:
+E         {'migrations': [],
+E          'resource_schema_version': 2,
+E          'ui': {'context_open': False,
+E                 'explorer_open': True,
+E                 'skin': 'studio',
+E                 'theme': 'fluent'}}
+E         
+E         Full diff:
+E           {
+E               'active_pane_id': 'pane-main',
+E               'direction': 'horizontal',
+E         +     'migrations': [],
+E               'panes': [
+E                   {
+E                       'active_view_id': 'view-workflow',
+E                       'id': 'pane-main',
+E                       'view_ids': [
+E                           'view-workflow',
+E                       ],
+E         -             'weight': 1,
+E         +             'weight': 1.0,
+E         ?                        ++
+E                   },
+E               ],
+E               'persona': 'neutral',
+E         +     'resource_schema_version': 2,
+E               'resources': [
+E                   {
+E                       'dependencies': [
+E                           {
+E                               'condition': 'success',
+E                               'id': 'dep-1',
+E                               'source': 'ingest',
+E                               'target': 'transform',
+E                           },
+E                       ],
+E                       'id': 'workflow-fixture',
+E                       'kind': 'workflow',
+E                       'revision': 0,
+E                       'schema_version': 1,
+E                       'tasks': [
+E                           {
+E                               'id': 'ingest',
+E                               'label': 'Ingest source',
+E                               'notebook_resource_id': None,
+E                               'runtime': 'local.sql',
+E                           },
+E                           {
+E                               'id': 'transform',
+E                               'label': 'Transform in notebook',
+E                               'notebook_resource_id': 'notebook-fixture',
+E                               'runtime': 'local.sparklab',
+E                           },
+E                       ],
+E                       'title': 'Ingest and transform',
+E                   },
+E                   {
+E                       'datasets': [
+E                           {
+E                               'asset_ref': None,
+E                               'id': 'bronze',
+E                               'label': 'Raw orders',
+E                           },
+E                           {
+E                               'asset_ref': None,
+E                               'id': 'silver',
+E                               'label': 'Validated orders',
+E                           },
+E                           {
+E                               'asset_ref': None,
+E                               'id': 'gold',
+E                               'label': 'Daily sales',
+E                           },
+E                       ],
+E                       'derivations': [
+E                           {
+E                               'id': 'derive-1',
+E                               'note': 'validate',
+E                               'source': 'bronze',
+E                               'target': 'silver',
+E                           },
+E                           {
+E                               'id': 'derive-2',
+E                               'note': 'aggregate',
+E                               'source': 'silver',
+E                               'target': 'gold',
+E                           },
+E                       ],
+E                       'id': 'lineage-fixture',
+E                       'kind': 'lineage',
+E                       'revision': 0,
+E                       'schema_version': 1,
+E                       'title': 'Bronze to gold lineage',
+E                   },
+E                   {
+E                       'id': 'data-model-fixture',
+E                       'kind': 'data-model',
+E                       'relationships': [
+E                           {
+E                               'cardinality': 'one-to-many',
+E                               'id': 'rel-1',
+E                               'source': 'customer',
+E                               'source_column': 'customer_key',
+E                               'target': 'sales',
+E                               'target_column': 'customer_key',
+E                           },
+E                       ],
+E                       'revision': 0,
+E                       'schema_version': 1,
+E                       'tables': [
+E                           {
+E                               'asset_ref': None,
+E                               'columns': [
+E                                   {
+E                                       'data_type': 'BIGINT',
+E                                       'id': 'customer_key',
+E                                       'key': 'primary',
+E                                       'nullable': False,
+E                                   },
+E                               ],
+E                               'grain': 'One row per customer version',
+E                               'id': 'customer',
+E                               'label': 'Dim Customer',
+E                               'role': 'dimension',
+E                               'scd': 2,
+E                           },
+E                           {
+E                               'asset_ref': None,
+E                               'columns': [
+E                                   {
+E                                       'data_type': 'BIGINT',
+E                                       'id': 'customer_key',
+E                                       'key': 'foreign',
+E                                       'nullable': False,
+E                                   },
+E                                   {
+E                                       'data_type': 'DECIMAL(18,2)',
+E                                       'id': 'amount',
+E                                       'key': 'none',
+E                                       'nullable': False,
+E                                   },
+E                               ],
+E                               'grain': 'One row per order line',
+E                               'id': 'sales',
+E                               'label': 'Fact Sales',
+E                               'role': 'fact',
+E                               'scd': 0,
+E                           },
+E                       ],
+E                       'title': 'Sales star model',
+E                   },
+E                   {
+E                       'id': 'notebook-fixture',
+E                       'kind': 'notebook',
+E                       'notebook_id': 'fixture-notebook',
+E                       'revision': 0,
+E                       'schema_version': 1,
+E                       'title': 'Existing notebook',
+E                   },
+E               ],
+E               'schema_version': 1,
+E         +     'ui': {
+E         +         'context_open': False,
+E         +         'explorer_open': True,
+E         +         'skin': 'studio',
+E         +         'theme': 'fluent',
+E         +     },
+E               'views': [
+E                   {
+E                       'id': 'view-workflow',
+E                       'mode': 'visual',
+E                       'positions': {
+E                           'ingest': {
+E         -                     'x': 10,
+E         +                     'x': 10.0,
+E         ?                            ++
+E         -                     'y': 20,
+E         +                     'y': 20.0,
+E         ?                            ++
+E                           },
+E                       },
+E                       'resource_id': 'workflow-fixture',
+E                       'selected_edge': None,
+E                       'selected_node': 'ingest',
+E         +             'state': {},
+E                       'viewport': {
+E         -                 'x': 0,
+E         +                 'x': 0.0,
+E         ?                      ++
+E         -                 'y': 0,
+E         +                 'y': 0.0,
+E         ?                      ++
+E         -                 'zoom': 1,
+E         +                 'zoom': 1.0,
+E         ?                          ++
+E                       },
+E                   },
+E               ],
+E           }
+
+tests/test_foundation.py:26: AssertionError
+________ test_workbench_save_preserves_notebook_runs_and_practice_state ________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_workbench_save_preserves_0')
+
+    def test_workbench_save_preserves_notebook_runs_and_practice_state(tmp_path):
+        docs, workspace=prepared(tmp_path)
+        original=deepcopy(workspace)
+        saved=docs.save_workbench(workspace['id'],workspace['revision'],fixture())
+        assert saved['revision']==original['revision']+1
+        for key in ('notebook','notebooks','runs','evidence','case_id','title'):
+            assert saved[key]==original[key]
+>       assert Documents(tmp_path).get(saved['id'])['workbench']==fixture()
+E       AssertionError: assert {'active_pane...': 1.0}], ...} == {'active_pane...neutral', ...}
+E         
+E         Omitting 6 identical items, use -vv to show
+E         Differing items:
+E         {'views': [{'id': 'view-workflow', 'mode': 'visual', 'positions': {'ingest': {'x': 10.0, 'y': 20.0}}, 'resource_id': 'workflow-fixture', ...}]} != {'views': [{'id': 'view-workflow', 'mode': 'visual', 'positions': {'ingest': {'x': 10, 'y': 20}}, 'resource_id': 'workflow-fixture', ...}]}
+E         Left contains 3 more items:
+E         {'migrations': [],
+E          'resource_schema_version': 2,
+E          'ui': {'context_open': False,
+E                 'explorer_open': True,
+E                 'skin': 'studio',
+E                 'theme': 'fluent'}}
+E         
+E         Full diff:
+E           {
+E               'active_pane_id': 'pane-main',
+E               'direction': 'horizontal',
+E         +     'migrations': [],
+E               'panes': [
+E                   {
+E                       'active_view_id': 'view-workflow',
+E                       'id': 'pane-main',
+E                       'view_ids': [
+E                           'view-workflow',
+E                       ],
+E         -             'weight': 1,
+E         +             'weight': 1.0,
+E         ?                        ++
+E                   },
+E               ],
+E               'persona': 'neutral',
+E         +     'resource_schema_version': 2,
+E               'resources': [
+E                   {
+E                       'dependencies': [
+E                           {
+E                               'condition': 'success',
+E                               'id': 'dep-1',
+E                               'source': 'ingest',
+E                               'target': 'transform',
+E                           },
+E                       ],
+E                       'id': 'workflow-fixture',
+E                       'kind': 'workflow',
+E                       'revision': 0,
+E                       'schema_version': 1,
+E                       'tasks': [
+E                           {
+E                               'id': 'ingest',
+E                               'label': 'Ingest source',
+E                               'notebook_resource_id': None,
+E                               'runtime': 'local.sql',
+E                           },
+E                           {
+E                               'id': 'transform',
+E                               'label': 'Transform in notebook',
+E                               'notebook_resource_id': 'notebook-fixture',
+E                               'runtime': 'local.sparklab',
+E                           },
+E                       ],
+E                       'title': 'Ingest and transform',
+E                   },
+E                   {
+E                       'datasets': [
+E                           {
+E                               'asset_ref': None,
+E                               'id': 'bronze',
+E                               'label': 'Raw orders',
+E                           },
+E                           {
+E                               'asset_ref': None,
+E                               'id': 'silver',
+E                               'label': 'Validated orders',
+E                           },
+E                           {
+E                               'asset_ref': None,
+E                               'id': 'gold',
+E                               'label': 'Daily sales',
+E                           },
+E                       ],
+E                       'derivations': [
+E                           {
+E                               'id': 'derive-1',
+E                               'note': 'validate',
+E                               'source': 'bronze',
+E                               'target': 'silver',
+E                           },
+E                           {
+E                               'id': 'derive-2',
+E                               'note': 'aggregate',
+E                               'source': 'silver',
+E                               'target': 'gold',
+E                           },
+E                       ],
+E                       'id': 'lineage-fixture',
+E                       'kind': 'lineage',
+E                       'revision': 0,
+E                       'schema_version': 1,
+E                       'title': 'Bronze to gold lineage',
+E                   },
+E                   {
+E                       'id': 'data-model-fixture',
+E                       'kind': 'data-model',
+E                       'relationships': [
+E                           {
+E                               'cardinality': 'one-to-many',
+E                               'id': 'rel-1',
+E                               'source': 'customer',
+E                               'source_column': 'customer_key',
+E                               'target': 'sales',
+E                               'target_column': 'customer_key',
+E                           },
+E                       ],
+E                       'revision': 0,
+E                       'schema_version': 1,
+E                       'tables': [
+E                           {
+E                               'asset_ref': None,
+E                               'columns': [
+E                                   {
+E                                       'data_type': 'BIGINT',
+E                                       'id': 'customer_key',
+E                                       'key': 'primary',
+E                                       'nullable': False,
+E                                   },
+E                               ],
+E                               'grain': 'One row per customer version',
+E                               'id': 'customer',
+E                               'label': 'Dim Customer',
+E                               'role': 'dimension',
+E                               'scd': 2,
+E                           },
+E                           {
+E                               'asset_ref': None,
+E                               'columns': [
+E                                   {
+E                                       'data_type': 'BIGINT',
+E                                       'id': 'customer_key',
+E                                       'key': 'foreign',
+E                                       'nullable': False,
+E                                   },
+E                                   {
+E                                       'data_type': 'DECIMAL(18,2)',
+E                                       'id': 'amount',
+E                                       'key': 'none',
+E                                       'nullable': False,
+E                                   },
+E                               ],
+E                               'grain': 'One row per order line',
+E                               'id': 'sales',
+E                               'label': 'Fact Sales',
+E                               'role': 'fact',
+E                               'scd': 0,
+E                           },
+E                       ],
+E                       'title': 'Sales star model',
+E                   },
+E                   {
+E                       'id': 'notebook-fixture',
+E                       'kind': 'notebook',
+E                       'notebook_id': 'fixture-notebook',
+E                       'revision': 0,
+E                       'schema_version': 1,
+E                       'title': 'Existing notebook',
+E                   },
+E               ],
+E               'schema_version': 1,
+E         +     'ui': {
+E         +         'context_open': False,
+E         +         'explorer_open': True,
+E         +         'skin': 'studio',
+E         +         'theme': 'fluent',
+E         +     },
+E               'views': [
+E                   {
+E                       'id': 'view-workflow',
+E                       'mode': 'visual',
+E                       'positions': {
+E                           'ingest': {
+E         -                     'x': 10,
+E         +                     'x': 10.0,
+E         ?                            ++
+E         -                     'y': 20,
+E         +                     'y': 20.0,
+E         ?                            ++
+E                           },
+E                       },
+E                       'resource_id': 'workflow-fixture',
+E                       'selected_edge': None,
+E                       'selected_node': 'ingest',
+E         +             'state': {},
+E                       'viewport': {
+E         -                 'x': 0,
+E         +                 'x': 0.0,
+E         ?                      ++
+E         -                 'y': 0,
+E         +                 'y': 0.0,
+E         ?                      ++
+E         -                 'zoom': 1,
+E         +                 'zoom': 1.0,
+E         ?                          ++
+E                       },
+E                   },
+E               ],
+E           }
+
+tests/test_foundation.py:72: AssertionError
+=============================== warnings summary ===============================
+apps/api/datapass/analytics_contracts.py:52
+  /mnt/data/datapass_work/candidate/apps/api/datapass/analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+    class ArtifactBundle(Document):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_foundation.py::test_shared_contract_fixture_and_json_schema - AssertionError: assert {'active_pane...': 1.0}], ...} == {'active_pane...neutral', ...}
+  
+  Omitting 6 identical items, use -vv to show
+  Differing items:
+  {'views': [{'id': 'view-workflow', 'mode': 'visual', 'positions': {'ingest': {'x': 10.0, 'y': 20.0}}, 'resource_id': 'workflow-fixture', ...}]} != {'views': [{'id': 'view-workflow', 'mode': 'visual', 'positions': {'ingest': {'x': 10, 'y': 20}}, 'resource_id': 'workflow-fixture', ...}]}
+  Left contains 3 more items:
+  {'migrations': [],
+   'resource_schema_version': 2,
+   'ui': {'context_open': False,
+          'explorer_open': True,
+          'skin': 'studio',
+          'theme': 'fluent'}}
+  
+  Full diff:
+    {
+        'active_pane_id': 'pane-main',
+        'direction': 'horizontal',
+  +     'migrations': [],
+        'panes': [
+            {
+                'active_view_id': 'view-workflow',
+                'id': 'pane-main',
+                'view_ids': [
+                    'view-workflow',
+                ],
+  -             'weight': 1,
+  +             'weight': 1.0,
+  ?                        ++
+            },
+        ],
+        'persona': 'neutral',
+  +     'resource_schema_version': 2,
+        'resources': [
+            {
+                'dependencies': [
+                    {
+                        'condition': 'success',
+                        'id': 'dep-1',
+                        'source': 'ingest',
+                        'target': 'transform',
+                    },
+                ],
+                'id': 'workflow-fixture',
+                'kind': 'workflow',
+                'revision': 0,
+                'schema_version': 1,
+                'tasks': [
+                    {
+                        'id': 'ingest',
+                        'label': 'Ingest source',
+                        'notebook_resource_id': None,
+                        'runtime': 'local.sql',
+                    },
+                    {
+                        'id': 'transform',
+                        'label': 'Transform in notebook',
+                        'notebook_resource_id': 'notebook-fixture',
+                        'runtime': 'local.sparklab',
+                    },
+                ],
+                'title': 'Ingest and transform',
+            },
+            {
+                'datasets': [
+                    {
+                        'asset_ref': None,
+                        'id': 'bronze',
+                        'label': 'Raw orders',
+                    },
+                    {
+                        'asset_ref': None,
+                        'id': 'silver',
+                        'label': 'Validated orders',
+                    },
+                    {
+                        'asset_ref': None,
+                        'id': 'gold',
+                        'label': 'Daily sales',
+                    },
+                ],
+                'derivations': [
+                    {
+                        'id': 'derive-1',
+                        'note': 'validate',
+                        'source': 'bronze',
+                        'target': 'silver',
+                    },
+                    {
+                        'id': 'derive-2',
+                        'note': 'aggregate',
+                        'source': 'silver',
+                        'target': 'gold',
+                    },
+                ],
+                'id': 'lineage-fixture',
+                'kind': 'lineage',
+                'revision': 0,
+                'schema_version': 1,
+                'title': 'Bronze to gold lineage',
+            },
+            {
+                'id': 'data-model-fixture',
+                'kind': 'data-model',
+                'relationships': [
+                    {
+                        'cardinality': 'one-to-many',
+                        'id': 'rel-1',
+                        'source': 'customer',
+                        'source_column': 'customer_key',
+                        'target': 'sales',
+                        'target_column': 'customer_key',
+                    },
+                ],
+                'revision': 0,
+                'schema_version': 1,
+                'tables': [
+                    {
+                        'asset_ref': None,
+                        'columns': [
+                            {
+                                'data_type': 'BIGINT',
+                                'id': 'customer_key',
+                                'key': 'primary',
+                                'nullable': False,
+                            },
+                        ],
+                        'grain': 'One row per customer version',
+                        'id': 'customer',
+                        'label': 'Dim Customer',
+                        'role': 'dimension',
+                        'scd': 2,
+                    },
+                    {
+                        'asset_ref': None,
+                        'columns': [
+                            {
+                                'data_type': 'BIGINT',
+                                'id': 'customer_key',
+                                'key': 'foreign',
+                                'nullable': False,
+                            },
+                            {
+                                'data_type': 'DECIMAL(18,2)',
+                                'id': 'amount',
+                                'key': 'none',
+                                'nullable': False,
+                            },
+                        ],
+                        'grain': 'One row per order line',
+                        'id': 'sales',
+                        'label': 'Fact Sales',
+                        'role': 'fact',
+                        'scd': 0,
+                    },
+                ],
+                'title': 'Sales star model',
+            },
+            {
+                'id': 'notebook-fixture',
+                'kind': 'notebook',
+                'notebook_id': 'fixture-notebook',
+                'revision': 0,
+                'schema_version': 1,
+                'title': 'Existing notebook',
+            },
+        ],
+        'schema_version': 1,
+  +     'ui': {
+  +         'context_open': False,
+  +         'explorer_open': True,
+  +         'skin': 'studio',
+  +         'theme': 'fluent',
+  +     },
+        'views': [
+            {
+                'id': 'view-workflow',
+                'mode': 'visual',
+                'positions': {
+                    'ingest': {
+  -                     'x': 10,
+  +                     'x': 10.0,
+  ?                            ++
+  -                     'y': 20,
+  +                     'y': 20.0,
+  ?                            ++
+                    },
+                },
+                'resource_id': 'workflow-fixture',
+                'selected_edge': None,
+                'selected_node': 'ingest',
+  +             'state': {},
+                'viewport': {
+  -                 'x': 0,
+  +                 'x': 0.0,
+  ?                      ++
+  -                 'y': 0,
+  +                 'y': 0.0,
+  ?                      ++
+  -                 'zoom': 1,
+  +                 'zoom': 1.0,
+  ?                          ++
+                },
+            },
+        ],
+    }
+FAILED tests/test_foundation.py::test_workbench_save_preserves_notebook_runs_and_practice_state - AssertionError: assert {'active_pane...': 1.0}], ...} == {'active_pane...neutral', ...}
+  
+  Omitting 6 identical items, use -vv to show
+  Differing items:
+  {'views': [{'id': 'view-workflow', 'mode': 'visual', 'positions': {'ingest': {'x': 10.0, 'y': 20.0}}, 'resource_id': 'workflow-fixture', ...}]} != {'views': [{'id': 'view-workflow', 'mode': 'visual', 'positions': {'ingest': {'x': 10, 'y': 20}}, 'resource_id': 'workflow-fixture', ...}]}
+  Left contains 3 more items:
+  {'migrations': [],
+   'resource_schema_version': 2,
+   'ui': {'context_open': False,
+          'explorer_open': True,
+          'skin': 'studio',
+          'theme': 'fluent'}}
+  
+  Full diff:
+    {
+        'active_pane_id': 'pane-main',
+        'direction': 'horizontal',
+  +     'migrations': [],
+        'panes': [
+            {
+                'active_view_id': 'view-workflow',
+                'id': 'pane-main',
+                'view_ids': [
+                    'view-workflow',
+                ],
+  -             'weight': 1,
+  +             'weight': 1.0,
+  ?                        ++
+            },
+        ],
+        'persona': 'neutral',
+  +     'resource_schema_version': 2,
+        'resources': [
+            {
+                'dependencies': [
+                    {
+                        'condition': 'success',
+                        'id': 'dep-1',
+                        'source': 'ingest',
+                        'target': 'transform',
+                    },
+                ],
+                'id': 'workflow-fixture',
+                'kind': 'workflow',
+                'revision': 0,
+                'schema_version': 1,
+                'tasks': [
+                    {
+                        'id': 'ingest',
+                        'label': 'Ingest source',
+                        'notebook_resource_id': None,
+                        'runtime': 'local.sql',
+                    },
+                    {
+                        'id': 'transform',
+                        'label': 'Transform in notebook',
+                        'notebook_resource_id': 'notebook-fixture',
+                        'runtime': 'local.sparklab',
+                    },
+                ],
+                'title': 'Ingest and transform',
+            },
+            {
+                'datasets': [
+                    {
+                        'asset_ref': None,
+                        'id': 'bronze',
+                        'label': 'Raw orders',
+                    },
+                    {
+                        'asset_ref': None,
+                        'id': 'silver',
+                        'label': 'Validated orders',
+                    },
+                    {
+                        'asset_ref': None,
+                        'id': 'gold',
+                        'label': 'Daily sales',
+                    },
+                ],
+                'derivations': [
+                    {
+                        'id': 'derive-1',
+                        'note': 'validate',
+                        'source': 'bronze',
+                        'target': 'silver',
+                    },
+                    {
+                        'id': 'derive-2',
+                        'note': 'aggregate',
+                        'source': 'silver',
+                        'target': 'gold',
+                    },
+                ],
+                'id': 'lineage-fixture',
+                'kind': 'lineage',
+                'revision': 0,
+                'schema_version': 1,
+                'title': 'Bronze to gold lineage',
+            },
+            {
+                'id': 'data-model-fixture',
+                'kind': 'data-model',
+                'relationships': [
+                    {
+                        'cardinality': 'one-to-many',
+                        'id': 'rel-1',
+                        'source': 'customer',
+                        'source_column': 'customer_key',
+                        'target': 'sales',
+                        'target_column': 'customer_key',
+                    },
+                ],
+                'revision': 0,
+                'schema_version': 1,
+                'tables': [
+                    {
+                        'asset_ref': None,
+                        'columns': [
+                            {
+                                'data_type': 'BIGINT',
+                                'id': 'customer_key',
+                                'key': 'primary',
+                                'nullable': False,
+                            },
+                        ],
+                        'grain': 'One row per customer version',
+                        'id': 'customer',
+                        'label': 'Dim Customer',
+                        'role': 'dimension',
+                        'scd': 2,
+                    },
+                    {
+                        'asset_ref': None,
+                        'columns': [
+                            {
+                                'data_type': 'BIGINT',
+                                'id': 'customer_key',
+                                'key': 'foreign',
+                                'nullable': False,
+                            },
+                            {
+                                'data_type': 'DECIMAL(18,2)',
+                                'id': 'amount',
+                                'key': 'none',
+                                'nullable': False,
+                            },
+                        ],
+                        'grain': 'One row per order line',
+                        'id': 'sales',
+                        'label': 'Fact Sales',
+                        'role': 'fact',
+                        'scd': 0,
+                    },
+                ],
+                'title': 'Sales star model',
+            },
+            {
+                'id': 'notebook-fixture',
+                'kind': 'notebook',
+                'notebook_id': 'fixture-notebook',
+                'revision': 0,
+                'schema_version': 1,
+                'title': 'Existing notebook',
+            },
+        ],
+        'schema_version': 1,
+  +     'ui': {
+  +         'context_open': False,
+  +         'explorer_open': True,
+  +         'skin': 'studio',
+  +         'theme': 'fluent',
+  +     },
+        'views': [
+            {
+                'id': 'view-workflow',
+                'mode': 'visual',
+                'positions': {
+                    'ingest': {
+  -                     'x': 10,
+  +                     'x': 10.0,
+  ?                            ++
+  -                     'y': 20,
+  +                     'y': 20.0,
+  ?                            ++
+                    },
+                },
+                'resource_id': 'workflow-fixture',
+                'selected_edge': None,
+                'selected_node': 'ingest',
+  +             'state': {},
+                'viewport': {
+  -                 'x': 0,
+  +                 'x': 0.0,
+  ?                      ++
+  -                 'y': 0,
+  +                 'y': 0.0,
+  ?                      ++
+  -                 'zoom': 1,
+  +                 'zoom': 1.0,
+  ?                          ++
+                },
+            },
+        ],
+    }
+2 failed, 22 passed, 1 warning in 1.21s

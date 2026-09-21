@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: M2 migrates once and retains original attachment byte-for-byte
+ok 1 - M2 migrates once and retains original attachment byte-for-byte
+  ---
+  duration_ms: 39.267936
+  type: 'test'
+  ...
+# Subtest: identical content on two notebooks shares resources, not ownership
+ok 2 - identical content on two notebooks shares resources, not ownership
+  ---
+  duration_ms: 6.408169
+  type: 'test'
+  ...
+# Subtest: conflicting dbt attachments preserve both projects but dedupe unchanged models
+ok 3 - conflicting dbt attachments preserve both projects but dedupe unchanged models
+  ---
+  duration_ms: 12.297485
+  type: 'test'
+  ...
+# Subtest: unknown attachment is retained with a recovery journal, never replaced by samples
+ok 4 - unknown attachment is retained with a recovery journal, never replaced by samples
+  ---
+  duration_ms: 0.776115
+  type: 'test'
+  ...
+# Subtest: alternate views edit one canonical dbt resource and retain per-view selected files
+ok 5 - alternate views edit one canonical dbt resource and retain per-view selected files
+  ---
+  duration_ms: 7.593159
+  type: 'test'
+  ...
+# Subtest: closing all analytics views never deletes the sources
+ok 6 - closing all analytics views never deletes the sources
+  ---
+  duration_ms: 9.858504
+  type: 'test'
+  ...
+# Subtest: themes and skins are presentation-only data
+ok 7 - themes and skins are presentation-only data
+  ---
+  duration_ms: 6.192294
+  type: 'test'
+  ...
+# Subtest: existing root layout keeps stable view and pane identity during migration
+ok 8 - existing root layout keeps stable view and pane identity during migration
+  ---
+  duration_ms: 4.685224
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 870.013774

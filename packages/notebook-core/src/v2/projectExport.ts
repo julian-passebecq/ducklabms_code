@@ -1,7 +1,7 @@
 import type { Layout } from 'react-grid-layout'
-import type { DatasetInfo, NotebookCellMeta, PanelType, ResultTable, WorkbenchPanel } from '../types'
-import type { ImportedNotebookInfo } from './ipynb'
-import type { NotebookView } from './model'
+import type { DatasetInfo, NotebookCellMeta, PanelType, ResultTable, WorkbenchPanel } from '../types.ts'
+import type { ImportedNotebookInfo } from './ipynb.ts'
+import type { NotebookView } from './model.ts'
 
 export type StorageReader = { getItem: (key: string) => string | null }
 

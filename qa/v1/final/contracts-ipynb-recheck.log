@@ -1,0 +1,292 @@
+TAP version 13
+# (node:3536) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: graph validates unknown, duplicate and cycle; supports independent tasks
+ok 1 - graph validates unknown, duplicate and cycle; supports independent tasks
+  ---
+  duration_ms: 2.618407
+  type: 'test'
+  ...
+# Subtest: case notebook has shared cell identity across all layouts
+ok 2 - case notebook has shared cell identity across all layouts
+  ---
+  duration_ms: 3.212917
+  type: 'test'
+  ...
+# Subtest: geometry cannot change notebook execution order
+ok 3 - geometry cannot change notebook execution order
+  ---
+  duration_ms: 1.699606
+  type: 'test'
+  ...
+# Subtest: semantic move is explicit and includes its output
+ok 4 - semantic move is explicit and includes its output
+  ---
+  duration_ms: 1.590964
+  type: 'test'
+  ...
+# Subtest: practice canvas honors custom geometry
+ok 5 - practice canvas honors custom geometry
+  ---
+  duration_ms: 0.885276
+  type: 'test'
+  ...
+# Subtest: project restore sanitizes blocks and keeps source
+ok 6 - project restore sanitizes blocks and keeps source
+  ---
+  duration_ms: 3.916798
+  type: 'test'
+  ...
+# Subtest: kernel switch updates export type without losing source
+ok 7 - kernel switch updates export type without losing source
+  ---
+  duration_ms: 0.569153
+  type: 'test'
+  ...
+# Subtest: ipynb roundtrip preserves source metadata attachments and inert HTML
+ok 8 - ipynb roundtrip preserves source metadata attachments and inert HTML
+  ---
+  duration_ms: 5.800955
+  type: 'test'
+  ...
+# Subtest: unsupported notebook magics stay read-only
+ok 9 - unsupported notebook magics stay read-only
+  ---
+  duration_ms: 0.780146
+  type: 'test'
+  ...
+# Subtest: root custom Spark kernel survives ipynb export and import
+ok 10 - root custom Spark kernel survives ipynb export and import
+  ---
+  duration_ms: 5.419694
+  type: 'test'
+  ...
+# Subtest: output evidence is attached to its originating cell only
+ok 11 - output evidence is attached to its originating cell only
+  ---
+  duration_ms: 0.896033
+  type: 'test'
+  ...
+# Subtest: server evidence cannot attach to another notebook
+ok 12 - server evidence cannot attach to another notebook
+  ---
+  duration_ms: 0.565816
+  type: 'test'
+  ...
+# Subtest: stale or changed inputs invalidate report freshness
+ok 13 - stale or changed inputs invalidate report freshness
+  ---
+  duration_ms: 0.28126
+  type: 'test'
+  ...
+# Subtest: new cells appear in all persistent layouts
+ok 14 - new cells appear in all persistent layouts
+  ---
+  duration_ms: 0.580041
+  type: 'test'
+  ...
+# Subtest: incompatible module contract rejected
+ok 15 - incompatible module contract rejected
+  ---
+  duration_ms: 0.224953
+  type: 'test'
+  ...
+# Subtest: custom practice geometry survives project save and restore
+ok 16 - custom practice geometry survives project save and restore
+  ---
+  duration_ms: 1.787252
+  type: 'test'
+  ...
+# Subtest: workflow evidence follows imported case cell identity and survives reopen
+ok 17 - workflow evidence follows imported case cell identity and survives reopen
+  ---
+  duration_ms: 4.645834
+  type: 'test'
+  ...
+# Subtest: corrupt import and duplicate project identities fail without changing source
+ok 18 - corrupt import and duplicate project identities fail without changing source
+  ---
+  duration_ms: 0.784872
+  type: 'test'
+  ...
+# (node:3542) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: shared server/client fixture has valid references
+ok 19 - shared server/client fixture has valid references
+  ---
+  duration_ms: 9.535212
+  type: 'test'
+  ...
+# Subtest: two panes reference exactly one notebook resource
+ok 20 - two panes reference exactly one notebook resource
+  ---
+  duration_ms: 15.696133
+  type: 'test'
+  ...
+# Subtest: opening an already-open resource focuses without duplicating tabs
+ok 21 - opening an already-open resource focuses without duplicating tabs
+  ---
+  duration_ms: 1.502327
+  type: 'test'
+  ...
+# Subtest: geometry/selection does not revise domain source
+ok 22 - geometry/selection does not revise domain source
+  ---
+  duration_ms: 5.343726
+  type: 'test'
+  ...
+# Subtest: semantic update is shared by all views and advances the resource revision
+ok 23 - semantic update is shared by all views and advances the resource revision
+  ---
+  duration_ms: 1.149064
+  type: 'test'
+  ...
+# Subtest: closing views or panes never deletes source and maintains one placement
+ok 24 - closing views or panes never deletes source and maintains one placement
+  ---
+  duration_ms: 4.549986
+  type: 'test'
+  ...
+# Subtest: moving a tab preserves view identity and layout
+ok 25 - moving a tab preserves view identity and layout
+  ---
+  duration_ms: 0.786482
+  type: 'test'
+  ...
+# Subtest: pane limit fails without mutating original
+ok 26 - pane limit fails without mutating original
+  ---
+  duration_ms: 6.255078
+  type: 'test'
+  ...
+# Subtest: dependency and derivation cycles fail closed
+ok 27 - dependency and derivation cycles fail closed
+  ---
+  duration_ms: 2.455022
+  type: 'test'
+  ...
+# Subtest: relationship cycles and distinct column relationships are not dependency cycles
+ok 28 - relationship cycles and distinct column relationships are not dependency cycles
+  ---
+  duration_ms: 0.503714
+  type: 'test'
+  ...
+# Subtest: model relationships require actual declared columns
+ok 29 - model relationships require actual declared columns
+  ---
+  duration_ms: 0.31428
+  type: 'test'
+  ...
+# Subtest: deleting a node cleans all view selections and incident edges
+ok 30 - deleting a node cleans all view selections and incident edges
+  ---
+  duration_ms: 0.566465
+  type: 'test'
+  ...
+# Subtest: missing notebook links and duplicate canonical references are rejected
+ok 31 - missing notebook links and duplicate canonical references are rejected
+  ---
+  duration_ms: 5.365351
+  type: 'test'
+  ...
+# Subtest: removing a design detaches its views without deleting the underlying notebook reference
+ok 32 - removing a design detaches its views without deleting the underlying notebook reference
+  ---
+  duration_ms: 0.383975
+  type: 'test'
+  ...
+# Subtest: unknown edge endpoints reject without accepting a partial graph
+ok 33 - unknown edge endpoints reject without accepting a partial graph
+  ---
+  duration_ms: 0.190605
+  type: 'test'
+  ...
+# Subtest: MotherDuck is a first-class but unavailable target, never a fake successful executor
+ok 34 - MotherDuck is a first-class but unavailable target, never a fake successful executor
+  ---
+  duration_ms: 2.389726
+  type: 'test'
+  ...
+# Subtest: measured local and modeled Spark times remain distinct
+ok 35 - measured local and modeled Spark times remain distinct
+  ---
+  duration_ms: 0.182218
+  type: 'test'
+  ...
+# Subtest: minimal empty workspace is a valid additive envelope
+ok 36 - minimal empty workspace is a valid additive envelope
+  ---
+  duration_ms: 0.11379
+  type: 'test'
+  ...
+# (node:3543) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: interview shares source and semantic order; geometry survives restore and view reset
+ok 37 - interview shares source and semantic order; geometry survives restore and view reset
+  ---
+  duration_ms: 16.73578
+  type: 'test'
+  ...
+# Subtest: scoped reset and clear preserve unrelated notes, geometry and source
+ok 38 - scoped reset and clear preserve unrelated notes, geometry and source
+  ---
+  duration_ms: 1.463943
+  type: 'test'
+  ...
+# Subtest: hide is view-only, reset restores hidden references, deletion groups output
+ok 39 - hide is view-only, reset restores hidden references, deletion groups output
+  ---
+  duration_ms: 0.812062
+  type: 'test'
+  ...
+# Subtest: exercise reset recovers deleted answer and preserves personal notes
+ok 40 - exercise reset recovers deleted answer and preserves personal notes
+  ---
+  duration_ms: 0.739741
+  type: 'test'
+  ...
+# Subtest: server hashes hydrate current source, edits stay historical, reset cannot resurrect output
+ok 41 - server hashes hydrate current source, edits stay historical, reset cannot resurrect output
+  ---
+  duration_ms: 33.768708
+  type: 'test'
+  ...
+# Subtest: failed import leaves current notebook intact; unknown metadata and attachments roundtrip
+ok 42 - failed import leaves current notebook intact; unknown metadata and attachments roundtrip
+  ---
+  duration_ms: 7.335976
+  type: 'test'
+  ...
+# Subtest: case notebooks choose product chrome without changing notebook semantics
+ok 43 - case notebooks choose product chrome without changing notebook semantics
+  ---
+  duration_ms: 0.571407
+  type: 'test'
+  ...
+# Subtest: workspace presentation registry keeps product chrome separate from notebook geometry
+ok 44 - workspace presentation registry keeps product chrome separate from notebook geometry
+  ---
+  duration_ms: 0.184869
+  type: 'test'
+  ...
+# Subtest: V1 playground presets cover local lakehouse, Fabric notebook, free canvas and optional MotherDuck
+ok 45 - V1 playground presets cover local lakehouse, Fabric notebook, free canvas and optional MotherDuck
+  ---
+  duration_ms: 1.514504
+  type: 'test'
+  ...
+# Subtest: playground layout changes do not duplicate source or change canonical notebook order
+ok 46 - playground layout changes do not duplicate source or change canonical notebook order
+  ---
+  duration_ms: 5.067868
+  type: 'test'
+  ...
+1..46
+# tests 46
+# suites 0
+# pass 46
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1194.115434

@@ -1,0 +1,1965 @@
+.....FFFFF.......................................................s..F.F. [ 24%]
+..sss................................................................... [ 48%]
+......EEEEEEE.E.E.E.E.E.....EEEE.......EEEEEEE.E.E.E.......F.F.Fss.E.E.E [ 72%]
+.E.F..E.E.EF...........ss..............EEEEEEEEEE....................... [ 96%]
+.........                                                                [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_complete_reference_workflows[duckdb-retail-medallion] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl7')
+request = <SubRequest 'engine' for <Function test_complete_reference_workflows[duckdb-retail-medallion]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb29a659f40>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl7/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+__ ERROR at setup of test_complete_reference_workflows[duckdb-warehouse-sql] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl8')
+request = <SubRequest 'engine' for <Function test_complete_reference_workflows[duckdb-warehouse-sql]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb29b714af0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl8/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+____ ERROR at setup of test_complete_reference_workflows[duckdb-dbt-marts] _____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl9')
+request = <SubRequest 'engine' for <Function test_complete_reference_workflows[duckdb-dbt-marts]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb29b716fd0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl9/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+__ ERROR at setup of test_complete_reference_workflows[duckdb-airflow-batch] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl10')
+request = <SubRequest 'engine' for <Function test_complete_reference_workflows[duckdb-airflow-batch]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89cd520>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl10/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+___ ERROR at setup of test_complete_reference_workflows[duckdb-airflow-dbt] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl11')
+request = <SubRequest 'engine' for <Function test_complete_reference_workflows[duckdb-airflow-dbt]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89ce8d0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl11/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+____ ERROR at setup of test_complete_reference_workflows[duckdb-turbine-ml] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl12')
+request = <SubRequest 'engine' for <Function test_complete_reference_workflows[duckdb-turbine-ml]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89cfbf0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl12/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+___ ERROR at setup of test_complete_reference_workflows[duckdb-spark-tuning] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl13')
+request = <SubRequest 'engine' for <Function test_complete_reference_workflows[duckdb-spark-tuning]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89cf530>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_complete_reference_workfl13/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+______ ERROR at setup of test_reference_values_and_shared_catalog[duckdb] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_reference_values_and_shar1')
+request = <SubRequest 'engine' for <Function test_reference_values_and_shared_catalog[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89cfc80>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_reference_values_and_shar1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_source_mutation_makes_downstream_stale_transitively[duckdb] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_source_mutation_makes_dow1')
+request = <SubRequest 'engine' for <Function test_source_mutation_makes_downstream_stale_transitively[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89cf9b0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_source_mutation_makes_dow1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+__________ ERROR at setup of test_wrong_solution_not_accepted[duckdb] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_wrong_solution_not_accept1')
+request = <SubRequest 'engine' for <Function test_wrong_solution_not_accepted[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89ce600>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_wrong_solution_not_accept1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_spark_symbols_persist_and_notebook_isolation[duckdb] __
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_symbols_persist_and1')
+request = <SubRequest 'engine' for <Function test_spark_symbols_persist_and_notebook_isolation[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8b95490>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_symbols_persist_and1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_________ ERROR at setup of test_python_state_and_sql_interop[duckdb] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_python_state_and_sql_inte1')
+request = <SubRequest 'engine' for <Function test_python_state_and_sql_interop[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8b94dd0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_python_state_and_sql_inte1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_spark_fails_closed[duckdb-import os\nresult = spark.table("source.orders")] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_fails_closed_duckdb0')
+request = <SubRequest 'engine' for <Function test_spark_fails_closed[duckdb-import os\nresult = spark.table("source.orders")]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8b959a0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_fails_closed_duckdb0/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_spark_fails_closed[duckdb-result = spark.table("source.orders").__class__] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_fails_closed_duckdb1')
+request = <SubRequest 'engine' for <Function test_spark_fails_closed[duckdb-result = spark.table("source.orders").__class__]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8b95520>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_fails_closed_duckdb1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_spark_fails_closed[duckdb-result = spark.table("source.orders").filter((F.col("net_amount") > 0) and (F.col("segment_id") > 0))] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_fails_closed_duckdb2')
+request = <SubRequest 'engine' for <Function test_spark_fails_closed[duckdb-result = spark.table("source.orders").filter((F.col("net_amount") > 0) and (F.col("segment_id") > 0))]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8b95760>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_fails_closed_duckdb2/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+___ ERROR at setup of test_spark_fails_closed[duckdb-while True:\n    pass] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_fails_closed_duckdb3')
+request = <SubRequest 'engine' for <Function test_spark_fails_closed[duckdb-while True:\n    pass]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8b952e0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_fails_closed_duckdb3/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_sql_rejects_external_operations[duckdb-ATTACH 'evil.db' AS secret] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper7')
+request = <SubRequest 'engine' for <Function test_sql_rejects_external_operations[duckdb-ATTACH 'evil.db' AS secret]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89cc200>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper7/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_sql_rejects_external_operations[duckdb-INSTALL httpfs] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper8')
+request = <SubRequest 'engine' for <Function test_sql_rejects_external_operations[duckdb-INSTALL httpfs]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89ce210>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper8/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+__ ERROR at setup of test_sql_rejects_external_operations[duckdb-LOAD httpfs] __
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper9')
+request = <SubRequest 'engine' for <Function test_sql_rejects_external_operations[duckdb-LOAD httpfs]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89cf920>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper9/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_sql_rejects_external_operations[duckdb-SELECT * FROM read_csv('/etc/passwd')] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper10')
+request = <SubRequest 'engine' for <Function test_sql_rejects_external_operations[duckdb-SELECT * FROM read_csv('/etc/passwd')]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89ce4e0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper10/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_sql_rejects_external_operations[duckdb-PRAGMA database_list] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper11')
+request = <SubRequest 'engine' for <Function test_sql_rejects_external_operations[duckdb-PRAGMA database_list]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89cc9e0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper11/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_sql_rejects_external_operations[duckdb-SELECT load_extension('evil')] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper12')
+request = <SubRequest 'engine' for <Function test_sql_rejects_external_operations[duckdb-SELECT load_extension('evil')]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89cc560>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper12/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_sql_rejects_external_operations[duckdb-COPY source.orders TO '/tmp/data.csv'] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper13')
+request = <SubRequest 'engine' for <Function test_sql_rejects_external_operations[duckdb-COPY source.orders TO '/tmp/data.csv']>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89ced50>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_sql_rejects_external_oper13/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+___________ ERROR at setup of test_publish_atomic_on_failure[duckdb] ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_publish_atomic_on_failure1')
+request = <SubRequest 'engine' for <Function test_publish_atomic_on_failure[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89cd5b0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_publish_atomic_on_failure1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_multiple_sql_statements_and_semicolon_in_string[duckdb] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_multiple_sql_statements_a1')
+request = <SubRequest 'engine' for <Function test_multiple_sql_statements_and_semicolon_in_string[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89ce450>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_multiple_sql_statements_a1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_failed_sql_transaction_preserves_previous_data[duckdb] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_failed_sql_transaction_pr1')
+request = <SubRequest 'engine' for <Function test_failed_sql_transaction_preserves_previous_data[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a89ce3c0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_failed_sql_transaction_pr1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_wrong_kpi_code_cannot_reuse_previous_catalog_acceptance[duckdb] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_wrong_kpi_code_cannot_reu1')
+request = <SubRequest 'engine' for <Function test_wrong_kpi_code_cannot_reuse_previous_catalog_acceptance[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a899c950>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_wrong_kpi_code_cannot_reu1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_____ ERROR at setup of test_copy_check_is_full_row_not_row_count[duckdb] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_copy_check_is_full_row_no1')
+request = <SubRequest 'engine' for <Function test_copy_check_is_full_row_not_row_count[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a899d5b0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_copy_check_is_full_row_no1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+__ ERROR at setup of test_spark_simulation_withholds_mutated_fixture[duckdb] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_simulation_withhold1')
+request = <SubRequest 'engine' for <Function test_spark_simulation_withholds_mutated_fixture[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb29b70e600>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_spark_simulation_withhold1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+______ ERROR at setup of test_unknown_workflow_override_rejected[duckdb] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_unknown_workflow_override1')
+request = <SubRequest 'engine' for <Function test_unknown_workflow_override_rejected[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb29b70f380>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_unknown_workflow_override1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_valid_pyspark_sql_filter_is_explicitly_unsupported_here[duckdb] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_valid_pyspark_sql_filter_1')
+request = <SubRequest 'engine' for <Function test_valid_pyspark_sql_filter_is_explicitly_unsupported_here[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb29a6745f0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_valid_pyspark_sql_filter_1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+______ ERROR at setup of test_python_reads_participate_in_lineage[duckdb] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_python_reads_participate_1')
+request = <SubRequest 'engine' for <Function test_python_reads_participate_in_lineage[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb29a675400>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_python_reads_participate_1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+____ ERROR at setup of test_stale_recompute_and_incompatible_schema[duckdb] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_stale_recompute_and_incom1')
+request = <SubRequest 'engine' for <Function test_stale_recompute_and_incompatible_schema[duckdb]>>
+
+    @pytest.fixture(params=['sqlite', 'duckdb'])
+    def engine(tmp_path, request):
+>       value = Engine(tmp_path/'db',mode=request.param,trusted_python=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb29a6752e0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_stale_recompute_and_incom1/db')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_________ ERROR at setup of test_outer_semi_anti_nulls_and_duplicates __________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_outer_semi_anti_nulls_and0')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path, mode='duckdb')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/sparklab/tests/test_runtime_pass1.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8cda180>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_outer_semi_anti_nulls_and0')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_unsupported_is_error[result = spark.table("source.orders").selectExpr("*")] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_resu0')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path, mode='duckdb')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/sparklab/tests/test_runtime_pass1.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8cdb5c0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_resu0')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_unsupported_is_error[result = spark.table("source.orders").filter((F.col("segment_id") > 1) and (F.col("net_amount") > 0))] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_resu1')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path, mode='duckdb')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/sparklab/tests/test_runtime_pass1.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8cda9f0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_resu1')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_unsupported_is_error[result = spark.table("source.orders").limit(-1)] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_resu2')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path, mode='duckdb')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/sparklab/tests/test_runtime_pass1.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8cda210>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_resu2')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_unsupported_is_error[result = spark.table("source.orders; DROP TABLE source.orders")] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_resu3')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path, mode='duckdb')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/sparklab/tests/test_runtime_pass1.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8cda4e0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_resu3')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_unsupported_is_error[result = spark.table("source.orders").select(F.col("net_amount").cast("decimal(2,9)"))] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_resu4')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path, mode='duckdb')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/sparklab/tests/test_runtime_pass1.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8cdbc80>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_resu4')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_unsupported_is_error[import os\nresult = spark.table("source.orders")] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_impo0')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path, mode='duckdb')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/sparklab/tests/test_runtime_pass1.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8cdb260>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_unsupported_is_error_impo0')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_finance_pack_profile_invariance_counterexamples_and_mutation _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_finance_pack_profile_inva0')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path, mode='duckdb')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/sparklab/tests/test_runtime_pass1.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8cda570>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_finance_pack_profile_inva0')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ ERROR at setup of test_shared_exercise_grades_semantics_and_keeps_hidden_rows_private _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_exercise_grades_se0')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path, mode='duckdb')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/sparklab/tests/test_runtime_pass1.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8cdbda0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_exercise_grades_se0')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+________ ERROR at setup of test_legacy_pack_and_empty_duplicate_subset _________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_legacy_pack_and_empty_dup0')
+
+    @pytest.fixture
+    def engine(tmp_path):
+>       value = Engine(tmp_path, mode='duckdb')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/sparklab/tests/test_runtime_pass1.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8cd9eb0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_legacy_pack_and_empty_dup0')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+=================================== FAILURES ===================================
+____________________ test_shared_grading_adapters[demo-sum] ____________________
+
+id = 'demo-sum'
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_grading_adapters_d0')
+
+    @pytest.mark.parametrize('id', ['demo-sum','demo-count','demo-python','demo-polars','demo-sparklab'])
+    def test_shared_grading_adapters(id,tmp_path):
+>       engine = Engine(tmp_path,mode='duckdb',trusted_python=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_exercise_packs.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8de5e80>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_grading_adapters_d0')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+___________________ test_shared_grading_adapters[demo-count] ___________________
+
+id = 'demo-count'
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_grading_adapters_d1')
+
+    @pytest.mark.parametrize('id', ['demo-sum','demo-count','demo-python','demo-polars','demo-sparklab'])
+    def test_shared_grading_adapters(id,tmp_path):
+>       engine = Engine(tmp_path,mode='duckdb',trusted_python=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_exercise_packs.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8f0d6d0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_grading_adapters_d1')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+__________________ test_shared_grading_adapters[demo-python] ___________________
+
+id = 'demo-python'
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_grading_adapters_d2')
+
+    @pytest.mark.parametrize('id', ['demo-sum','demo-count','demo-python','demo-polars','demo-sparklab'])
+    def test_shared_grading_adapters(id,tmp_path):
+>       engine = Engine(tmp_path,mode='duckdb',trusted_python=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_exercise_packs.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8f0dd10>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_grading_adapters_d2')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+__________________ test_shared_grading_adapters[demo-polars] ___________________
+
+id = 'demo-polars'
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_grading_adapters_d3')
+
+    @pytest.mark.parametrize('id', ['demo-sum','demo-count','demo-python','demo-polars','demo-sparklab'])
+    def test_shared_grading_adapters(id,tmp_path):
+>       engine = Engine(tmp_path,mode='duckdb',trusted_python=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_exercise_packs.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8e5de00>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_grading_adapters_d3')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_________________ test_shared_grading_adapters[demo-sparklab] __________________
+
+id = 'demo-sparklab'
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_grading_adapters_d4')
+
+    @pytest.mark.parametrize('id', ['demo-sum','demo-count','demo-python','demo-polars','demo-sparklab'])
+    def test_shared_grading_adapters(id,tmp_path):
+>       engine = Engine(tmp_path,mode='duckdb',trusted_python=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_exercise_packs.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8e5e3f0>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_shared_grading_adapters_d4')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+_ test_grading_executes_fixtures_not_constants_and_leaves_catalog_unchanged[duckdb] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_grading_executes_fixtures1')
+mode = 'duckdb'
+
+    @pytest.mark.parametrize('mode', ['sqlite','duckdb'])
+    def test_grading_executes_fixtures_not_constants_and_leaves_catalog_unchanged(tmp_path,mode):
+>       engine=Engine(tmp_path,mode=mode)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_interview.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/execution.py:64: in __init__
+    self.catalog = Catalog(directory, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.catalog.Catalog object at 0x7fb2a8b06360>
+directory = PosixPath('/tmp/pytest-of-root/pytest-15/test_grading_executes_fixtures1')
+mode = 'duckdb'
+
+    def __init__(self, directory: Path, mode: str = 'auto'):
+        self.directory = directory
+        directory.mkdir(parents=True, exist_ok=True)
+        has_duckdb = importlib.util.find_spec('duckdb') is not None
+        if mode not in {'auto', 'duckdb', 'ducklake', 'sqlite'}:
+            raise ValueError('Unknown storage mode.')
+        if mode in {'duckdb', 'ducklake'} and not has_duckdb:
+>           raise RuntimeError('DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.')
+E           RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/catalog.py:108: RuntimeError
+__________ test_api_submit_checkpoint_redaction_attempts_and_timeout ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_api_submit_checkpoint_red0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb2a8b05d00>
+
+    def test_api_submit_checkpoint_redaction_attempts_and_timeout(tmp_path,monkeypatch):
+        app=create_app(tmp_path,token='test',mode='duckdb')
+        with TestClient(app,base_url='http://localhost',headers={'Authorization':'Bearer test'}) as client:
+            definitions=client.get('/api/exercises').json()
+            demo=next(e for e in definitions if e['id']=='demo-sum')
+            assert demo['origin']=='internal-demo'
+            assert {e['pack']['id'] for e in definitions} >= {'internal-demo','sparklab-runtime'}
+            assert all('source' not in e.get('solution', {}) for e in definitions)
+            assert 'expected' not in json.dumps(definitions)
+            w=client.post('/api/workspaces',json={}).json();base=f"/api/workspaces/{w['id']}"
+            code=solution('demo-sum')['source']
+            n={'id':'exercise-demo-sum-1','blocks':[{'id':'answer','type':'sql'}], 'blockState':{'mosaic:v2:code:answer':code}}
+            w=client.put(base+'/notebook',json={'revision':0,'notebook':n}).json()
+            body=request(code,'run');body['source_revision']=w['revision']
+            run=client.post(base+'/exercise',json=body)
+            assert run.status_code==200,run.text
+            assert client.get(base+'/attempts').json()==[]
+            body.update(mode='submit',source_revision=run.json()['workspace_revision'])
+            response=client.post(base+'/exercise',json=body)
+            assert response.status_code==200,response.text
+            result=response.json();attempt=result['attempt']
+            assert attempt['source_hash']==hashlib.sha256(code.encode()).hexdigest()
+            assert attempt['source_revision']==body['source_revision']
+>           assert attempt['status']=='passed'
+E           AssertionError: assert 'error' == 'passed'
+E             
+E             - passed
+E             + error
+
+tests/test_interview.py:75: AssertionError
+___________ test_real_process_kernel_persistence_and_restart[duckdb] ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_real_process_kernel_persi1')
+mode = 'duckdb'
+
+    @pytest.mark.parametrize('mode', ['sqlite', 'duckdb'])
+    def test_real_process_kernel_persistence_and_restart(tmp_path, mode):
+        manager=KernelManager(mode=mode,trusted=True,timeout=10)
+        try:
+>           manager.call('a',tmp_path/'a',request('x=123','python'))
+
+tests/test_root.py:169: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/kernels.py:126: in call
+    return kernel.call(request,self.timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.kernels.Kernel object at 0x7fb2a8cbc5f0>
+request = {'case_id': 'retail-medallion', 'cell_id': 'cell', 'code': 'x=123', 'language': 'python', ...}
+timeout = 10
+
+    def call(self, request: dict, timeout: float):
+        with self.lock:
+            self.last_used = time.monotonic()
+            if self.process.poll() is not None:
+                raise RuntimeError('The kernel exited. Restart the workspace kernel.')
+            response = queue.Queue(maxsize=1)
+            self.process.stdin.write(json.dumps(request)+'\n')
+            self.process.stdin.flush()
+            def read():
+                try:
+                    response.put(self.process.stdout.readline(3_000_002))
+                except Exception as error:
+                    response.put(error)
+            thread = threading.Thread(target=read,daemon=True)
+            thread.start()
+            try:
+                value = response.get(timeout=timeout)
+            except queue.Empty:
+                self.stop()
+                raise KernelTimeout('Execution timed out. The kernel was terminated; restart it. Persisted tables remain, variables do not.')
+            if isinstance(value, Exception):
+                raise value
+            if not value:
+                raise RuntimeError('The worker exited without a response. Inspect worker.stderr.log.')
+            if len(value) > 3_000_000:
+                self.stop()
+                raise RuntimeError('The worker returned too much output and was stopped.')
+            try:
+                payload = json.loads(value)
+            except json.JSONDecodeError:
+                self.stop()
+                raise RuntimeError('The worker protocol was corrupted. The process was stopped.')
+            if not payload['ok']:
+                # A validated request rejected by the worker is not an outage.
+                if payload.get('error_type') == 'ValueError':
+                    raise ValueError(payload['error'])
+>               raise RuntimeError(payload['error'])
+E               RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/kernels.py:74: RuntimeError
+_____________ test_worker_timeout_terminates_and_recovers[duckdb] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_worker_timeout_terminates1')
+mode = 'duckdb'
+
+    @pytest.mark.parametrize('mode', ['sqlite', 'duckdb'])
+    def test_worker_timeout_terminates_and_recovers(tmp_path, mode):
+        manager=KernelManager(mode=mode,trusted=True,timeout=10)
+        try:
+>           manager.call('a',tmp_path,{'op':'capabilities'})
+
+tests/test_root.py:183: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/kernels.py:126: in call
+    return kernel.call(request,self.timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.kernels.Kernel object at 0x7fb29b709300>
+request = {'op': 'capabilities'}, timeout = 10
+
+    def call(self, request: dict, timeout: float):
+        with self.lock:
+            self.last_used = time.monotonic()
+            if self.process.poll() is not None:
+                raise RuntimeError('The kernel exited. Restart the workspace kernel.')
+            response = queue.Queue(maxsize=1)
+            self.process.stdin.write(json.dumps(request)+'\n')
+            self.process.stdin.flush()
+            def read():
+                try:
+                    response.put(self.process.stdout.readline(3_000_002))
+                except Exception as error:
+                    response.put(error)
+            thread = threading.Thread(target=read,daemon=True)
+            thread.start()
+            try:
+                value = response.get(timeout=timeout)
+            except queue.Empty:
+                self.stop()
+                raise KernelTimeout('Execution timed out. The kernel was terminated; restart it. Persisted tables remain, variables do not.')
+            if isinstance(value, Exception):
+                raise value
+            if not value:
+                raise RuntimeError('The worker exited without a response. Inspect worker.stderr.log.')
+            if len(value) > 3_000_000:
+                self.stop()
+                raise RuntimeError('The worker returned too much output and was stopped.')
+            try:
+                payload = json.loads(value)
+            except json.JSONDecodeError:
+                self.stop()
+                raise RuntimeError('The worker protocol was corrupted. The process was stopped.')
+            if not payload['ok']:
+                # A validated request rejected by the worker is not an outage.
+                if payload.get('error_type') == 'ValueError':
+                    raise ValueError(payload['error'])
+>               raise RuntimeError(payload['error'])
+E               RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/kernels.py:74: RuntimeError
+___________ test_api_auth_origins_revision_and_real_workflow[duckdb] ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_api_auth_origins_revision1')
+mode = 'duckdb'
+
+    @pytest.mark.parametrize('mode', ['sqlite', 'duckdb'])
+    def test_api_auth_origins_revision_and_real_workflow(tmp_path, mode):
+        app=create_app(tmp_path,'test-token',mode=mode,trusted_python=False)
+        with TestClient(app,base_url='http://127.0.0.1') as client:
+            assert client.get('/api/health').status_code==200
+            assert client.get('/api/cases').status_code==401
+            client.headers['Authorization']='Bearer test-token'
+            assert client.get('/api/cases',headers={'Origin':'https://evil.example'}).status_code==403
+            assert len(client.get('/api/cases').json())==len(cases())
+            response=client.post('/api/workspaces',json={'case_id':'retail-medallion'})
+            assert response.status_code==201,response.text
+            id=response.json()['id']
+            result=client.post(f'/api/workspaces/{id}/workflow',json={})
+>           assert result.status_code==200,result.text
+E           AssertionError: {"detail":"DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made."}
+E           assert 503 == 200
+E            +  where 503 = <Response [503 Service Unavailable]>.status_code
+
+tests/test_root.py:205: AssertionError
+____________ test_workspace_concurrent_requests_serialized[duckdb] _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_workspace_concurrent_requ1')
+mode = 'duckdb'
+
+    @pytest.mark.parametrize('mode', ['sqlite', 'duckdb'])
+    def test_workspace_concurrent_requests_serialized(tmp_path, mode):
+        from concurrent.futures import ThreadPoolExecutor
+        manager=KernelManager(mode,True,timeout=10,max_workers=2)
+        try:
+            with ThreadPoolExecutor(max_workers=3) as pool:
+>               results=list(pool.map(lambda i:manager.call('a',tmp_path/'a',request(f'SELECT {i} AS x')),range(6)))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:262: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.13/concurrent/futures/_base.py:619: in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/concurrent/futures/_base.py:317: in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+/usr/lib/python3.13/concurrent/futures/thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_root.py:262: in <lambda>
+    results=list(pool.map(lambda i:manager.call('a',tmp_path/'a',request(f'SELECT {i} AS x')),range(6)))
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+apps/api/datapass/kernels.py:126: in call
+    return kernel.call(request,self.timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.kernels.Kernel object at 0x7fb29a685020>
+request = {'case_id': 'retail-medallion', 'cell_id': 'cell', 'code': 'SELECT 0 AS x', 'language': 'sql', ...}
+timeout = 10
+
+    def call(self, request: dict, timeout: float):
+        with self.lock:
+            self.last_used = time.monotonic()
+            if self.process.poll() is not None:
+                raise RuntimeError('The kernel exited. Restart the workspace kernel.')
+            response = queue.Queue(maxsize=1)
+            self.process.stdin.write(json.dumps(request)+'\n')
+            self.process.stdin.flush()
+            def read():
+                try:
+                    response.put(self.process.stdout.readline(3_000_002))
+                except Exception as error:
+                    response.put(error)
+            thread = threading.Thread(target=read,daemon=True)
+            thread.start()
+            try:
+                value = response.get(timeout=timeout)
+            except queue.Empty:
+                self.stop()
+                raise KernelTimeout('Execution timed out. The kernel was terminated; restart it. Persisted tables remain, variables do not.')
+            if isinstance(value, Exception):
+                raise value
+            if not value:
+                raise RuntimeError('The worker exited without a response. Inspect worker.stderr.log.')
+            if len(value) > 3_000_000:
+                self.stop()
+                raise RuntimeError('The worker returned too much output and was stopped.')
+            try:
+                payload = json.loads(value)
+            except json.JSONDecodeError:
+                self.stop()
+                raise RuntimeError('The worker protocol was corrupted. The process was stopped.')
+            if not payload['ok']:
+                # A validated request rejected by the worker is not an outage.
+                if payload.get('error_type') == 'ValueError':
+                    raise ValueError(payload['error'])
+>               raise RuntimeError(payload['error'])
+E               RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/kernels.py:74: RuntimeError
+_______________________ test_duckdb_workspace_isolation ________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-15/test_duckdb_workspace_isolatio0')
+
+    def test_duckdb_workspace_isolation(tmp_path):
+        manager = KernelManager('duckdb', True, timeout=10)
+        try:
+>           assert manager.call('a', tmp_path/'a', request('SELECT 42 AS n', output_asset='gold.private'))['status'] == 'success'
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_root.py:304: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+apps/api/datapass/kernels.py:126: in call
+    return kernel.call(request,self.timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <apps.api.datapass.kernels.Kernel object at 0x7fb2a8101db0>
+request = {'case_id': 'retail-medallion', 'cell_id': 'cell', 'code': 'SELECT 42 AS n', 'language': 'sql', ...}
+timeout = 10
+
+    def call(self, request: dict, timeout: float):
+        with self.lock:
+            self.last_used = time.monotonic()
+            if self.process.poll() is not None:
+                raise RuntimeError('The kernel exited. Restart the workspace kernel.')
+            response = queue.Queue(maxsize=1)
+            self.process.stdin.write(json.dumps(request)+'\n')
+            self.process.stdin.flush()
+            def read():
+                try:
+                    response.put(self.process.stdout.readline(3_000_002))
+                except Exception as error:
+                    response.put(error)
+            thread = threading.Thread(target=read,daemon=True)
+            thread.start()
+            try:
+                value = response.get(timeout=timeout)
+            except queue.Empty:
+                self.stop()
+                raise KernelTimeout('Execution timed out. The kernel was terminated; restart it. Persisted tables remain, variables do not.')
+            if isinstance(value, Exception):
+                raise value
+            if not value:
+                raise RuntimeError('The worker exited without a response. Inspect worker.stderr.log.')
+            if len(value) > 3_000_000:
+                self.stop()
+                raise RuntimeError('The worker returned too much output and was stopped.')
+            try:
+                payload = json.loads(value)
+            except json.JSONDecodeError:
+                self.stop()
+                raise RuntimeError('The worker protocol was corrupted. The process was stopped.')
+            if not payload['ok']:
+                # A validated request rejected by the worker is not an outage.
+                if payload.get('error_type') == 'ValueError':
+                    raise ValueError(payload['error'])
+>               raise RuntimeError(payload['error'])
+E               RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+
+apps/api/datapass/kernels.py:74: RuntimeError
+=============================== warnings summary ===============================
+apps/api/datapass/analytics_contracts.py:52
+  /mnt/data/datapass_work/candidate/apps/api/datapass/analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+    class ArtifactBundle(Document):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_guided_spark_v1.py:112: No live endpoint supplied; mock conformance is not deployment certification.
+SKIPPED [1] tests/test_lakehouse_profile.py:75: real DuckLake extension integration is an explicit CI/smoke gate
+SKIPPED [1] tests/test_lakehouse_profile.py:136: real DuckLake maintenance integration is an explicit CI/smoke gate
+SKIPPED [1] tests/test_lakehouse_profile.py:196: real DuckLake partition integration is an explicit CI/smoke gate
+SKIPPED [1] tests/test_root.py:216: DuckDB package unavailable in this environment; real-engine validation is a release gate.
+SKIPPED [1] tests/test_root.py:224: Polars package unavailable; no simulated replacement is counted as a pass.
+SKIPPED [2] tests/test_semantic_v1.py:39: Native DuckDB/Polars packages not installed; no substitute certification
+ERROR tests/test_root.py::test_complete_reference_workflows[duckdb-retail-medallion] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_complete_reference_workflows[duckdb-warehouse-sql] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_complete_reference_workflows[duckdb-dbt-marts] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_complete_reference_workflows[duckdb-airflow-batch] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_complete_reference_workflows[duckdb-airflow-dbt] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_complete_reference_workflows[duckdb-turbine-ml] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_complete_reference_workflows[duckdb-spark-tuning] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_reference_values_and_shared_catalog[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_source_mutation_makes_downstream_stale_transitively[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_wrong_solution_not_accepted[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_spark_symbols_persist_and_notebook_isolation[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_python_state_and_sql_interop[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_spark_fails_closed[duckdb-import os\nresult = spark.table("source.orders")] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_spark_fails_closed[duckdb-result = spark.table("source.orders").__class__] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_spark_fails_closed[duckdb-result = spark.table("source.orders").filter((F.col("net_amount") > 0) and (F.col("segment_id") > 0))] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_spark_fails_closed[duckdb-while True:\n    pass] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_sql_rejects_external_operations[duckdb-ATTACH 'evil.db' AS secret] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_sql_rejects_external_operations[duckdb-INSTALL httpfs] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_sql_rejects_external_operations[duckdb-LOAD httpfs] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_sql_rejects_external_operations[duckdb-SELECT * FROM read_csv('/etc/passwd')] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_sql_rejects_external_operations[duckdb-PRAGMA database_list] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_sql_rejects_external_operations[duckdb-SELECT load_extension('evil')] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_sql_rejects_external_operations[duckdb-COPY source.orders TO '/tmp/data.csv'] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_publish_atomic_on_failure[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_multiple_sql_statements_and_semicolon_in_string[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_failed_sql_transaction_preserves_previous_data[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_wrong_kpi_code_cannot_reuse_previous_catalog_acceptance[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_copy_check_is_full_row_not_row_count[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_spark_simulation_withholds_mutated_fixture[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_unknown_workflow_override_rejected[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_valid_pyspark_sql_filter_is_explicitly_unsupported_here[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_python_reads_participate_in_lineage[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR tests/test_root.py::test_stale_recompute_and_incompatible_schema[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR services/sparklab/tests/test_runtime_pass1.py::test_outer_semi_anti_nulls_and_duplicates - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR services/sparklab/tests/test_runtime_pass1.py::test_unsupported_is_error[result = spark.table("source.orders").selectExpr("*")] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR services/sparklab/tests/test_runtime_pass1.py::test_unsupported_is_error[result = spark.table("source.orders").filter((F.col("segment_id") > 1) and (F.col("net_amount") > 0))] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR services/sparklab/tests/test_runtime_pass1.py::test_unsupported_is_error[result = spark.table("source.orders").limit(-1)] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR services/sparklab/tests/test_runtime_pass1.py::test_unsupported_is_error[result = spark.table("source.orders; DROP TABLE source.orders")] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR services/sparklab/tests/test_runtime_pass1.py::test_unsupported_is_error[result = spark.table("source.orders").select(F.col("net_amount").cast("decimal(2,9)"))] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR services/sparklab/tests/test_runtime_pass1.py::test_unsupported_is_error[import os\nresult = spark.table("source.orders")] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR services/sparklab/tests/test_runtime_pass1.py::test_finance_pack_profile_invariance_counterexamples_and_mutation - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR services/sparklab/tests/test_runtime_pass1.py::test_shared_exercise_grades_semantics_and_keeps_hidden_rows_private - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+ERROR services/sparklab/tests/test_runtime_pass1.py::test_legacy_pack_and_empty_duplicate_subset - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+FAILED tests/test_exercise_packs.py::test_shared_grading_adapters[demo-sum] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+FAILED tests/test_exercise_packs.py::test_shared_grading_adapters[demo-count] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+FAILED tests/test_exercise_packs.py::test_shared_grading_adapters[demo-python] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+FAILED tests/test_exercise_packs.py::test_shared_grading_adapters[demo-polars] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+FAILED tests/test_exercise_packs.py::test_shared_grading_adapters[demo-sparklab] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+FAILED tests/test_interview.py::test_grading_executes_fixtures_not_constants_and_leaves_catalog_unchanged[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+FAILED tests/test_interview.py::test_api_submit_checkpoint_redaction_attempts_and_timeout - AssertionError: assert 'error' == 'passed'
+  
+  - passed
+  + error
+FAILED tests/test_root.py::test_real_process_kernel_persistence_and_restart[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+FAILED tests/test_root.py::test_worker_timeout_terminates_and_recovers[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+FAILED tests/test_root.py::test_api_auth_origins_revision_and_real_workflow[duckdb] - AssertionError: {"detail":"DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made."}
+assert 503 == 200
+ +  where 503 = <Response [503 Service Unavailable]>.status_code
+FAILED tests/test_root.py::test_workspace_concurrent_requests_serialized[duckdb] - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+FAILED tests/test_root.py::test_duckdb_workspace_isolation - RuntimeError: DuckDB is not installed. Install requirements-engines.txt; no silent storage substitution was made.
+12 failed, 234 passed, 8 skipped, 1 warning, 43 errors in 25.85s

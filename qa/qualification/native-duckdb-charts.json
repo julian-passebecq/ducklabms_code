@@ -1,0 +1,195 @@
+{
+  "gate": "real-local-dbt-shared-catalog",
+  "storage": "duckdb",
+  "status": "FAIL",
+  "versions": {
+    "duckdb": "1.5.5",
+    "dbt-core": "1.11.15",
+    "dbt-duckdb": "1.11.0",
+    "polars": "1.44.2",
+    "pandas": "3.0.6",
+    "dbt-charts": "0.8.0"
+  },
+  "checks": [
+    "Real dbt seed/model/test build, matching artifacts, compiled SQL and lineage",
+    "dbt output visible through shared notebook catalog after kernel restart"
+  ],
+  "job": {
+    "schema_version": 1,
+    "id": "f0eee49f6feb450398d6282f8fc54a1a",
+    "workspace_id": "dcb3af0b44cc41c5a8999752b59a64bd",
+    "resource_id": "native-dbt",
+    "resource_revision": 0,
+    "workspace_revision": 1,
+    "source_hash": "6fd9f80f07b2e0bc28b28dc556f1b790797b5d9e9a0cddffc8c6f5618d125139",
+    "kind": "dbt",
+    "action": "build",
+    "status": "success",
+    "truth": "real_local",
+    "created_at": "2026-09-21T18:22:58.133392+00:00",
+    "started_at": "2026-09-21T18:22:58.138764+00:00",
+    "finished_at": "2026-09-21T18:23:06.882102+00:00",
+    "elapsed_ms": 8748.697,
+    "runtime": {
+      "adapter": "dbt-core",
+      "versions": {
+        "dbt-core": "1.11.15",
+        "dbt-duckdb": "1.11.0",
+        "duckdb": "1.5.5"
+      },
+      "storage": "duckdb",
+      "lakehouse": {
+        "schema_version": 1,
+        "active": false,
+        "table_format": "ducklake",
+        "compute_engine": "duckdb",
+        "metadata_backend": null,
+        "metadata_file": null,
+        "data_format": "parquet",
+        "data_directory": null,
+        "data_inlining_row_limit": 0,
+        "truth": "real local DuckDB compatibility mode; DuckLake is not attached",
+        "duckdb_version": "v1.5.5",
+        "ducklake_extension_installed": true,
+        "ducklake_extension_version": "d8a1881e",
+        "legacy_metadata": false
+      },
+      "process_isolation": "trusted local subprocess; not a sandbox"
+    },
+    "log": "[dbt] build / canonical resource native-dbt revision 0\n[stdout] 18:23:01  Running with dbt=1.11.15\r\n18:23:01  Registered adapter: duckdb=1.11.0\r\n18:23:04  Found 1 model, 1 test, 1 seed, 500 macros\r\n18:23:04  \r\n18:23:04  Concurrency: 1 threads (target='local')\r\n18:23:04  \r\n18:23:04  1 of 3 START seed file warehouse.smoke_seed .................................... [RUN]\r\n18:23:04  1 of 3 OK loaded seed file warehouse.smoke_seed ................................ [INSERT 2 in 0.11s]\r\n18:23:04  2 of 3 START sql table model warehouse.smoke_model ............................. [RUN]\r\n18:23:05  2 of 3 OK created sql table model warehouse.smoke_model ........................ [OK in 0.12s]\r\n18:23:05  3 of 3 START test assert_smoke ................................................. [RUN]\r\n18:23:05  3 of 3 PASS assert_smoke ....................................................... [PASS in 0.04s]\r\n18:23:05  \r\n18:23:05  Finished running 1 seed, 1 table model, 1 test in 0 hours 0 minutes and 0.60 seconds (0.60s).\r\n18:23:05  \r\n18:23:05  Completed successfully\r\n18:23:05  \r\n18:23:05  Done. PASS=3 WARN=0 ERROR=0 SKIP=0 NO-OP=0 TOTAL=3\r\n",
+    "log_truncated": false,
+    "artifacts": {
+      "manifest": {
+        "file": "manifest.json",
+        "bytes": 559519,
+        "sha256": "48871ee8d727ca1da48db5679c5a46da2152857969404b660f9ac18bc044a1e0"
+      },
+      "run_results": {
+        "file": "run_results.json",
+        "bytes": 5509,
+        "sha256": "ad768a2ee9fcbd59714eebd9de05ead5626990de8b82dce9d523872e5ec09677"
+      }
+    },
+    "steps": [],
+    "result": {
+      "runtime": {
+        "adapter": "dbt-core",
+        "versions": {
+          "dbt-core": "1.11.15",
+          "dbt-duckdb": "1.11.0",
+          "duckdb": "1.5.5"
+        },
+        "storage": "duckdb",
+        "lakehouse": {
+          "schema_version": 1,
+          "active": false,
+          "table_format": "ducklake",
+          "compute_engine": "duckdb",
+          "metadata_backend": null,
+          "metadata_file": null,
+          "data_format": "parquet",
+          "data_directory": null,
+          "data_inlining_row_limit": 0,
+          "truth": "real local DuckDB compatibility mode; DuckLake is not attached",
+          "duckdb_version": "v1.5.5",
+          "ducklake_extension_installed": true,
+          "ducklake_extension_version": "d8a1881e",
+          "legacy_metadata": false
+        },
+        "process_isolation": "trusted local subprocess; not a sandbox"
+      },
+      "returncode": 0,
+      "invocation_id": "8370c3ee-9ae6-44d2-95ff-329f0539f137",
+      "warnings": [],
+      "action": "build",
+      "selector": "",
+      "resource_id": "native-dbt",
+      "resource_revision": 0,
+      "source_hash": "8306e91f13f773be43594fee7cf260d5dc30d7c05658057d56821dffef88b16d",
+      "files": {
+        "manifest": {
+          "file": "manifest.json",
+          "bytes": 559519,
+          "sha256": "48871ee8d727ca1da48db5679c5a46da2152857969404b660f9ac18bc044a1e0"
+        },
+        "run_results": {
+          "file": "run_results.json",
+          "bytes": 5509,
+          "sha256": "ad768a2ee9fcbd59714eebd9de05ead5626990de8b82dce9d523872e5ec09677"
+        }
+      },
+      "truth": "real_local",
+      "catalog_registration": {
+        "registered": [
+          "warehouse.smoke_seed",
+          "warehouse.smoke_model"
+        ],
+        "omitted": []
+      }
+    }
+  },
+  "charts": [
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "validate",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-f7kmaqf4\\dcb3af0b44cc41c5a8999752b59a64bd\\jobs\\f0eee49f6feb450398d6282f8fc54a1a\\dbt\\source\\bar.yml"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "WARN-SINGLE-CHART-REDUNDANT-TITLE  analysis_chart: Board title 'Revenue over \ntime' sits above a single chart that carries its own title 'Revenue over time';\ntwo headers for one chart.\nFix: Give the board one header: drop the chart's `title:` (the board title \nalready heads the board, and it is what listings, search, and nav show), or \ndrop the board `title:` and let the chart title stand.\nAt: bar.yml:19\nDocs: dct docs board\n"
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "render",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-f7kmaqf4\\dcb3af0b44cc41c5a8999752b59a64bd\\jobs\\f0eee49f6feb450398d6282f8fc54a1a\\dbt\\source\\bar.yml",
+        "--format",
+        "html",
+        "--output",
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-bar.html",
+        "--no-cache"
+      ],
+      "exit_code": 0,
+      "stdout": "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-bar.html\n",
+      "stderr": "[2026-09-21T18:23:26Z WARN  usvg::parser::text] Failed to parse font-family value: 'Source Serif 4, Noto Emoji, Georgia, Times New Roman, serif'. Falling back to Times New Roman.\n[2026-09-21T18:23:26Z WARN  usvg::parser::text] Failed to parse font-family value: 'Source Serif 4, Noto Emoji, Georgia, Times New Roman, serif'. Falling back to Times New Roman.\n\u00e2\u0161\u00a0 1 warning:\nWARN-SINGLE-CHART-REDUNDANT-TITLE  analysis_chart: Board title 'Revenue over \ntime' sits above a single chart that carries its own title 'Revenue over time';\ntwo headers for one chart.\nFix: Give the board one header: drop the chart's `title:` (the board title \nalready heads the board, and it is what listings, search, and nav show), or \ndrop the board `title:` and let the chart title stand.\nAt: bar.yml:19\nDocs: dct docs board\nRendered C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-f7kmaqf4\\dcb3af0b44cc41c5a8999752b59a64bd\\jobs\\f0eee49f6feb450398d6282f8fc54a1a\\dbt\\source\\bar.yml to D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-bar.html (html format)\n"
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "validate",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-f7kmaqf4\\dcb3af0b44cc41c5a8999752b59a64bd\\jobs\\f0eee49f6feb450398d6282f8fc54a1a\\dbt\\source\\line.yml"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "WARN-SINGLE-CHART-REDUNDANT-TITLE  analysis_chart: Board title 'Revenue over \ntime' sits above a single chart that carries its own title 'Revenue over time';\ntwo headers for one chart.\nFix: Give the board one header: drop the chart's `title:` (the board title \nalready heads the board, and it is what listings, search, and nav show), or \ndrop the board `title:` and let the chart title stand.\nAt: line.yml:19\nDocs: dct docs board\n"
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "render",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-f7kmaqf4\\dcb3af0b44cc41c5a8999752b59a64bd\\jobs\\f0eee49f6feb450398d6282f8fc54a1a\\dbt\\source\\line.yml",
+        "--format",
+        "html",
+        "--output",
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-line.html",
+        "--no-cache"
+      ],
+      "exit_code": 0,
+      "stdout": "D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-line.html\n",
+      "stderr": "[2026-09-21T18:23:39Z WARN  usvg::parser::text] Failed to parse font-family value: 'Source Serif 4, Noto Emoji, Georgia, Times New Roman, serif'. Falling back to Times New Roman.\n[2026-09-21T18:23:39Z WARN  usvg::parser::text] Failed to parse font-family value: 'Source Serif 4, Noto Emoji, Georgia, Times New Roman, serif'. Falling back to Times New Roman.\n\u00e2\u0161\u00a0 1 warning:\nWARN-SINGLE-CHART-REDUNDANT-TITLE  analysis_chart: Board title 'Revenue over \ntime' sits above a single chart that carries its own title 'Revenue over time';\ntwo headers for one chart.\nFix: Give the board one header: drop the chart's `title:` (the board title \nalready heads the board, and it is what listings, search, and nav show), or \ndrop the board `title:` and let the chart title stand.\nAt: line.yml:19\nDocs: dct docs board\nRendered C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-f7kmaqf4\\dcb3af0b44cc41c5a8999752b59a64bd\\jobs\\f0eee49f6feb450398d6282f8fc54a1a\\dbt\\source\\line.yml to D:\\PROJ\\datapass-v1-final-20260921\\source\\qa\\qualification\\dct-duckdb-line.html (html format)\n"
+    },
+    {
+      "command": [
+        "D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Scripts\\dct.exe",
+        "validate",
+        "C:\\Users\\julia\\AppData\\Local\\Temp\\datapass-v1-native-f7kmaqf4\\dcb3af0b44cc41c5a8999752b59a64bd\\jobs\\f0eee49f6feb450398d6282f8fc54a1a\\dbt\\source\\kpi.yml"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "ERR-VALIDATION-FIELD  Field 'charts.analysis_chart.kpi': Value error, `title:` \nis not used on `type: kpi`. Use `label:` instead.\nAt: kpi.yml:13\nDocs: dct docs board\n"
+    }
+  ],
+  "reason": "ERR-VALIDATION-FIELD  Field 'charts.analysis_chart.kpi': Value error, `title:` \nis not used on `type: kpi`. Use `label:` instead.\nAt: kpi.yml:13\nDocs: dct docs board\n",
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\scripts\\v1-local-smoke.py\", line 115, in main\n    assert invocation.returncode == 0, invocation.stderr\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ERR-VALIDATION-FIELD  Field 'charts.analysis_chart.kpi': Value error, `title:` \nis not used on `type: kpi`. Use `label:` instead.\nAt: kpi.yml:13\nDocs: dct docs board\n\n"
+}

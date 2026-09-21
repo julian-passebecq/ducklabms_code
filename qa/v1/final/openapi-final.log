@@ -1,0 +1,8 @@
+.                                                                        [100%]
+=============================== warnings summary ===============================
+apps/api/datapass/analytics_contracts.py:52
+  /mnt/data/datapass_work/candidate/apps/api/datapass/analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+    class ArtifactBundle(Document):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 1 warning in 1.96s

@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {"target":"ES2022","lib":["ES2022","DOM"],"module":"ESNext","moduleResolution":"Bundler","strict":true,"noEmit":true,"allowImportingTsExtensions":true,"types":[]},
+  "files":[
+    "packages/contracts/src/foundation.ts", "packages/contracts/src/workbench.ts", "packages/contracts/src/analytics.ts", "packages/contracts/src/local.ts",
+    "apps/web/src/studio/analytics/project.ts", "apps/web/src/studio/analytics/dbt.ts", "apps/web/src/studio/analytics/modeling.ts", "apps/web/src/studio/analytics/charts.ts",
+    "apps/web/src/studio/figures/semantics.ts"
+  ]
+}

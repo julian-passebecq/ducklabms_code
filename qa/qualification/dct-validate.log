@@ -1,0 +1,4 @@
+Usage: dct [OPTIONS] COMMAND [ARGS]...
+Try 'dct --help' for help.
+
+Error: No such option '--project-dir'.

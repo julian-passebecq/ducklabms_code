@@ -23,6 +23,7 @@ class ParseResult:
     dataframe: DataFrame
     symbols: dict[str, Any]
     target_name: str
+    action: str = 'notebook_preview'
 
 
 class SafeSparkParser:
@@ -38,6 +39,8 @@ class SafeSparkParser:
         self.last_dataframe_name: str | None = None
 
     def parse(self, source: str) -> ParseResult:
+        self.last_dataframe_name = None
+        self.action = 'notebook_preview'
         try:
             tree = ast.parse(source, mode="exec")
         except SyntaxError as exc:
@@ -51,7 +54,7 @@ class SafeSparkParser:
         value = self.symbols.get(self.last_dataframe_name)
         if not isinstance(value, DataFrame):
             raise SparkLabSyntaxError("Final result is not a DataFrame")
-        return ParseResult(value, dict(self.symbols), self.last_dataframe_name)
+        return ParseResult(value, dict(self.symbols), self.last_dataframe_name, self.action)
 
     def _stmt(self, node: ast.stmt) -> None:
         if isinstance(node, (ast.Import, ast.ImportFrom)):
@@ -67,7 +70,10 @@ class SafeSparkParser:
                 self.last_dataframe_name = name
             return
         if isinstance(node, ast.Expr):
-            self._expr(node.value)
+            value = self._expr(node.value)
+            if isinstance(value, DataFrame):
+                self.symbols['_cell_result'] = value
+                self.last_dataframe_name = '_cell_result'
             return
         raise SparkLabSyntaxError(f"Unsupported statement: {type(node).__name__}")
 
@@ -181,8 +187,8 @@ class SafeSparkParser:
         allowed_attrs = {
             SparkSession: {"table", "read"}, DataFrame: {
                 "filter", "where", "select", "withColumn", "withColumnRenamed", "drop", "dropDuplicates", "distinct",
-                "groupBy", "join", "orderBy", "limit", "repartition", "coalesce",
-            }, Expr: {"alias", "over", "desc", "asc", "isNull", "isNotNull", "cast", "isin", "between", "otherwise", "when"},
+                "groupBy", "join", "orderBy", "sort", "alias", "limit", "repartition", "coalesce",
+            }, Expr: {"alias", "over", "desc", "asc", "isNull", "isNotNull", "eqNullSafe", "cast", "isin", "between", "otherwise", "when"},
             WindowSpec: {"partitionBy", "orderBy", "rowsBetween"},
             GroupedData: {"agg"},
         }
@@ -203,6 +209,8 @@ class SafeSparkParser:
         for typ, allowed in allowed_attrs.items():
             if isinstance(base, typ):
                 if attr not in allowed:
+                    if attr == 'selectExpr':
+                        raise SparkLabSyntaxError('selectExpr SQL strings are unsupported; use select(F.col(...), F.sum(...).alias(...))')
                     raise SparkLabSyntaxError(f"Unsupported {typ.__name__} attribute: {attr}")
                 return getattr(base, attr)
         raise SparkLabSyntaxError(f"Attribute access is not allowed: {attr}")

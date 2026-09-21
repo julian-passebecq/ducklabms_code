@@ -1,0 +1,103 @@
+{
+  "gate": "real-local-dbt-shared-catalog",
+  "storage": "duckdb",
+  "status": "FAIL",
+  "versions": {
+    "duckdb": "1.5.5",
+    "dbt-core": "1.11.15",
+    "dbt-duckdb": "1.11.0",
+    "polars": "1.44.2",
+    "pandas": "3.0.6"
+  },
+  "checks": [],
+  "job": {
+    "schema_version": 1,
+    "id": "a82d8722368f493cb960cdffa9eec8fc",
+    "workspace_id": "6eb754e4fffd4ac4975d036b8d1198bc",
+    "resource_id": "native-dbt",
+    "resource_revision": 0,
+    "workspace_revision": 1,
+    "source_hash": "6fd9f80f07b2e0bc28b28dc556f1b790797b5d9e9a0cddffc8c6f5618d125139",
+    "kind": "dbt",
+    "action": "build",
+    "status": "failed",
+    "truth": "real_local",
+    "created_at": "2026-09-21T18:10:47.143083+00:00",
+    "started_at": "2026-09-21T18:10:47.145430+00:00",
+    "finished_at": "2026-09-21T18:10:55.701847+00:00",
+    "elapsed_ms": 8558.754,
+    "runtime": {
+      "adapter": "dbt-core",
+      "versions": {
+        "dbt-core": "1.11.15",
+        "dbt-duckdb": "1.11.0",
+        "duckdb": "1.5.5"
+      },
+      "storage": "duckdb",
+      "lakehouse": {
+        "schema_version": 1,
+        "active": false,
+        "table_format": "ducklake",
+        "compute_engine": "duckdb",
+        "metadata_backend": null,
+        "metadata_file": null,
+        "data_format": "parquet",
+        "data_directory": null,
+        "data_inlining_row_limit": 0,
+        "truth": "real local DuckDB compatibility mode; DuckLake is not attached",
+        "duckdb_version": "v1.5.5",
+        "ducklake_extension_installed": true,
+        "ducklake_extension_version": "d8a1881e",
+        "legacy_metadata": false
+      },
+      "process_isolation": "trusted local subprocess; not a sandbox"
+    },
+    "log": "[dbt] build / canonical resource native-dbt revision 0\n[stdout] 18:10:54  Running with dbt=1.11.15\r\n18:10:55  Encountered an error:\r\nattempted relative import with no known parent package\r\n18:10:55  Traceback (most recent call last):\r\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Lib\\site-packages\\dbt\\cli\\requires.py\", line 187, in wrapper\r\n    result, success = func(*args, **kwargs)\r\n                      ~~~~^^^^^^^^^^^^^^^^^\r\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Lib\\site-packages\\dbt\\cli\\requires.py\", line 133, in wrapper\r\n    return func(*args, **kwargs)\r\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Lib\\site-packages\\dbt\\cli\\requires.py\", line 281, in wrapper\r\n    return func(*args, **kwargs)\r\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Lib\\site-packages\\dbt\\cli\\requires.py\", line 319, in wrapper\r\n    set_up_plugin_manager(project_name=project.project_name)\r\n    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Lib\\site-packages\\dbt\\plugins\\__init__.py\", line 11, in set_up_plugin_manager\r\n    PLUGIN_MANAGER = PluginManager.from_modules(project_name)\r\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Lib\\site-packages\\dbt\\plugins\\manager.py\", line 120, in from_modules\r\n    discovered_dbt_modules = cls.get_prefixed_modules()\r\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\.venv\\Lib\\site-packages\\dbt\\plugins\\manager.py\", line 137, in get_prefixed_modules\r\n    name: importlib.import_module(name)\r\n          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\r\n  File \"C:\\Users\\julia\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\importlib\\__init__.py\", line 88, in import_module\r\n    return _bootstrap._gcd_import(name[level:], package, level)\r\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\r\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\r\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\r\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\r\n  File \"<frozen importlib._bootstrap_external>\", line 1026, in exec_module\r\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\r\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\apps\\api\\datapass\\dbt_drills.py\", line 3, in <module>\r\n    from .catalog import validate_sql\r\nImportError: attempted relative import with no known parent package\r\n\r\n[stderr] attempted relative import with no known parent package\r\n",
+    "log_truncated": false,
+    "artifacts": {},
+    "steps": [],
+    "result": {
+      "runtime": {
+        "adapter": "dbt-core",
+        "versions": {
+          "dbt-core": "1.11.15",
+          "dbt-duckdb": "1.11.0",
+          "duckdb": "1.5.5"
+        },
+        "storage": "duckdb",
+        "lakehouse": {
+          "schema_version": 1,
+          "active": false,
+          "table_format": "ducklake",
+          "compute_engine": "duckdb",
+          "metadata_backend": null,
+          "metadata_file": null,
+          "data_format": "parquet",
+          "data_directory": null,
+          "data_inlining_row_limit": 0,
+          "truth": "real local DuckDB compatibility mode; DuckLake is not attached",
+          "duckdb_version": "v1.5.5",
+          "ducklake_extension_installed": true,
+          "ducklake_extension_version": "d8a1881e",
+          "legacy_metadata": false
+        },
+        "process_isolation": "trusted local subprocess; not a sandbox"
+      },
+      "returncode": 2,
+      "invocation_id": null,
+      "warnings": [
+        "No manifest was produced. No lineage or compiled SQL is assumed."
+      ],
+      "action": "build",
+      "selector": "",
+      "resource_id": "native-dbt",
+      "resource_revision": 0,
+      "source_hash": "8306e91f13f773be43594fee7cf260d5dc30d7c05658057d56821dffef88b16d",
+      "files": {},
+      "truth": "real_local"
+    },
+    "error": "RuntimeError: dbt build exited 2. Matching artifacts and bounded stdout/stderr remain available."
+  },
+  "reason": "RuntimeError: dbt build exited 2. Matching artifacts and bounded stdout/stderr remain available.",
+  "traceback": "Traceback (most recent call last):\n  File \"D:\\PROJ\\datapass-v1-final-20260921\\source\\scripts\\v1-local-smoke.py\", line 76, in main\n    assert record['status'] == 'success', record.get('error')\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: RuntimeError: dbt build exited 2. Matching artifacts and bounded stdout/stderr remain available.\n"
+}

@@ -1,0 +1,104 @@
+
+> datapass-studio-root@0.1.0 test:v1:browser
+> playwright test --config playwright.v1.config.ts
+
+[WebServer] D:\PROJ\datapass-v1-final-20260921\source\apps\api\datapass\analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+[WebServer]   class ArtifactBundle(Document):
+[WebServer] INFO:     Started server process [41912]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:18080 (Press CTRL+C to quit)
+
+Running 5 tests using 1 worker
+
+(node:46476) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\browser\charts-roundtrip.spec.ts:4:1 › Charts YAML imports as design, executes locally, and exports a replayable board (22.3s)
+(node:18828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 tests\browser\v1-native.spec.ts:3:1 › native shell: one canonical figure, independent panes, persisted skins and source (7.5s)
+  x  3 tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views (34.1s)
+(node:13808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 4 tests\browser\v1-resources.spec.ts:62:1 › Arena pipeline Run/Submit grades DAG design and persists attempts (4.6s)
+  ok 5 tests\browser\v1-resources.spec.ts:84:1 › imported notebook executes real SQL, pandas and Polars; guided Run stays unavailable (6.1s)
+
+
+  1) tests\browser\charts-roundtrip.spec.ts:4:1 › Charts YAML imports as design, executes locally, and exports a replayable board 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('img', { name: /Imported revenue, bar chart/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('img', { name: /Imported revenue, bar chart/ }) with timeout 15000ms
+      - waiting for getByRole('img', { name: /Imported revenue, bar chart/ })
+
+
+      42 |  await expect(evidence.locator('strong')).toHaveText('success');
+      43 |  await page.getByRole('button',{name:'Use result in board',exact:true}).click();
+    > 44 |  await expect(page.getByRole('img',{name:/Imported revenue, bar chart/})).toBeVisible();
+         |                                                                           ^
+      45 |  await page.screenshot({path:'qa/qualification/charts-yaml-roundtrip.png',fullPage:true});
+      46 | });
+      47 |
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\charts-roundtrip.spec.ts:44:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\charts-roundtrip-Charts-YA-122ea--exports-a-replayable-board\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\charts-roundtrip-Charts-YA-122ea--exports-a-replayable-board\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\charts-roundtrip-Charts-YA-122ea--exports-a-replayable-board\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\charts-roundtrip-Charts-YA-122ea--exports-a-replayable-board\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('region', { name: 'Workspace local execution evidence' }).locator('strong')
+    Expected: "success"
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" getByRole('region', { name: 'Workspace local execution evidence' }).locator('strong') with timeout 15000ms
+      - waiting for getByRole('region', { name: 'Workspace local execution evidence' }).locator('strong')
+
+
+      37 |  await create(page,'Pipeline Lab');
+      38 |  await page.getByRole('button',{name:'Run saved pipeline',exact:true}).click();
+    > 39 |  await expect(evidence.locator('strong')).toHaveText('success');
+         |                                           ^
+      40 |  await expect(page.locator('.dp-task-runs tbody tr')).toHaveCount(2);
+      41 |  await expect(page.locator('.dp-task-runs')).toContainText('valid_orders');
+      42 |  await create(page,'Data model / SCD');
+        at D:\PROJ\datapass-v1-final-20260921\source\tests\browser\v1-resources.spec.ts:39:43
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\v1-resources-native-dbt-ca-0aa5b--and-durable-resource-views\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests\browser\charts-roundtrip.spec.ts:4:1 › Charts YAML imports as design, executes locally, and exports a replayable board 
+    tests\browser\v1-resources.spec.ts:7:1 › native dbt, catalog charts, pipeline tasks, model/SCD and durable resource views 
+  3 passed (1.3m)

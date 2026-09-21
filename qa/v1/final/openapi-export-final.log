@@ -1,0 +1,2 @@
+/mnt/data/datapass_work/candidate/apps/api/datapass/analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+  class ArtifactBundle(Document):

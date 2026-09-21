@@ -1,0 +1,39 @@
+............F.                                                           [100%]
+=================================== FAILURES ===================================
+_________________ test_csv_api_revision_provenance_and_reopen __________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-11/test_csv_api_revision_provenan0')
+
+    def test_csv_api_revision_provenance_and_reopen(tmp_path):
+        from fastapi.testclient import TestClient
+        from apps.api.datapass.api import create_app
+        app=create_app(tmp_path,token='csv-api-test',mode='sqlite')
+        with TestClient(app,base_url='http://localhost',headers={'Authorization':'Bearer csv-api-test'}) as client:
+            w=client.post('/api/workspaces',json={'title':'CSV example'}).json();wid=w['id']
+            body={'asset':'bronze.uploaded','text':'id,label\n001,"a,b"\n002,\n','workspace_revision':w['revision']}
+            response=client.post(f'/api/workspaces/{wid}/catalog/import-csv',json=body)
+            assert response.status_code==200,response.text
+            result=response.json();assert result['rows_imported']==2
+            saved=client.get(f'/api/workspaces/{wid}').json()
+            assert saved['revision']==result['workspace_revision']==1
+            run=saved['runs'][-1];assert run['status']=='success' and run['source_hash']==result['sha256']
+            assert client.post(f'/api/workspaces/{wid}/catalog/import-csv',json={**body,'asset':'bronze.other'}).status_code==409
+>           assert client.post(f'/api/workspaces/{wid}/catalog/import-csv',json={**body,'workspace_revision':1}).status_code==422
+E           assert 503 == 422
+E            +  where 503 = <Response [503 Service Unavailable]>.status_code
+E            +    where <Response [503 Service Unavailable]> = post('/api/workspaces/dab810e2140c4b7782de150ee02a4f85/catalog/import-csv', json={'asset': 'bronze.uploaded', 'text': 'id,label\n001,"a,b"\n002,\n', 'workspace_revision': 1})
+E            +      where post = <starlette.testclient.TestClient object at 0x7f10305234d0>.post
+
+tests/test_local_data_v1.py:45: AssertionError
+=============================== warnings summary ===============================
+tests/test_local_data_v1.py::test_csv_api_revision_provenance_and_reopen
+  /mnt/data/datapass_work/candidate/apps/api/datapass/analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+    class ArtifactBundle(Document):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_local_data_v1.py::test_csv_api_revision_provenance_and_reopen - assert 503 == 422
+ +  where 503 = <Response [503 Service Unavailable]>.status_code
+ +    where <Response [503 Service Unavailable]> = post('/api/workspaces/dab810e2140c4b7782de150ee02a4f85/catalog/import-csv', json={'asset': 'bronze.uploaded', 'text': 'id,label\n001,"a,b"\n002,\n', 'workspace_revision': 1})
+ +      where post = <starlette.testclient.TestClient object at 0x7f10305234d0>.post
+1 failed, 13 passed, 1 warning in 1.86s

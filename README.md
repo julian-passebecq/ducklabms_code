@@ -1,10 +1,25 @@
 # Datapass Studio Root 0.1.0
 
+## Current edited V1 candidate (2026-09-21)
+
+**Implemented source candidate, not release-qualified V1.** Pre-Pro cleanup and Analytics M2 are already assembled. Workspace-resource migration, local dbt/pipeline adapters, shared Arena variants, guided Spark gating and figure resources are implemented. Do not reapply the overlays.
+
+Start with [release status and actual QA](docs/v1/RELEASE_STATUS.md), [local setup](docs/v1/LOCAL_RUN.md), and [exact provenance/migration](docs/v1/MIGRATION_AND_PROVENANCE.md). Full dependency/type/build/native-engine/browser gates remain blocked; no completed V1 is claimed.
+
+
 **One learning workspace. Optional tool paths. Real local data, explicitly simulated cloud behavior.**
 
 This is the integration foundation created from the September 17, 2026 uploads. It is not a claim that every feature from the seven original applications has already been migrated. Read `START_HERE.md`, `docs/SOURCE_AUDIT.md` and `docs/VERIFICATION.md` first.
 
 The new root contains a React / Fluent UI 2 application, a Mosaic-derived notebook core, a local FastAPI service with persistent kernel workers, connected case studies, a shared catalog and specialist handoffs. Original application sources are retained under `migration-sources/`; they are reference material, not seven embedded apps.
+
+## Current architecture handoff
+
+The current V1 architecture, frozen decisions, Cloudflare target and next-agent handoff live in:
+
+`architecture/00_START_HERE.md`
+
+Use that folder as the continuation source of truth for the active V1 branch. The older `architecture-reference/` directory remains useful historical/context material but should not override the newer decisions in `architecture/`.
 
 ## Architecture reference
 
@@ -48,21 +63,28 @@ Or on macOS/Linux:
 source .venv/bin/activate
 ```
 
-Then install and start:
+Then install and build:
 
 ```sh
 python -m pip install -r requirements.txt -r requirements-engines.txt
 npm ci
 npm run build
-python start.py --storage duckdb
 ```
+
+For the full local lakehouse profile, install the official DuckLake/SQLite extensions once and start:
+
+```sh
+python start.py --storage ducklake --install-ducklake
+```
+
+Later offline starts can use `python start.py --storage ducklake`. New DuckLake workspaces use DuckDB compute, SQLite metadata and Parquet data with Datapass data inlining disabled. Plain `--storage duckdb` remains a real local compatibility mode when the DuckLake profile is not required.
 
 Open the token-bearing local URL printed by `start.py`. Do not share that URL. There is no deployed public site in this package.
 
 For the ML/Python/Polars cases, explicitly enable trusted local code:
 
 ```sh
-python start.py --storage duckdb --trusted-local-python
+python start.py --storage ducklake --trusted-local-python
 ```
 
 **Trusted Python has your operating-system user's privileges. A worker process is NOT a security sandbox. Do not expose this API to a network or run untrusted notebooks.**
@@ -77,6 +99,24 @@ python start.py --storage sqlite
 When `apps/web/dist` does not exist, port 8000 serves a clearly labeled **offline API diagnostic client**, not the compiled React application. The diagnostic client uses the same cases, workers and catalog; it is not a second implementation of the data engine. Its source edits are session-only. Use the React app for persistent notebook editing.
 
 For frontend development, run `npm run dev` in a second terminal and use the port-5173 token URL printed by the backend. Vite proxies `/api` to the local backend. Always run one API worker.
+
+## V1 playgrounds
+
+The React shell now has a **New playground** launcher so the product can be tried before any Oracle deployment:
+
+- **DuckLake / DuckDB lab** — real local analytical SQL over the seeded workspace catalog.
+- **Fabric-style Python + SparkLab** — Fabric-inspired notebook chrome with real trusted-local Python when enabled and the bounded SparkLab PySpark subset.
+- **Free coding canvas** — SQL, Python, Polars, SparkLab and notes on the same draggable/resizable notebook.
+- **LeetCode arena** — problem browser plus focused problem/editor/results/guidance layout using the installed exercise packs.
+- **MotherDuck-ready SQL** — deliberately runs locally in V1; the runtime strip says `MotherDuck off` until a real remote adapter is configured. There is no hidden upload or network fallback.
+
+For the fullest local playground, use DuckLake plus trusted Python:
+
+```sh
+python start.py --storage ducklake --install-ducklake --trusted-local-python
+```
+
+After the DuckLake extension is installed once, later starts can omit `--install-ducklake`. The same notebook documents and layouts are used whether the product is shown as Studio, Fabric notebook or interview coding chrome.
 
 ## First connected case
 

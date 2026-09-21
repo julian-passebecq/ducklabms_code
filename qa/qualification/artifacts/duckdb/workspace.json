@@ -1,0 +1,2009 @@
+{
+  "schema_version": 1,
+  "id": "b1ea20d65e45421a9e8ab206fc2eab30",
+  "case_id": null,
+  "title": "V1 native resource journey",
+  "revision": 11,
+  "updated_at": "2026-09-21T18:48:00.808225+00:00",
+  "notebook": {
+    "schemaVersion": 1,
+    "id": "playground-free",
+    "title": "Free coding canvas",
+    "blocks": [
+      {
+        "id": "canvas-note",
+        "type": "markdown",
+        "title": "Free canvas",
+        "role": "note",
+        "starterSource": "Drag and resize every block. Switch between Notebook, Two-page, Code + explanation, Dashboard and Free canvas without cloning the notebook.",
+        "notebook": {
+          "source": "ipynb",
+          "cellId": "canvas-note",
+          "cellType": "markdown",
+          "originalIndex": 0
+        }
+      },
+      {
+        "id": "sql-orders",
+        "type": "sql",
+        "title": "SQL",
+        "kernel": "sql",
+        "role": "code",
+        "starterSource": "SELECT\n  customer_id,\n  COUNT(*) AS orders,\n  ROUND(SUM(net_amount), 2) AS revenue\nFROM source.orders\nWHERE net_amount > 0\nGROUP BY customer_id\nORDER BY revenue DESC",
+        "notebook": {
+          "source": "ipynb",
+          "cellId": "sql-orders",
+          "cellType": "code",
+          "originalIndex": 1,
+          "language": "sql",
+          "cellMetadata": {
+            "datapass": {
+              "kernel": "sql"
+            }
+          }
+        }
+      },
+      {
+        "id": "spark-orders",
+        "type": "python",
+        "title": "SparkLab",
+        "kernel": "sparklab",
+        "role": "code",
+        "starterSource": "from pyspark.sql import functions as F\n\norders = spark.table(\"source.orders\").filter(F.col(\"net_amount\") > 0)\nresult = orders.groupBy(\"customer_id\").agg(\n    F.sum(\"net_amount\").alias(\"revenue\"),\n    F.count(\"order_id\").alias(\"orders\")\n)",
+        "notebook": {
+          "source": "ipynb",
+          "cellId": "spark-orders",
+          "cellType": "code",
+          "originalIndex": 2,
+          "language": "python",
+          "cellMetadata": {
+            "datapass": {
+              "kernel": "sparklab"
+            }
+          }
+        }
+      },
+      {
+        "id": "python-orders",
+        "type": "python",
+        "title": "Python",
+        "kernel": "python",
+        "role": "code",
+        "starterSource": "rows = query(\"\"\"\nSELECT customer_id, net_amount\nFROM source.orders\nWHERE net_amount > 0\nORDER BY net_amount DESC\n\"\"\")\ndisplay(rows[:8])",
+        "notebook": {
+          "source": "ipynb",
+          "cellId": "python-orders",
+          "cellType": "code",
+          "originalIndex": 3,
+          "language": "python",
+          "cellMetadata": {
+            "datapass": {
+              "kernel": "python"
+            }
+          }
+        }
+      },
+      {
+        "id": "polars-orders",
+        "type": "polars",
+        "title": "Polars",
+        "kernel": "polars",
+        "role": "code",
+        "starterSource": "import polars as pl\n\norders = pl.DataFrame(query(\"SELECT * FROM source.orders\"))\nresult = (\n    orders\n    .filter(pl.col(\"net_amount\") > 0)\n    .group_by(\"customer_id\")\n    .agg(\n        pl.col(\"net_amount\").sum().alias(\"revenue\"),\n        pl.len().alias(\"orders\"),\n    )\n    .sort(\"revenue\", descending=True)\n)\ndisplay(result)",
+        "notebook": {
+          "source": "ipynb",
+          "cellId": "polars-orders",
+          "cellType": "code",
+          "originalIndex": 4,
+          "language": "polars",
+          "cellMetadata": {
+            "datapass": {
+              "kernel": "polars"
+            }
+          }
+        }
+      }
+    ],
+    "views": [
+      {
+        "id": "notebook",
+        "label": "Notebook",
+        "description": "Original notebook order with saved outputs.",
+        "blockIds": [
+          "canvas-note",
+          "sql-orders",
+          "spark-orders",
+          "python-orders",
+          "polars-orders"
+        ],
+        "layout": [
+          {
+            "i": "canvas-note",
+            "x": 1,
+            "y": 0,
+            "w": 10,
+            "h": 5,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "sql-orders",
+            "x": 1,
+            "y": 5,
+            "w": 10,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "spark-orders",
+            "x": 1,
+            "y": 15,
+            "w": 10,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "python-orders",
+            "x": 1,
+            "y": 25,
+            "w": 10,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "polars-orders",
+            "x": 1,
+            "y": 35,
+            "w": 10,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          }
+        ],
+        "defaultLayout": [
+          {
+            "i": "canvas-note",
+            "x": 1,
+            "y": 0,
+            "w": 10,
+            "h": 5,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "sql-orders",
+            "x": 1,
+            "y": 5,
+            "w": 10,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "spark-orders",
+            "x": 1,
+            "y": 15,
+            "w": 10,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "python-orders",
+            "x": 1,
+            "y": 25,
+            "w": 10,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "polars-orders",
+            "x": 1,
+            "y": 35,
+            "w": 10,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          }
+        ]
+      },
+      {
+        "id": "split",
+        "label": "Two-page",
+        "description": "The same notebook reorganized into two columns.",
+        "blockIds": [
+          "canvas-note",
+          "sql-orders",
+          "spark-orders",
+          "python-orders",
+          "polars-orders"
+        ],
+        "layout": [
+          {
+            "i": "canvas-note",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 5,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "sql-orders",
+            "x": 0,
+            "y": 5,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "spark-orders",
+            "x": 0,
+            "y": 15,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "python-orders",
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "polars-orders",
+            "x": 6,
+            "y": 10,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          }
+        ],
+        "defaultLayout": [
+          {
+            "i": "canvas-note",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 5,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "sql-orders",
+            "x": 0,
+            "y": 5,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "spark-orders",
+            "x": 0,
+            "y": 15,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "python-orders",
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "polars-orders",
+            "x": 6,
+            "y": 10,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          }
+        ]
+      },
+      {
+        "id": "explain",
+        "label": "Code + explanation",
+        "description": "Code and outputs on the left, markdown explanations on the right.",
+        "blockIds": [
+          "canvas-note",
+          "sql-orders",
+          "spark-orders",
+          "python-orders",
+          "polars-orders"
+        ],
+        "layout": [
+          {
+            "i": "canvas-note",
+            "x": 8,
+            "y": 0,
+            "w": 4,
+            "h": 5,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "sql-orders",
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "spark-orders",
+            "x": 0,
+            "y": 10,
+            "w": 8,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "python-orders",
+            "x": 0,
+            "y": 20,
+            "w": 8,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "polars-orders",
+            "x": 0,
+            "y": 30,
+            "w": 8,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          }
+        ],
+        "defaultLayout": [
+          {
+            "i": "canvas-note",
+            "x": 8,
+            "y": 0,
+            "w": 4,
+            "h": 5,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "sql-orders",
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "spark-orders",
+            "x": 0,
+            "y": 10,
+            "w": 8,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "python-orders",
+            "x": 0,
+            "y": 20,
+            "w": 8,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "polars-orders",
+            "x": 0,
+            "y": 30,
+            "w": 8,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          }
+        ]
+      },
+      {
+        "id": "two-plus-one",
+        "label": "2 + 1",
+        "description": "Two compact notebook sections above the remaining document.",
+        "blockIds": [
+          "canvas-note",
+          "sql-orders",
+          "spark-orders",
+          "python-orders",
+          "polars-orders"
+        ],
+        "layout": [
+          {
+            "i": "canvas-note",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 5,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "sql-orders",
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "spark-orders",
+            "x": 0,
+            "y": 10,
+            "w": 12,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "python-orders",
+            "x": 0,
+            "y": 20,
+            "w": 12,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "polars-orders",
+            "x": 0,
+            "y": 30,
+            "w": 12,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          }
+        ],
+        "defaultLayout": [
+          {
+            "i": "canvas-note",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 5,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "sql-orders",
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "spark-orders",
+            "x": 0,
+            "y": 10,
+            "w": 12,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "python-orders",
+            "x": 0,
+            "y": 20,
+            "w": 12,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          },
+          {
+            "i": "polars-orders",
+            "x": 0,
+            "y": 30,
+            "w": 12,
+            "h": 10,
+            "minW": 4,
+            "minH": 4
+          }
+        ]
+      },
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "description": "Saved notebook outputs arranged as presentation tiles.",
+        "blockIds": [],
+        "layout": [],
+        "defaultLayout": []
+      },
+      {
+        "id": "free",
+        "label": "Free canvas",
+        "description": "All imported cells on a free two-column canvas.",
+        "blockIds": [
+          "canvas-note",
+          "sql-orders",
+          "spark-orders",
+          "python-orders",
+          "polars-orders"
+        ],
+        "layout": [
+          {
+            "i": "canvas-note",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 6,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "sql-orders",
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "spark-orders",
+            "x": 0,
+            "y": 6,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "python-orders",
+            "x": 6,
+            "y": 10,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "polars-orders",
+            "x": 0,
+            "y": 16,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          }
+        ],
+        "defaultLayout": [
+          {
+            "i": "canvas-note",
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 6,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "sql-orders",
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "spark-orders",
+            "x": 0,
+            "y": 6,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "python-orders",
+            "x": 6,
+            "y": 10,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          },
+          {
+            "i": "polars-orders",
+            "x": 0,
+            "y": 16,
+            "w": 6,
+            "h": 10,
+            "minW": 3,
+            "minH": 4
+          }
+        ]
+      }
+    ],
+    "blockState": {
+      "mosaic:v2:markdown:canvas-note": "Drag and resize every block. Switch between Notebook, Two-page, Code + explanation, Dashboard and Free canvas without cloning the notebook.",
+      "mosaic:v2:code:sql-orders": "SELECT\n  customer_id,\n  COUNT(*) AS orders,\n  ROUND(SUM(net_amount), 2) AS revenue\nFROM source.orders\nWHERE net_amount > 0\nGROUP BY customer_id\nORDER BY revenue DESC",
+      "mosaic:v2:code:spark-orders": "from pyspark.sql import functions as F\n\norders = spark.table(\"source.orders\").filter(F.col(\"net_amount\") > 0)\nresult = orders.groupBy(\"customer_id\").agg(\n    F.sum(\"net_amount\").alias(\"revenue\"),\n    F.count(\"order_id\").alias(\"orders\")\n)",
+      "mosaic:v2:code:python-orders": "rows = query(\"\"\"\nSELECT customer_id, net_amount\nFROM source.orders\nWHERE net_amount > 0\nORDER BY net_amount DESC\n\"\"\")\ndisplay(rows[:8])",
+      "mosaic:v2:code:polars-orders": "import polars as pl\n\norders = pl.DataFrame(query(\"SELECT * FROM source.orders\"))\nresult = (\n    orders\n    .filter(pl.col(\"net_amount\") > 0)\n    .group_by(\"customer_id\")\n    .agg(\n        pl.col(\"net_amount\").sum().alias(\"revenue\"),\n        pl.len().alias(\"orders\"),\n    )\n    .sort(\"revenue\", descending=True)\n)\ndisplay(result)"
+    },
+    "info": null,
+    "executions": {},
+    "executedSource": {},
+    "playground": "free",
+    "presentation": "studio",
+    "skin": "neutral"
+  },
+  "evidence": {},
+  "runs": [],
+  "notebooks": {
+    "playground-free": {
+      "schemaVersion": 1,
+      "id": "playground-free",
+      "title": "Free coding canvas",
+      "blocks": [
+        {
+          "id": "canvas-note",
+          "type": "markdown",
+          "title": "Free canvas",
+          "role": "note",
+          "starterSource": "Drag and resize every block. Switch between Notebook, Two-page, Code + explanation, Dashboard and Free canvas without cloning the notebook.",
+          "notebook": {
+            "source": "ipynb",
+            "cellId": "canvas-note",
+            "cellType": "markdown",
+            "originalIndex": 0
+          }
+        },
+        {
+          "id": "sql-orders",
+          "type": "sql",
+          "title": "SQL",
+          "kernel": "sql",
+          "role": "code",
+          "starterSource": "SELECT\n  customer_id,\n  COUNT(*) AS orders,\n  ROUND(SUM(net_amount), 2) AS revenue\nFROM source.orders\nWHERE net_amount > 0\nGROUP BY customer_id\nORDER BY revenue DESC",
+          "notebook": {
+            "source": "ipynb",
+            "cellId": "sql-orders",
+            "cellType": "code",
+            "originalIndex": 1,
+            "language": "sql",
+            "cellMetadata": {
+              "datapass": {
+                "kernel": "sql"
+              }
+            }
+          }
+        },
+        {
+          "id": "spark-orders",
+          "type": "python",
+          "title": "SparkLab",
+          "kernel": "sparklab",
+          "role": "code",
+          "starterSource": "from pyspark.sql import functions as F\n\norders = spark.table(\"source.orders\").filter(F.col(\"net_amount\") > 0)\nresult = orders.groupBy(\"customer_id\").agg(\n    F.sum(\"net_amount\").alias(\"revenue\"),\n    F.count(\"order_id\").alias(\"orders\")\n)",
+          "notebook": {
+            "source": "ipynb",
+            "cellId": "spark-orders",
+            "cellType": "code",
+            "originalIndex": 2,
+            "language": "python",
+            "cellMetadata": {
+              "datapass": {
+                "kernel": "sparklab"
+              }
+            }
+          }
+        },
+        {
+          "id": "python-orders",
+          "type": "python",
+          "title": "Python",
+          "kernel": "python",
+          "role": "code",
+          "starterSource": "rows = query(\"\"\"\nSELECT customer_id, net_amount\nFROM source.orders\nWHERE net_amount > 0\nORDER BY net_amount DESC\n\"\"\")\ndisplay(rows[:8])",
+          "notebook": {
+            "source": "ipynb",
+            "cellId": "python-orders",
+            "cellType": "code",
+            "originalIndex": 3,
+            "language": "python",
+            "cellMetadata": {
+              "datapass": {
+                "kernel": "python"
+              }
+            }
+          }
+        },
+        {
+          "id": "polars-orders",
+          "type": "polars",
+          "title": "Polars",
+          "kernel": "polars",
+          "role": "code",
+          "starterSource": "import polars as pl\n\norders = pl.DataFrame(query(\"SELECT * FROM source.orders\"))\nresult = (\n    orders\n    .filter(pl.col(\"net_amount\") > 0)\n    .group_by(\"customer_id\")\n    .agg(\n        pl.col(\"net_amount\").sum().alias(\"revenue\"),\n        pl.len().alias(\"orders\"),\n    )\n    .sort(\"revenue\", descending=True)\n)\ndisplay(result)",
+          "notebook": {
+            "source": "ipynb",
+            "cellId": "polars-orders",
+            "cellType": "code",
+            "originalIndex": 4,
+            "language": "polars",
+            "cellMetadata": {
+              "datapass": {
+                "kernel": "polars"
+              }
+            }
+          }
+        }
+      ],
+      "views": [
+        {
+          "id": "notebook",
+          "label": "Notebook",
+          "description": "Original notebook order with saved outputs.",
+          "blockIds": [
+            "canvas-note",
+            "sql-orders",
+            "spark-orders",
+            "python-orders",
+            "polars-orders"
+          ],
+          "layout": [
+            {
+              "i": "canvas-note",
+              "x": 1,
+              "y": 0,
+              "w": 10,
+              "h": 5,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "sql-orders",
+              "x": 1,
+              "y": 5,
+              "w": 10,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "spark-orders",
+              "x": 1,
+              "y": 15,
+              "w": 10,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "python-orders",
+              "x": 1,
+              "y": 25,
+              "w": 10,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "polars-orders",
+              "x": 1,
+              "y": 35,
+              "w": 10,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            }
+          ],
+          "defaultLayout": [
+            {
+              "i": "canvas-note",
+              "x": 1,
+              "y": 0,
+              "w": 10,
+              "h": 5,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "sql-orders",
+              "x": 1,
+              "y": 5,
+              "w": 10,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "spark-orders",
+              "x": 1,
+              "y": 15,
+              "w": 10,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "python-orders",
+              "x": 1,
+              "y": 25,
+              "w": 10,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "polars-orders",
+              "x": 1,
+              "y": 35,
+              "w": 10,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            }
+          ]
+        },
+        {
+          "id": "split",
+          "label": "Two-page",
+          "description": "The same notebook reorganized into two columns.",
+          "blockIds": [
+            "canvas-note",
+            "sql-orders",
+            "spark-orders",
+            "python-orders",
+            "polars-orders"
+          ],
+          "layout": [
+            {
+              "i": "canvas-note",
+              "x": 0,
+              "y": 0,
+              "w": 6,
+              "h": 5,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "sql-orders",
+              "x": 0,
+              "y": 5,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "spark-orders",
+              "x": 0,
+              "y": 15,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "python-orders",
+              "x": 6,
+              "y": 0,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "polars-orders",
+              "x": 6,
+              "y": 10,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            }
+          ],
+          "defaultLayout": [
+            {
+              "i": "canvas-note",
+              "x": 0,
+              "y": 0,
+              "w": 6,
+              "h": 5,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "sql-orders",
+              "x": 0,
+              "y": 5,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "spark-orders",
+              "x": 0,
+              "y": 15,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "python-orders",
+              "x": 6,
+              "y": 0,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "polars-orders",
+              "x": 6,
+              "y": 10,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            }
+          ]
+        },
+        {
+          "id": "explain",
+          "label": "Code + explanation",
+          "description": "Code and outputs on the left, markdown explanations on the right.",
+          "blockIds": [
+            "canvas-note",
+            "sql-orders",
+            "spark-orders",
+            "python-orders",
+            "polars-orders"
+          ],
+          "layout": [
+            {
+              "i": "canvas-note",
+              "x": 8,
+              "y": 0,
+              "w": 4,
+              "h": 5,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "sql-orders",
+              "x": 0,
+              "y": 0,
+              "w": 8,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "spark-orders",
+              "x": 0,
+              "y": 10,
+              "w": 8,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "python-orders",
+              "x": 0,
+              "y": 20,
+              "w": 8,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "polars-orders",
+              "x": 0,
+              "y": 30,
+              "w": 8,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            }
+          ],
+          "defaultLayout": [
+            {
+              "i": "canvas-note",
+              "x": 8,
+              "y": 0,
+              "w": 4,
+              "h": 5,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "sql-orders",
+              "x": 0,
+              "y": 0,
+              "w": 8,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "spark-orders",
+              "x": 0,
+              "y": 10,
+              "w": 8,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "python-orders",
+              "x": 0,
+              "y": 20,
+              "w": 8,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "polars-orders",
+              "x": 0,
+              "y": 30,
+              "w": 8,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            }
+          ]
+        },
+        {
+          "id": "two-plus-one",
+          "label": "2 + 1",
+          "description": "Two compact notebook sections above the remaining document.",
+          "blockIds": [
+            "canvas-note",
+            "sql-orders",
+            "spark-orders",
+            "python-orders",
+            "polars-orders"
+          ],
+          "layout": [
+            {
+              "i": "canvas-note",
+              "x": 0,
+              "y": 0,
+              "w": 6,
+              "h": 5,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "sql-orders",
+              "x": 6,
+              "y": 0,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "spark-orders",
+              "x": 0,
+              "y": 10,
+              "w": 12,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "python-orders",
+              "x": 0,
+              "y": 20,
+              "w": 12,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "polars-orders",
+              "x": 0,
+              "y": 30,
+              "w": 12,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            }
+          ],
+          "defaultLayout": [
+            {
+              "i": "canvas-note",
+              "x": 0,
+              "y": 0,
+              "w": 6,
+              "h": 5,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "sql-orders",
+              "x": 6,
+              "y": 0,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "spark-orders",
+              "x": 0,
+              "y": 10,
+              "w": 12,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "python-orders",
+              "x": 0,
+              "y": 20,
+              "w": 12,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            },
+            {
+              "i": "polars-orders",
+              "x": 0,
+              "y": 30,
+              "w": 12,
+              "h": 10,
+              "minW": 4,
+              "minH": 4
+            }
+          ]
+        },
+        {
+          "id": "dashboard",
+          "label": "Dashboard",
+          "description": "Saved notebook outputs arranged as presentation tiles.",
+          "blockIds": [],
+          "layout": [],
+          "defaultLayout": []
+        },
+        {
+          "id": "free",
+          "label": "Free canvas",
+          "description": "All imported cells on a free two-column canvas.",
+          "blockIds": [
+            "canvas-note",
+            "sql-orders",
+            "spark-orders",
+            "python-orders",
+            "polars-orders"
+          ],
+          "layout": [
+            {
+              "i": "canvas-note",
+              "x": 0,
+              "y": 0,
+              "w": 6,
+              "h": 6,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "sql-orders",
+              "x": 6,
+              "y": 0,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "spark-orders",
+              "x": 0,
+              "y": 6,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "python-orders",
+              "x": 6,
+              "y": 10,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "polars-orders",
+              "x": 0,
+              "y": 16,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            }
+          ],
+          "defaultLayout": [
+            {
+              "i": "canvas-note",
+              "x": 0,
+              "y": 0,
+              "w": 6,
+              "h": 6,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "sql-orders",
+              "x": 6,
+              "y": 0,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "spark-orders",
+              "x": 0,
+              "y": 6,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "python-orders",
+              "x": 6,
+              "y": 10,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            },
+            {
+              "i": "polars-orders",
+              "x": 0,
+              "y": 16,
+              "w": 6,
+              "h": 10,
+              "minW": 3,
+              "minH": 4
+            }
+          ]
+        }
+      ],
+      "blockState": {
+        "mosaic:v2:markdown:canvas-note": "Drag and resize every block. Switch between Notebook, Two-page, Code + explanation, Dashboard and Free canvas without cloning the notebook.",
+        "mosaic:v2:code:sql-orders": "SELECT\n  customer_id,\n  COUNT(*) AS orders,\n  ROUND(SUM(net_amount), 2) AS revenue\nFROM source.orders\nWHERE net_amount > 0\nGROUP BY customer_id\nORDER BY revenue DESC",
+        "mosaic:v2:code:spark-orders": "from pyspark.sql import functions as F\n\norders = spark.table(\"source.orders\").filter(F.col(\"net_amount\") > 0)\nresult = orders.groupBy(\"customer_id\").agg(\n    F.sum(\"net_amount\").alias(\"revenue\"),\n    F.count(\"order_id\").alias(\"orders\")\n)",
+        "mosaic:v2:code:python-orders": "rows = query(\"\"\"\nSELECT customer_id, net_amount\nFROM source.orders\nWHERE net_amount > 0\nORDER BY net_amount DESC\n\"\"\")\ndisplay(rows[:8])",
+        "mosaic:v2:code:polars-orders": "import polars as pl\n\norders = pl.DataFrame(query(\"SELECT * FROM source.orders\"))\nresult = (\n    orders\n    .filter(pl.col(\"net_amount\") > 0)\n    .group_by(\"customer_id\")\n    .agg(\n        pl.col(\"net_amount\").sum().alias(\"revenue\"),\n        pl.len().alias(\"orders\"),\n    )\n    .sort(\"revenue\", descending=True)\n)\ndisplay(result)"
+      },
+      "info": null,
+      "executions": {},
+      "executedSource": {},
+      "playground": "free",
+      "presentation": "studio",
+      "skin": "neutral"
+    }
+  },
+  "workbench": {
+    "schema_version": 1,
+    "resources": [
+      {
+        "schema_version": 1,
+        "id": "shared-catalog",
+        "title": "Shared catalog",
+        "revision": 0,
+        "kind": "catalog"
+      },
+      {
+        "schema_version": 1,
+        "id": "shared-evidence",
+        "title": "Run evidence",
+        "revision": 0,
+        "kind": "evidence"
+      },
+      {
+        "schema_version": 1,
+        "id": "notebook-72aff9c2-ee89-4f98-a69f-96b49d1942dc",
+        "title": "Free coding canvas",
+        "revision": 0,
+        "kind": "notebook",
+        "notebook_id": "playground-free"
+      },
+      {
+        "schema_version": 1,
+        "id": "dbt-project-cbedce75f5c09800",
+        "title": "Retail analytics / dbt",
+        "revision": 0,
+        "kind": "dbt-project",
+        "files": [
+          {
+            "path": "dbt_project.yml",
+            "source": "name: datapass_retail\nversion: '1.0.0'\nconfig-version: 2\nprofile: datapass_retail\nmodel-paths: [models]\nseed-paths: [seeds]\ntest-paths: [tests]\nmodels:\n  datapass_retail:\n    staging:\n      +materialized: view\n    marts:\n      +materialized: table\n"
+          },
+          {
+            "path": "dbt_charts.yml",
+            "source": "sources:\n  db:\n    type: dbt_profile\n    profile: datapass_retail\n    target: dev\n"
+          },
+          {
+            "path": "models/staging/stg_orders.sql",
+            "source": "-- One row per order; invalid amounts do not contribute.\nselect\n    order_id,\n    customer_id,\n    order_month,\n    cast(net_amount as decimal(18,2)) as revenue\nfrom {{ ref('raw_orders') }}\nwhere net_amount > 0\n"
+          },
+          {
+            "path": "models/marts/dim_customers.sql",
+            "source": "select\n    customer_id as customer_key,\n    customer_id,\n    customer_name,\n    city\nfrom {{ ref('raw_customers') }}\n"
+          },
+          {
+            "path": "models/marts/fct_sales.sql",
+            "source": "-- Grain: one row per valid order.\nselect\n    o.order_id,\n    c.customer_key,\n    c.customer_name,\n    o.order_month,\n    o.revenue\nfrom {{ ref('stg_orders') }} as o\nleft join {{ ref('dim_customers') }} as c\n    on o.customer_id = c.customer_id\n"
+          },
+          {
+            "path": "models/schema.yml",
+            "source": "version: 2\nmodels:\n  - name: stg_orders\n    description: One row per valid order.\n    columns:\n      - name: order_id\n        data_tests: [unique, not_null]\n  - name: dim_customers\n    columns:\n      - name: customer_key\n        data_tests: [unique, not_null]\n  - name: fct_sales\n    columns:\n      - name: order_id\n        data_tests: [unique, not_null]\n      - name: customer_key\n        data_tests:\n          - not_null\n          - relationships:\n              arguments:\n                to: ref('dim_customers')\n                field: customer_key\n"
+          },
+          {
+            "path": "tests/assert_positive_revenue.sql",
+            "source": "-- dbt singular tests return failing rows. Zero rows means pass.\nselect *\nfrom {{ ref('fct_sales') }}\nwhere revenue <= 0 or revenue is null\n"
+          },
+          {
+            "path": "seeds/raw_customers.csv",
+            "source": "customer_id,customer_name,city\n101,Aster,Geneva\n102,Birch,Bergen\n"
+          },
+          {
+            "path": "seeds/raw_orders.csv",
+            "source": "order_id,customer_id,order_month,net_amount\n1,101,2026-01,420\n2,102,2026-01,275\n3,101,2026-02,560\n4,102,2026-02,360\n5,101,2026-03,610\n6,102,2026-03,480\n7,101,2026-04,720\n8,102,2026-04,430\n"
+          }
+        ],
+        "artifacts": null,
+        "last_run_id": null
+      },
+      {
+        "schema_version": 1,
+        "id": "model-design-cdfe083b2a327be9",
+        "title": "Retail analytics / Model",
+        "revision": 0,
+        "kind": "model-design",
+        "model": {
+          "tables": [
+            {
+              "id": "customers",
+              "name": "dim_customers",
+              "role": "dimension",
+              "grain": "One row per customer (Type 1).",
+              "columns": [
+                {
+                  "id": "c-key",
+                  "name": "customer_key",
+                  "type": "INTEGER",
+                  "primary": true,
+                  "nullable": false
+                },
+                {
+                  "id": "c-id",
+                  "name": "customer_id",
+                  "type": "INTEGER",
+                  "primary": false,
+                  "nullable": false
+                },
+                {
+                  "id": "c-name",
+                  "name": "customer_name",
+                  "type": "VARCHAR",
+                  "primary": false,
+                  "nullable": false
+                },
+                {
+                  "id": "c-city",
+                  "name": "city",
+                  "type": "VARCHAR",
+                  "primary": false,
+                  "nullable": true
+                }
+              ],
+              "x": 30,
+              "y": 80
+            },
+            {
+              "id": "sales",
+              "name": "fct_sales",
+              "role": "fact",
+              "grain": "One row per valid order.",
+              "columns": [
+                {
+                  "id": "s-id",
+                  "name": "order_id",
+                  "type": "INTEGER",
+                  "primary": true,
+                  "nullable": false
+                },
+                {
+                  "id": "s-customer",
+                  "name": "customer_key",
+                  "type": "INTEGER",
+                  "primary": false,
+                  "nullable": false
+                },
+                {
+                  "id": "s-month",
+                  "name": "order_month",
+                  "type": "VARCHAR",
+                  "primary": false,
+                  "nullable": false
+                },
+                {
+                  "id": "s-revenue",
+                  "name": "revenue",
+                  "type": "DECIMAL(18,2)",
+                  "primary": false,
+                  "nullable": false
+                }
+              ],
+              "x": 370,
+              "y": 190
+            },
+            {
+              "id": "months",
+              "name": "dim_month",
+              "role": "dimension",
+              "grain": "One row per calendar month.",
+              "columns": [
+                {
+                  "id": "m-key",
+                  "name": "order_month",
+                  "type": "VARCHAR",
+                  "primary": true,
+                  "nullable": false
+                },
+                {
+                  "id": "m-year",
+                  "name": "year",
+                  "type": "INTEGER",
+                  "primary": false,
+                  "nullable": false
+                },
+                {
+                  "id": "m-quarter",
+                  "name": "quarter",
+                  "type": "INTEGER",
+                  "primary": false,
+                  "nullable": false
+                }
+              ],
+              "x": 710,
+              "y": 60
+            }
+          ],
+          "relationships": [
+            {
+              "id": "sales-customer",
+              "fromTable": "sales",
+              "fromColumn": "s-customer",
+              "toTable": "customers",
+              "toColumn": "c-key",
+              "cardinality": "many-to-one"
+            },
+            {
+              "id": "sales-month",
+              "fromTable": "sales",
+              "fromColumn": "s-month",
+              "toTable": "months",
+              "toColumn": "m-key",
+              "cardinality": "many-to-one"
+            }
+          ],
+          "mappings": [
+            {
+              "id": "map-customer",
+              "fromTable": "customers",
+              "fromColumn": "c-key",
+              "toTable": "sales",
+              "toColumn": "s-customer",
+              "expression": "Lookup using the customer business key"
+            }
+          ]
+        },
+        "scd": {
+          "type": 2,
+          "step": 3,
+          "answer": ""
+        }
+      },
+      {
+        "schema_version": 1,
+        "id": "chart-board-6875a0f220d5cbc9",
+        "title": "Revenue over time",
+        "revision": 0,
+        "kind": "chart-board",
+        "board": {
+          "title": "Revenue over time",
+          "chartType": "bar",
+          "x": "order_month",
+          "y": "revenue",
+          "aggregation": "sum",
+          "query": "SELECT order_month, customer_name, revenue\nFROM {{ ref('fct_sales') }}\nORDER BY order_month, customer_name",
+          "snapshot": {
+            "label": "Retail teaching fixture",
+            "columns": [
+              "order_month",
+              "customer_name",
+              "revenue"
+            ],
+            "rows": [
+              {
+                "order_month": "2026-01",
+                "customer_name": "Aster",
+                "revenue": 420
+              },
+              {
+                "order_month": "2026-01",
+                "customer_name": "Birch",
+                "revenue": 275
+              },
+              {
+                "order_month": "2026-02",
+                "customer_name": "Aster",
+                "revenue": 560
+              },
+              {
+                "order_month": "2026-02",
+                "customer_name": "Birch",
+                "revenue": 360
+              },
+              {
+                "order_month": "2026-03",
+                "customer_name": "Aster",
+                "revenue": 610
+              },
+              {
+                "order_month": "2026-03",
+                "customer_name": "Birch",
+                "revenue": 480
+              },
+              {
+                "order_month": "2026-04",
+                "customer_name": "Aster",
+                "revenue": 720
+              },
+              {
+                "order_month": "2026-04",
+                "customer_name": "Birch",
+                "revenue": 430
+              }
+            ],
+            "origin": "sample",
+            "query": "SELECT order_month, customer_name, revenue\nFROM {{ ref('fct_sales') }}\nORDER BY order_month, customer_name",
+            "importedAt": null,
+            "run_id": null,
+            "workspace_id": null,
+            "input_versions": null
+          }
+        }
+      },
+      {
+        "schema_version": 1,
+        "id": "dbt-project-426702be-ff8d-4076-9e91-3ed25374e4a9",
+        "title": "dbt project",
+        "revision": 0,
+        "kind": "dbt-project",
+        "files": [
+          {
+            "path": "dbt_project.yml",
+            "source": "name: datapass_retail\nversion: '1.0.0'\nconfig-version: 2\nprofile: datapass_retail\nmodel-paths: [models]\nseed-paths: [seeds]\ntest-paths: [tests]\nmodels:\n  datapass_retail:\n    staging:\n      +materialized: view\n    marts:\n      +materialized: table\n"
+          },
+          {
+            "path": "dbt_charts.yml",
+            "source": "sources:\n  db:\n    type: dbt_profile\n    profile: datapass_retail\n    target: dev\n"
+          },
+          {
+            "path": "models/staging/stg_orders.sql",
+            "source": "-- One row per order; invalid amounts do not contribute.\nselect\n    order_id,\n    customer_id,\n    order_month,\n    cast(net_amount as decimal(18,2)) as revenue\nfrom {{ ref('raw_orders') }}\nwhere net_amount > 0\n"
+          },
+          {
+            "path": "models/marts/dim_customers.sql",
+            "source": "select\n    customer_id as customer_key,\n    customer_id,\n    customer_name,\n    city\nfrom {{ ref('raw_customers') }}\n"
+          },
+          {
+            "path": "models/marts/fct_sales.sql",
+            "source": "-- Grain: one row per valid order.\nselect\n    o.order_id,\n    c.customer_key,\n    c.customer_name,\n    o.order_month,\n    o.revenue\nfrom {{ ref('stg_orders') }} as o\nleft join {{ ref('dim_customers') }} as c\n    on o.customer_id = c.customer_id\n"
+          },
+          {
+            "path": "models/schema.yml",
+            "source": "version: 2\nmodels:\n  - name: stg_orders\n    description: One row per valid order.\n    columns:\n      - name: order_id\n        data_tests: [unique, not_null]\n  - name: dim_customers\n    columns:\n      - name: customer_key\n        data_tests: [unique, not_null]\n  - name: fct_sales\n    columns:\n      - name: order_id\n        data_tests: [unique, not_null]\n      - name: customer_key\n        data_tests:\n          - not_null\n          - relationships:\n              arguments:\n                to: ref('dim_customers')\n                field: customer_key\n"
+          },
+          {
+            "path": "tests/assert_positive_revenue.sql",
+            "source": "-- dbt singular tests return failing rows. Zero rows means pass.\nselect *\nfrom {{ ref('fct_sales') }}\nwhere revenue <= 0 or revenue is null\n"
+          },
+          {
+            "path": "seeds/raw_customers.csv",
+            "source": "customer_id,customer_name,city\n101,Aster,Geneva\n102,Birch,Bergen\n"
+          },
+          {
+            "path": "seeds/raw_orders.csv",
+            "source": "order_id,customer_id,order_month,net_amount\n1,101,2026-01,420\n2,102,2026-01,275\n3,101,2026-02,560\n4,102,2026-02,360\n5,101,2026-03,610\n6,102,2026-03,480\n7,101,2026-04,720\n8,102,2026-04,430\n"
+          }
+        ],
+        "artifacts": null,
+        "last_run_id": null
+      },
+      {
+        "schema_version": 1,
+        "id": "chart-board-8193bf6a-e11c-4d98-b936-f24a37900695",
+        "title": "Chart board",
+        "revision": 1,
+        "kind": "chart-board",
+        "board": {
+          "title": "Revenue over time",
+          "chartType": "bar",
+          "x": "order_month",
+          "y": "revenue",
+          "aggregation": "sum",
+          "query": "SELECT order_month, customer_name, revenue FROM warehouse.fct_sales ORDER BY order_month, customer_name",
+          "snapshot": {
+            "label": "Chart board",
+            "columns": [
+              "order_month",
+              "customer_name",
+              "revenue"
+            ],
+            "rows": [
+              {
+                "order_month": "2026-01",
+                "customer_name": "Aster",
+                "revenue": 420
+              },
+              {
+                "order_month": "2026-01",
+                "customer_name": "Birch",
+                "revenue": 275
+              },
+              {
+                "order_month": "2026-02",
+                "customer_name": "Aster",
+                "revenue": 560
+              },
+              {
+                "order_month": "2026-02",
+                "customer_name": "Birch",
+                "revenue": 360
+              },
+              {
+                "order_month": "2026-03",
+                "customer_name": "Aster",
+                "revenue": 610
+              },
+              {
+                "order_month": "2026-03",
+                "customer_name": "Birch",
+                "revenue": 480
+              },
+              {
+                "order_month": "2026-04",
+                "customer_name": "Aster",
+                "revenue": 720
+              },
+              {
+                "order_month": "2026-04",
+                "customer_name": "Birch",
+                "revenue": 430
+              }
+            ],
+            "origin": "real_local",
+            "query": "SELECT order_month, customer_name, revenue FROM warehouse.fct_sales ORDER BY order_month, customer_name",
+            "importedAt": "2026-09-21T18:47:54.410250+00:00",
+            "run_id": "b74c66de057345469fd9ef64e71dcfc2",
+            "workspace_id": "b1ea20d65e45421a9e8ab206fc2eab30",
+            "input_versions": {
+              "warehouse.fct_sales": "1f8bbf24a5e94694a8234a6af328e825"
+            }
+          }
+        }
+      },
+      {
+        "schema_version": 1,
+        "id": "pipeline-bae2e789-68d3-4bbd-ae05-94f09f0c0186",
+        "title": "Pipeline Lab",
+        "revision": 1,
+        "kind": "pipeline",
+        "source": "pipeline(\"retail_quality\", schedule=\"@daily\")\nraw = sql(\"raw\", \"CREATE TABLE IF NOT EXISTS bronze.pipeline_orders AS SELECT * FROM source.orders\")\ncheck = quality(\"valid_orders\", \"SELECT * FROM bronze.pipeline_orders WHERE order_id IS NULL\")\nraw >> check\n",
+        "last_valid_ir": {
+          "schema_version": 1,
+          "id": "retail_quality",
+          "schedule": "@daily",
+          "tasks": [
+            {
+              "id": "raw",
+              "kind": "sql",
+              "source": "CREATE TABLE IF NOT EXISTS bronze.pipeline_orders AS SELECT * FROM source.orders",
+              "retries": 0,
+              "retry_delay": 0,
+              "resource_id": null,
+              "action": null
+            },
+            {
+              "id": "valid_orders",
+              "kind": "quality",
+              "source": "SELECT * FROM bronze.pipeline_orders WHERE order_id IS NULL",
+              "retries": 0,
+              "retry_delay": 0,
+              "resource_id": null,
+              "action": null
+            }
+          ],
+          "edges": [
+            {
+              "source": "raw",
+              "target": "valid_orders"
+            }
+          ],
+          "source_hash": "4ff57c8a224215a0db2e34c06ea080bd063c3de250ba63b4e701c3f9ecf01c05"
+        },
+        "diagnostics": [],
+        "last_run_id": null
+      },
+      {
+        "schema_version": 1,
+        "id": "model-design-d19c81ee-5146-4de3-9e10-b43a151d2c7b",
+        "title": "Data model / SCD",
+        "revision": 4,
+        "kind": "model-design",
+        "model": {
+          "tables": [
+            {
+              "id": "customers",
+              "name": "dim_customers",
+              "role": "dimension",
+              "grain": "One row per customer (Type 1).",
+              "columns": [
+                {
+                  "id": "c-key",
+                  "name": "customer_key",
+                  "type": "INTEGER",
+                  "primary": true,
+                  "nullable": false
+                },
+                {
+                  "id": "c-id",
+                  "name": "customer_id",
+                  "type": "INTEGER",
+                  "primary": false,
+                  "nullable": false
+                },
+                {
+                  "id": "c-name",
+                  "name": "customer_name",
+                  "type": "VARCHAR",
+                  "primary": false,
+                  "nullable": false
+                },
+                {
+                  "id": "c-city",
+                  "name": "city",
+                  "type": "VARCHAR",
+                  "primary": false,
+                  "nullable": true
+                }
+              ],
+              "x": 30,
+              "y": 80
+            },
+            {
+              "id": "sales",
+              "name": "fct_sales",
+              "role": "fact",
+              "grain": "One row per valid order.",
+              "columns": [
+                {
+                  "id": "s-id",
+                  "name": "order_id",
+                  "type": "INTEGER",
+                  "primary": true,
+                  "nullable": false
+                },
+                {
+                  "id": "s-customer",
+                  "name": "customer_key",
+                  "type": "INTEGER",
+                  "primary": false,
+                  "nullable": false
+                },
+                {
+                  "id": "s-month",
+                  "name": "order_month",
+                  "type": "VARCHAR",
+                  "primary": false,
+                  "nullable": false
+                },
+                {
+                  "id": "s-revenue",
+                  "name": "revenue",
+                  "type": "DECIMAL(18,2)",
+                  "primary": false,
+                  "nullable": false
+                }
+              ],
+              "x": 370,
+              "y": 190
+            },
+            {
+              "id": "months",
+              "name": "dim_month",
+              "role": "dimension",
+              "grain": "One row per calendar month.",
+              "columns": [
+                {
+                  "id": "m-key",
+                  "name": "order_month",
+                  "type": "VARCHAR",
+                  "primary": true,
+                  "nullable": false
+                },
+                {
+                  "id": "m-year",
+                  "name": "year",
+                  "type": "INTEGER",
+                  "primary": false,
+                  "nullable": false
+                },
+                {
+                  "id": "m-quarter",
+                  "name": "quarter",
+                  "type": "INTEGER",
+                  "primary": false,
+                  "nullable": false
+                }
+              ],
+              "x": 710,
+              "y": 60
+            }
+          ],
+          "relationships": [
+            {
+              "id": "sales-customer",
+              "fromTable": "sales",
+              "fromColumn": "s-customer",
+              "toTable": "customers",
+              "toColumn": "c-key",
+              "cardinality": "many-to-one"
+            },
+            {
+              "id": "sales-month",
+              "fromTable": "sales",
+              "fromColumn": "s-month",
+              "toTable": "months",
+              "toColumn": "m-key",
+              "cardinality": "many-to-one"
+            }
+          ],
+          "mappings": [
+            {
+              "id": "map-customer",
+              "fromTable": "customers",
+              "fromColumn": "c-key",
+              "toTable": "sales",
+              "toColumn": "s-customer",
+              "expression": "Lookup using the customer business key"
+            }
+          ]
+        },
+        "scd": {
+          "type": 3,
+          "step": 5,
+          "answer": ""
+        }
+      }
+    ],
+    "views": [
+      {
+        "id": "view-aab2e204-4a4e-42cd-8cca-82fae7a9d830",
+        "resource_id": "notebook-72aff9c2-ee89-4f98-a69f-96b49d1942dc",
+        "mode": "visual",
+        "state": {},
+        "positions": {},
+        "viewport": null,
+        "selected_node": null,
+        "selected_edge": null
+      },
+      {
+        "id": "view-f75b9e3a-63f5-4ec1-af64-84847e69a65f",
+        "resource_id": "dbt-project-426702be-ff8d-4076-9e91-3ed25374e4a9",
+        "mode": "visual",
+        "state": {
+          "selectedFile": "models/marts/fct_sales.sql",
+          "layer": "lineage"
+        },
+        "positions": {},
+        "viewport": null,
+        "selected_node": null,
+        "selected_edge": null
+      },
+      {
+        "id": "view-27d1450e-0a26-4485-8981-3b678a95f50a",
+        "resource_id": "chart-board-8193bf6a-e11c-4d98-b936-f24a37900695",
+        "mode": "visual",
+        "state": {},
+        "positions": {},
+        "viewport": null,
+        "selected_node": null,
+        "selected_edge": null
+      },
+      {
+        "id": "view-a02af7ea-3ff7-44ee-8ffc-c76eadfc3e2a",
+        "resource_id": "pipeline-bae2e789-68d3-4bbd-ae05-94f09f0c0186",
+        "mode": "visual",
+        "state": {},
+        "positions": {},
+        "viewport": null,
+        "selected_node": null,
+        "selected_edge": null
+      },
+      {
+        "id": "view-e9cdaf11-49d4-4d8f-a3da-8d2577ef6ada",
+        "resource_id": "model-design-d19c81ee-5146-4de3-9e10-b43a151d2c7b",
+        "mode": "visual",
+        "state": {
+          "layer": "scd"
+        },
+        "positions": {},
+        "viewport": null,
+        "selected_node": null,
+        "selected_edge": null
+      }
+    ],
+    "panes": [
+      {
+        "id": "pane-main",
+        "view_ids": [
+          "view-aab2e204-4a4e-42cd-8cca-82fae7a9d830",
+          "view-f75b9e3a-63f5-4ec1-af64-84847e69a65f",
+          "view-27d1450e-0a26-4485-8981-3b678a95f50a",
+          "view-a02af7ea-3ff7-44ee-8ffc-c76eadfc3e2a",
+          "view-e9cdaf11-49d4-4d8f-a3da-8d2577ef6ada"
+        ],
+        "active_view_id": "view-e9cdaf11-49d4-4d8f-a3da-8d2577ef6ada",
+        "weight": 1.0
+      }
+    ],
+    "active_pane_id": "pane-main",
+    "persona": "neutral",
+    "direction": "horizontal",
+    "resource_schema_version": 2,
+    "ui": {
+      "theme": "fluent",
+      "skin": "studio",
+      "explorer_open": true,
+      "context_open": false
+    },
+    "migrations": []
+  }
+}

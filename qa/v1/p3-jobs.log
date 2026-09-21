@@ -1,0 +1,33 @@
+....F...............                                                     [100%]
+=================================== FAILURES ===================================
+________________ test_process_cancellation_and_deadline[False] _________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-3/test_process_cancellation_and_1')
+cancel = False
+
+    @pytest.mark.parametrize('cancel',[True,False])
+    def test_process_cancellation_and_deadline(tmp_path,cancel):
+        docs=Documents(tmp_path);w=saved(docs);manager=KernelManager('sqlite');jobs=LocalJobs(docs,manager,timeout=4 if cancel else .12)
+        ready=threading.Event()
+        def operation(job,*_):
+            ready.set()
+            return job.run_process([sys.executable,'-c','import time; time.sleep(10)'],cwd=tmp_path,env={})
+        job=start(jobs,w,operation);assert ready.wait(2)
+        if cancel: time.sleep(.04);jobs.cancel(w['id'],job['id'])
+        record=finish(jobs,w['id'],job['id'])
+        assert record['status']==('cancelled' if cancel else 'timed_out')
+>       assert w['id'] not in jobs.active
+E       AssertionError: assert '1667761de63f4395bf513184b8e7e101' not in {'1667761de63f4395bf513184b8e7e101': <apps.api.datapass.local_jobs.JobContext object at 0x7f6ff22dd6e0>}
+E        +  where {'1667761de63f4395bf513184b8e7e101': <apps.api.datapass.local_jobs.JobContext object at 0x7f6ff22dd6e0>} = <apps.api.datapass.local_jobs.LocalJobs object at 0x7f6ff22d56a0>.active
+
+tests/test_local_jobs.py:106: AssertionError
+=============================== warnings summary ===============================
+apps/api/datapass/analytics_contracts.py:52
+  /mnt/data/datapass_work/candidate/apps/api/datapass/analytics_contracts.py:52: UserWarning: Field name "schema" in "ArtifactBundle" shadows an attribute in parent "Document"
+    class ArtifactBundle(Document):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_local_jobs.py::test_process_cancellation_and_deadline[False] - AssertionError: assert '1667761de63f4395bf513184b8e7e101' not in {'1667761de63f4395bf513184b8e7e101': <apps.api.datapass.local_jobs.JobContext object at 0x7f6ff22dd6e0>}
+ +  where {'1667761de63f4395bf513184b8e7e101': <apps.api.datapass.local_jobs.JobContext object at 0x7f6ff22dd6e0>} = <apps.api.datapass.local_jobs.LocalJobs object at 0x7f6ff22d56a0>.active
+1 failed, 19 passed, 1 warning in 5.00s

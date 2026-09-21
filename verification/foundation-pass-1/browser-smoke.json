@@ -1,0 +1,8 @@
+{
+  "status": "blocked",
+  "scope": "targeted split-pane save/reopen Chromium smoke",
+  "reason": "Chromium navigation to local HTTP was blocked by administrator policy (ERR_BLOCKED_BY_ADMINISTRATOR). No browser assertions executed.",
+  "application_assertions_passed": 0,
+  "release_evidence": false,
+  "next_step": "Run scripts/foundation-browser-smoke.mjs in an environment permitting its local development URL. Do not bypass browser policy."
+}

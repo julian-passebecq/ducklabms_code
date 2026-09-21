@@ -1,0 +1,4 @@
+.............................s                                           [100%]
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_guided_spark_v1.py:115: No live endpoint supplied; mock conformance is not deployment certification.
+29 passed, 1 skipped in 0.26s

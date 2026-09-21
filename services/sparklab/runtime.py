@@ -30,6 +30,22 @@ class ClusterProfile:
     cold_start_seconds: float = 0.0
     fabric_cu_per_vcore_hour: float | None = None
     dbu_equivalent_per_node_hour: float | None = None
+    schema_version: int = 1
+    default_partitions: int = 64
+    shuffle_partitions: int = 200
+    broadcast_threshold_mb: float = 10.0
+    aqe_default: bool = True
+    advisory_partition_mb: float = 64.0
+    scheduler_overhead_s: float = 0.08
+    credits_per_core_hour: float = 1.0
+    tags: tuple[str, ...] = ('balanced',)
+
+    def contract(self) -> dict[str, Any]:
+        return {**asdict(self), 'max_cores': self.max_cores,
+                'executor_count': self.max_workers, 'executor_cores': self.cores_per_worker,
+                'executor_memory_gb': self.memory_gb_per_worker,
+                'total_virtual_cores': self.max_cores,
+                'truth': 'Fictional teaching profile; no vendor capacity or billing parity'}
 
     @property
     def max_cores(self) -> int:
