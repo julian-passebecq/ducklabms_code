@@ -67,6 +67,19 @@ test('production React / DuckDB connected notebook journey',async({page,request}
  expect(workers.some(url=>url.includes('editor.worker'))).toBeTruthy();expect(errors).toEqual([]);
 });
 
+test('Monaco restores canonical source after plain-editor changes',async({page})=>{
+ await page.goto('/#token=core-pass-browser');
+ await page.getByRole('button',{name:/Retail revenue lakehouse/}).click();
+ await expect(page.locator('.monaco-editor').first()).toBeVisible();
+ await page.getByRole('button',{name:'Use plain editor',exact:true}).click();
+ const source='SELECT 42 AS editor_round_trip';
+ await page.getByRole('textbox',{name:'sql cell source',exact:true}).fill(source);
+ await page.getByRole('button',{name:'Use Monaco',exact:true}).click();
+ await expect(page.locator('.monaco-editor .view-lines')).toContainText(source);
+ await page.getByRole('button',{name:'Use plain editor',exact:true}).click();
+ await expect(page.getByRole('textbox',{name:'sql cell source',exact:true})).toHaveValue(source);
+});
+
 test('editing, keyboard execution, stale lineage, recovery and distinct run scopes',async({page,request})=>{
  await page.goto('/#token=core-pass-browser');
  await page.getByRole('button',{name:/Retail revenue lakehouse/}).click();
